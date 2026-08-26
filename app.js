@@ -23,7 +23,7 @@ let state = {
   song:'twinkle',running:false,paused:false,startAt:0,pauseStart:0,pauseTotal:0,
   speed:1,mode:'play',hand:'right',micStream:null,audioCtx:null,analyser:null,
   audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,assistTimer:null,assistBeat:0,
-  judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,
+  judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,lastMasterBeat:-1,
   performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,demoSoundOn:false,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoVolume:0.45,pianoVoices:new Set()
 };
 
@@ -67,8 +67,9 @@ $('quickStart').addEventListener('click',()=>openPractice('sight','5 MIN'));
 function openPractice(songId,label='PLAY'){
   state.song=songId; state.running=false; state.paused=false; state.pauseTotal=0; state.judged=new Set(); state.goodStreak=0;
   state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set();
-  state.tempoManual=false; state.tempoBpm=songs[songId].bpm;
+  state.tempoManual=false; state.tempoBpm=songs[songId].bpm; state.speed=1; state.lastMasterBeat=-1;
   $('tempoInput').value=state.tempoBpm;
+  $('speedSelect').value='1';
   $('practiceTitle').textContent=songs[songId].title;
   $('practiceModeLabel').textContent=label;
   showView('practice');
@@ -86,14 +87,18 @@ $('pauseBtn').addEventListener('click',()=>{
     state.pauseStart=performance.now(); stopMetronome(false); stopAllPianoVoices()
   }else{
     state.pauseTotal+=performance.now()-state.pauseStart;
-    if(state.metroOn) startMetronome();
+    startMetronome();
   }
 });
 
 $('speedSelect').addEventListener('change',()=>{
   state.speed=parseFloat($('speedSelect').value)||1;
-  if(!state.tempoManual){ state.tempoBpm=songs[state.song].bpm; $('tempoInput').value=state.tempoBpm; }
-  renderStaticScore(); restartPractice();
+  // Speed presets directly change the master BPM.
+  state.tempoManual=false;
+  state.tempoBpm=Math.max(30,Math.round(songs[state.song].bpm*state.speed));
+  $('tempoInput').value=state.tempoBpm;
+  renderStaticScore();
+  restartPractice();
 });
 $('practiceMode').addEventListener('change',()=>{state.mode=$('practiceMode').value;});
 $('handSelect').addEventListener('change',()=>{state.hand=$('handSelect').value;});
@@ -106,15 +111,24 @@ $('metroBtn').addEventListener('click',()=>{
 
 function setTempo(v,manual=true){
   const bpm=Math.max(30,Math.min(240,Math.round(Number(v)||songs[state.song].bpm)));
-  state.tempoBpm=bpm; state.tempoManual=manual;
+  state.tempoBpm=bpm;
+  state.tempoManual=manual;
   $('tempoInput').value=bpm;
-  if(state.metroOn && state.running && !state.paused) startMetronome();
+
+  // Keep speed selector approximately reflecting the chosen master tempo.
+  const ratio=bpm/songs[state.song].bpm;
+  if(Math.abs(ratio-.5)<.03) $('speedSelect').value='0.5';
+  else if(Math.abs(ratio-.75)<.03) $('speedSelect').value='0.75';
+  else if(Math.abs(ratio-1)<.03) $('speedSelect').value='1';
+
+  renderStaticScore();
+  if(state.running) restartPractice();
   if(!$('rhythmAssist').hidden) $('assistBpm').textContent=effectiveBpm()+' BPM';
 }
 $('tempoInput').addEventListener('change',()=>setTempo($('tempoInput').value,true));
 $('tempoMinus').addEventListener('click',()=>setTempo((state.tempoBpm||songs[state.song].bpm)-1,true));
 $('tempoPlus').addEventListener('click',()=>setTempo((state.tempoBpm||songs[state.song].bpm)+1,true));
-$('tempoReset').addEventListener('click',()=>setTempo(songs[state.song].bpm,false));
+$('tempoReset').addEventListener('click',()=>{ $('speedSelect').value='1'; state.speed=1; setTempo(songs[state.song].bpm,false); });
 
 
 const LOCAL_PIANO_SAMPLES = [
@@ -275,19 +289,28 @@ function playScoreSample(note){
   playLocalPiano(note,0.86,1.0);
 }
 
-function scoreBpm(){ return Math.max(30,Math.round(songs[state.song].bpm*state.speed)); }
+function scoreBpm(){ return Math.max(30,Math.round(songs[state.song].bpm)); }
+
+// Single master tempo for EVERYTHING:
+// metronome, scrolling score, note arrival, demo piano and microphone timing.
 function effectiveBpm(){
-  const base=state.tempoManual ? state.tempoBpm : songs[state.song].bpm;
-  return Math.max(30,Math.round(base*state.speed));
+  return Math.max(30,Math.min(240,Math.round(state.tempoBpm || songs[state.song].bpm)));
 }
-function effectiveDuration(){ return songs[state.song].duration/state.speed; }
+function beatSeconds(){ return 60/effectiveBpm(); }
+
+// Current demo songs use one quarter-note beat per note.
+// Add 2 extra beats: one count-in beat before first note and one release beat at the end.
+function effectiveDuration(){
+  return (songs[state.song].notes.length + 2) * beatSeconds();
+}
 function elapsed(){
   if(!state.running) return 0;
   const now=state.paused?state.pauseStart:performance.now();
   return Math.max(0,(now-state.startAt-state.pauseTotal)/1000);
 }
 function noteTime(i){
-  const s=songs[state.song]; return (i+1)*effectiveDuration()/(s.notes.length+1);
+  // First note arrives on beat 1, exactly one beat after transport starts.
+  return (i+1)*beatSeconds();
 }
 
 const degree={C:0,D:1,E:2,F:3,G:4,A:5,B:6};
@@ -320,11 +343,11 @@ function renderStaticScore(){
     f.className='finger'; f.style.left=n.style.left; f.textContent=fingerFor(i);
     root.appendChild(f);
   });
-  const bars=Math.ceil(effectiveDuration()/(60/scoreBpm()*4));
+  const bars=Math.ceil((songs[state.song].notes.length+1)/4);
   for(let i=1;i<=bars;i++){
     const line=document.createElement('div');
     line.className='measure-line';
-    line.style.left=(lead+i*(60/scoreBpm()*4)*pxPerSec)+'px';
+    line.style.left=(lead+i*(beatSeconds()*4)*pxPerSec)+'px';
     root.appendChild(line);
   }
 }
@@ -332,19 +355,38 @@ function renderStaticScore(){
 function startPractice(){
   stopAnimationOnly();
   state.running=true; state.paused=false; state.pauseTotal=0; state.startAt=performance.now();
-  state.judged=new Set(); state.goodStreak=0; state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set(); state.demoPlayed=new Set();
+  state.judged=new Set(); state.goodStreak=0; state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set(); state.lastMasterBeat=-1;
   $('recordCount').textContent='0'; $('playedNote').textContent='—'; $('timingDelta').textContent='—'; $('scoreNote').textContent='—';
-  if(state.metroOn) startMetronome();
+  startMetronome();
   gameLoop();
 }
 function restartPractice(){ if($('practiceView').classList.contains('active')){renderStaticScore(); startPractice();} }
 function stopAnimationOnly(){ if(state.gameRaf) cancelAnimationFrame(state.gameRaf); state.gameRaf=0; }
 function stopPractice(){ state.running=false; stopAnimationOnly(); stopMetronome(false); hideAssist(); stopAllPianoVoices() }
 
+function updateMasterBeat(e){
+  const beatIndex=Math.floor(e/beatSeconds());
+
+  if(beatIndex!==state.lastMasterBeat){
+    state.lastMasterBeat=beatIndex;
+
+    // Metronome click is generated from exactly the same beat index that drives score movement.
+    if(state.metroOn) metroClick(beatIndex%4===0);
+
+    // Rhythm-assist dots also follow the same master beat.
+    if(!$('rhythmAssist').hidden){
+      state.assistBeat=beatIndex%4;
+      updateAssist();
+      $('assistBpm').textContent=effectiveBpm()+' BPM';
+    }
+  }
+}
+
 function gameLoop(){
   if(!state.running){return}
   if(state.paused){state.gameRaf=requestAnimationFrame(gameLoop);return}
   const e=elapsed(), s=songs[state.song], root=$('scrollingScore');
+  updateMasterBeat(e);
   const pxPerSec=+root.dataset.pxPerSec;
   const playhead=$('staffWindow').clientWidth*.22;
   const lead=+root.dataset.lead;
@@ -389,13 +431,15 @@ function flash(kind){
   t._timer=setTimeout(()=>t.className='feedback-tint',180);
 }
 function showAssist(){
-  const r=$('rhythmAssist'); r.hidden=false; $('assistBpm').textContent=effectiveBpm()+' BPM';
-  state.assistBeat=0; updateAssist();
-  clearInterval(state.assistTimer);
-  state.assistTimer=setInterval(()=>{state.assistBeat=(state.assistBeat+1)%4;updateAssist()},60000/effectiveBpm());
+  const r=$('rhythmAssist');
+  r.hidden=false;
+  $('assistBpm').textContent=effectiveBpm()+' BPM';
+  state.assistBeat=Math.floor(elapsed()/beatSeconds())%4;
+  updateAssist();
 }
 function hideAssist(){
-  $('rhythmAssist').hidden=true; clearInterval(state.assistTimer); state.assistTimer=null;
+  $('rhythmAssist').hidden=true;
+  state.assistTimer=null;
 }
 function updateAssist(){
   document.querySelectorAll('#rhythmAssist span').forEach((x,i)=>x.classList.toggle('active',i===state.assistBeat));
@@ -556,10 +600,15 @@ function metroClick(accent){
   osc.connect(gain).connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime+.07);
 }
 function startMetronome(){
-  stopMetronome(false);
-  let beat=0; const tick=()=>{metroClick(beat%4===0);beat=(beat+1)%4};
-  tick(); state.metroTimer=setInterval(tick,60000/effectiveBpm());
+  // No independent setInterval. The game loop drives beats from the same master clock.
+  state.lastMasterBeat=-1;
 }
-function stopMetronome(update=true){clearInterval(state.metroTimer);state.metroTimer=null;if(update){state.metroOn=false;$('metroBtn').textContent='節拍器：關'}}
+function stopMetronome(update=true){
+  state.lastMasterBeat=-1;
+  if(update){
+    state.metroOn=false;
+    $('metroBtn').textContent='節拍器：關';
+  }
+}
 
 window.addEventListener('resize',()=>{ if($('practiceView').classList.contains('active')) renderStaticScore(); });

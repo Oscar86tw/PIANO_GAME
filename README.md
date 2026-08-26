@@ -1,18 +1,33 @@
-# PIANO LEARNING V1.4 — Local Piano
+# PIANO LEARNING V1.5 — Master Clock Sync
 
-## 修正
-V1.3 的鋼琴聲依賴外部 Tone.js / SoundFont CDN，部分手機、平板或 GitHub Pages 環境可能載入失敗。
+## 核心修正
+V1.4 的節拍器 BPM 與五線譜移動時間是兩套計時，因此調整 BPM 後，
+節拍器、音符抵達藍色判定線與示範鋼琴聲可能不同步。
 
-V1.4 改成「本地鋼琴取樣」：
-- 專案內直接包含 `30` 個 Acoustic Grand Piano MP3 sample。
-- 音色位於 `assets/piano/`。
-- 執行時不再向第三方音色 CDN 下載。
-- 不再需要 Tone.js。
-- 使用瀏覽器原生 Web Audio API。
-- 其他音高會用最近的 sample 做少量 pitch-shift。
-- 本地取樣總大小約 0.34 MB。
-- 第一次按「譜面鋼琴聲：關」會載入本地 sample，完成後立即播放 C4 測試音。
-- 瀏覽器會快取本地 sample。
+V1.5 改成單一 Master Clock：
 
-## GitHub
-上傳時務必連同整個 `assets/piano/` 資料夾一起上傳，不能只覆蓋 index.html / app.js。
+BPM
+→ 五線譜移動
+→ 音符抵達藍色判定線
+→ 節拍器
+→ 示範鋼琴聲
+→ 麥克風音符/節拍判定
+
+全部使用同一個時間基準。
+
+## BPM 行為
+- 開啟歌曲時，預設 BPM = 原樂譜 BPM。
+- 50% / 75% / 100% 速度會直接換算成 Master BPM。
+  - 例如原譜 96 BPM：
+    - 50% = 48 BPM
+    - 75% = 72 BPM
+    - 100% = 96 BPM
+- 手動修改 BPM 後，五線譜、判定線到達時間、節拍器及示範鋼琴聲全部立即使用新 BPM。
+- 「恢復原譜 BPM」回到歌曲原始速度。
+
+## 目前示範樂譜
+V1.5 內建示範歌曲暫時以「每顆音符 = 1 個四分音符拍」處理，
+因此每顆音符抵達藍線時都應與節拍器拍點一致。
+
+下一階段加入正式 MIDI / MusicXML 後，會依每顆音符真正的 duration
+（八分音符、四分音符、二分音符、休止符、附點等）計算時間。
