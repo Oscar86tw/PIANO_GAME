@@ -23,7 +23,7 @@
   async function start(bpm=80,beat=0){
     const c=await ensure();
     state.bpm=clampBpm(bpm);
-    state.anchorBeat=Math.max(0,Number(beat)||0);
+    state.anchorBeat=Number.isFinite(Number(beat))?Number(beat):0;
     state.pausedBeat=state.anchorBeat;
     state.anchorTime=c.currentTime+.06;
     state.running=true;
@@ -57,7 +57,7 @@
   }
 
   function seek(beat=0){
-    const b=Math.max(0,Number(beat)||0),c=ctx();
+    const b=Number.isFinite(Number(beat))?Number(beat):0,c=ctx();
     state.pausedBeat=b;state.anchorBeat=b;
     if(state.running&&c)state.anchorTime=c.currentTime;
     state.generation++;

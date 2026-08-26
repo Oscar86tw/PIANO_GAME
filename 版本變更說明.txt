@@ -1,20 +1,17 @@
-PIANO LEARNING V5.5
-主題：AUDIO MIXER
+PIANO LEARNING V5.6
+主題：7-SECOND READY BUFFER
 
 新增：
-- 鋼琴聲音量 0–200%，預設 135%
-- 節拍器音量 0–150%，預設 72%
-- 總音量 0–150%，預設 100%
-- Practice 可直接調整
-- Sound 頁同步可調整
-- 音量 localStorage 保存
+- 按開始後固定 7 秒準備時間
+- READY 7.0s → 0.0s 倒數
+- 第一顆音符從右側往藍線移動
+- Beat 0 才開始出聲
+- Beat 0 才開始 Scoring
+- Beat 0 才開始節拍器第一拍
+- 準備時間內彈琴不算錯
 
-AudioEngine：
-- pianoGain
-- metroGain
-- masterGain
-
-修正：
-- 鋼琴示範預設音量提高
-- synth fallback 音量提高
-- BPM / Master Clock 與音量控制互相獨立
+同步方式：
+- 不使用另一個獨立倒數 clock
+- TransportMaster 從負 beat 開始
+- 第一顆音符仍然 startBeat 0
+- 五線譜 / 琴聲 / 節拍器 / Scoring 繼續共用 AudioContext Master Clock

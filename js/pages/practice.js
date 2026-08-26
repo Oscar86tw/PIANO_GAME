@@ -31,6 +31,7 @@
   setupAudioMixer();
 
   let effectiveBpm=Number(song.bpm)||80;
+  const READY_BUFFER_SECONDS=7;
 
   function renderScore(){
     Practice.render(layer,{showFingering,startMeasure:practiceM1,endMeasure:practiceM2});
@@ -77,15 +78,25 @@
     effectiveBpm=calcEffectiveBpm();
     Practice.reset(layer);TransportMaster.stop();
 
-    $('practiceStatus').textContent='準備音色與時間軸…';
+    $('practiceStatus').textContent='READY · 7 秒準備時間';
+    $('readyCountdown').textContent='READY 7.0s';
+    $('readyCountdown').className='ready-countdown';
+
     await AudioEngine.preload();
     const health=AudioEngine.health();
     $('audioHealth').textContent=health.loadedSamples?`${health.loadedSamples}/${health.expectedSamples}`:'Fallback';
 
     const timeline=Practice.getTimeline();
-    await TransportMaster.start(effectiveBpm,0);
+
+    // 7-second lead-in is represented on the SAME musical master clock.
+    // First note remains startBeat 0; transport begins at a negative beat.
+    const leadInBeats=effectiveBpm*READY_BUFFER_SECONDS/60;
+    await TransportMaster.start(effectiveBpm,-leadInBeats);
+
     ScoringEngine.start(song,effectiveBpm,{transport:TransportMaster,timeline});
-    practiceRunning=true;paused=false;Practice.start(layer);
+    practiceRunning=true;paused=false;
+    Practice.start(layer);
+
     if(demoOn)await DemoScheduler.enable(timeline);
     if(Metronome.enabled)Metronome.resetSchedule();
     $('practiceStatus').textContent=inputConnected?'PLAYING · 同步即時判定':'PLAYING · 同步播放';
@@ -104,13 +115,13 @@
   $('pauseBtn').onclick=()=>{
     if(!practiceRunning)return;
     TransportMaster.pause();Practice.stop();DemoScheduler.cancelScheduled();Metronome.cancelScheduled();
-    practiceRunning=false;paused=true;$('practiceStatus').textContent='PAUSED · Master Clock 已凍結';$('practiceStatus').className='status';
+    practiceRunning=false;paused=true;$('practiceStatus').textContent='PAUSED · Master Clock 已凍結';$('readyCountdown').className='ready-countdown paused';$('practiceStatus').className='status';
   };
 
   $('backBtn').onclick=()=>{
     TransportMaster.stop();Practice.reset(layer);DemoScheduler.disable();Metronome.cancelScheduled();
     practiceRunning=false;paused=false;
-    $('practiceStatus').textContent='READY';$('practiceStatus').className='status';
+    $('practiceStatus').textContent='READY';$('practiceStatus').className='status';$('readyCountdown').textContent='READY 7.0s';$('readyCountdown').className='ready-countdown';
     $('playedNoteValue').textContent='—';$('expectedNoteValue').textContent='—';$('timingValue').textContent='—';$('inputFeedback').textContent='已重來，準備後按開始。';updateStars(0);
   };
 
@@ -132,6 +143,11 @@
   Events.on('input:note',input=>{
     $('playedNoteValue').textContent=input.note;$('inputSourceValue').textContent=input.source==='midi'?'MIDI':input.source==='microphone'?'麥克風':'虛擬琴鍵';
     if(!practiceRunning)return;
+    if(TransportMaster.currentBeat()<0){
+      $('inputFeedback').textContent='準備時間中，尚未開始判定。';
+      $('inputFeedback').className='status';
+      return;
+    }
     const r=ScoringEngine.addInput(input);if(!r)return;
     $('expectedNoteValue').textContent=(r.expected||[]).join(' + ')||'—';$('timingValue').textContent=r.timingMs==null?'—':`${r.timingMs>0?'+':''}${r.timingMs} ms · ${r.timingClass}`;
     if(r.result==='exact'){$('inputFeedback').textContent=`✓ ${input.note} 正確，拍點${r.timingClass}`;$('inputFeedback').className='status ok'}
@@ -160,7 +176,26 @@
   });
 
   function syncHud(){
-    $('masterBeat').textContent=TransportMaster.currentBeat().toFixed(2);$('masterBpm').textContent=Math.round(calcEffectiveBpm());requestAnimationFrame(syncHud);
+    const beat=TransportMaster.currentBeat();
+    $('masterBeat').textContent=beat.toFixed(2);
+    $('masterBpm').textContent=Math.round(calcEffectiveBpm());
+
+    if(practiceRunning){
+      if(beat<0){
+        const sec=Math.max(0,(-beat)*60/Math.max(1,TransportMaster.bpm()));
+        $('readyCountdown').textContent=`READY ${sec.toFixed(1)}s`;
+        $('readyCountdown').className='ready-countdown';
+        $('practiceStatus').textContent=`READY · ${sec.toFixed(1)} 秒後開始`;
+      }else{
+        $('readyCountdown').textContent='GO';
+        $('readyCountdown').className='ready-countdown go';
+        if($('practiceStatus').textContent.startsWith('READY')) {
+          $('practiceStatus').textContent=inputConnected?'PLAYING · 同步即時判定':'PLAYING · 同步播放';
+          $('practiceStatus').className='status '+(inputConnected?'ok':'');
+        }
+      }
+    }
+    requestAnimationFrame(syncHud);
   }
   Events.on('audio:health',h=>{
     $('audioHealth').textContent=h.loadedSamples?`${h.loadedSamples}/${h.expectedSamples}`:'Fallback';

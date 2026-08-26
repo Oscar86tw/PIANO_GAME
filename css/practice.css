@@ -39,3 +39,11 @@
 .audio-mixer label{display:flex;justify-content:space-between;gap:8px}
 .audio-mixer b{color:#6658c9}
 @media(max-width:760px){.audio-mixer{grid-template-columns:1fr}}
+
+.ready-countdown{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:88px;padding:6px 10px;border-radius:999px;
+  background:#f1efff;color:#6658c9;font-size:.72rem;font-weight:900;
+}
+.ready-countdown.go{background:#edf7f0;color:#4e7d62}
+.ready-countdown.paused{background:#f3f4f7;color:#7d879b}
