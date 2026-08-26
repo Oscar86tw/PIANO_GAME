@@ -304,9 +304,21 @@ function updateStats(){
   const sc=acc===null?0:acc>=90?3:acc>=75?2:acc>=55?1:0;
   $('stars').textContent='★'.repeat(sc)+'☆'.repeat(3-sc); $('rankOrb').textContent=acc===null?'S':rankFor(acc);
 }
+function flashFeedback(kind='ok'){
+  ['staffFeedback','highwayFeedback'].forEach(id=>{
+    const e=$(id); if(!e) return;
+    e.className='feedback-tint '+kind+' show';
+    clearTimeout(e._timer);
+    e._timer=setTimeout(()=>{e.className='feedback-tint';}, kind==='ok'?140:220);
+  });
+}
 function setJudge(text,type=''){
-  const e=$('judge');e.textContent=text;e.className='judge'+(type?' '+type:'');void e.offsetWidth;e.classList.add('pop');
-  setTimeout(()=>e.classList.remove('pop'),300);
+  // 學習模式改為只用背景顏色提示，避免文字干擾彈奏。
+  const map={
+    'MARVELOUS!':'ok','PERFECT!':'ok','GREAT!':'ok','TIME UP!':'ok','開始':'ok','繼續':'ok',
+    'TOO EARLY!':'early','TOO LATE!':'late','MISS!':'miss','WRONG NOTE!':'wrong','暫停':'ok','準備好了嗎？':'ok'
+  };
+  flashFeedback(map[text] || (type==='good'?'ok':type==='bad'?'wrong':'ok'));
 }
 async function startGame(){
   if(state.running)return;
@@ -383,7 +395,7 @@ function acceptNote(note,hz=0){
     let bonus=0,judge='GREAT!';
     if(bestDelta<=0.08){bonus=180;judge='MARVELOUS!'} else if(bestDelta<=0.16){bonus=120;judge='PERFECT!'} else bonus=70;
     state.score+=100+bonus+Math.min(300,state.combo*8); setJudge(judge,'good'); registerGoodRhythm(bestDelta);
-    $('comboBurst').textContent=state.combo>=2?`${state.combo} COMBO!`:'';
+    $('comboBurst').textContent='';
     if(best===state.index) while(state.judged.has(state.index)&&state.index<s.notes.length) state.index++;
   }else{
     state.combo=0;state.score=Math.max(0,state.score-15);

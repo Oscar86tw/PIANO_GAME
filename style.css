@@ -388,3 +388,24 @@ body{color:#2b3a55}
   .key{height:98px}
   .black{height:62px}
 }
+
+
+/* V0.9 — silent feedback by background tint only */
+.judge,.combo-burst{display:none !important}
+.feedback-tint{
+  position:absolute;inset:0;pointer-events:none;opacity:0;border-radius:inherit;
+  transition:opacity .18s ease, background-color .18s ease;
+}
+.feedback-tint.show{opacity:1}
+.feedback-tint.ok{background:rgba(111,205,151,.18)}
+.feedback-tint.early{background:rgba(255,210,102,.16)}
+.feedback-tint.late{background:rgba(255,170,170,.16)}
+.feedback-tint.miss{background:rgba(193,167,233,.18)}
+.feedback-tint.wrong{background:rgba(255,189,145,.18)}
+.staff-area .feedback-tint{z-index:9}
+.note-highway .feedback-tint{z-index:1}
+.learning-theme .feedback-tint.ok{background:rgba(120,212,157,.20)}
+.learning-theme .feedback-tint.early{background:rgba(255,219,122,.20)}
+.learning-theme .feedback-tint.late{background:rgba(255,171,171,.18)}
+.learning-theme .feedback-tint.miss{background:rgba(190,174,228,.20)}
+.learning-theme .feedback-tint.wrong{background:rgba(255,194,138,.18)}

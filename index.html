@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#080510" />
-  <title>PIANO LEARNING STUDIO V0.8</title>
+  <title>PIANO LEARNING STUDIO V0.9</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -130,18 +130,18 @@
                   </div>
                 </div>
                 <div id="rhythmPulseLine" class="rhythm-pulse-line" hidden></div>
-                <div id="staffNotes" class="staff-notes"></div>
+                <div id="staffNotes" class="staff-notes"></div><div id="staffFeedback" class="feedback-tint" aria-hidden="true"></div>
               </div>
             </div>
           </section>
 
           <div class="note-highway-wrap">
             <div class="note-highway">
-              <div class="lane-grid"></div>
+              <div class="lane-grid"></div><div id="highwayFeedback" class="feedback-tint" aria-hidden="true"></div>
               <div id="noteStream" class="falling-notes"></div>
               <div class="hit-line"><span></span></div>
             </div>
-            <div id="judge" class="judge">READY?</div>
+            <div id="judge" class="judge" aria-hidden="true"></div>
             <div id="comboBurst" class="combo-burst"></div>
           </div>
 
