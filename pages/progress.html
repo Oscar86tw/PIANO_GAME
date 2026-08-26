@@ -1,0 +1,23 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>進度 / AI · V5.2</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/progress.css"></head><body data-page="progress">
+<header class="topbar">
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.2</span></div>
+<nav class="nav">
+<a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
+<a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
+<a data-nav="rhythm">節奏</a><a data-nav="exam">測驗</a><a data-nav="library">曲庫</a>
+<a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
+</nav></header>
+<main class="page"><section class="card"><div class="kicker">PROGRESS</div><h1>學習進度 / AI 教練</h1><div class="grid grid-4" style="margin-top:12px"><div class="metric"><small>今日練習</small><b id="today">0 分</b></div><div class="metric"><small>完全吻合</small><b id="exact">—</b></div><div class="metric"><small>音高</small><b id="pitch">—</b></div><div class="metric"><small>節拍</small><b id="rhythm">—</b></div></div></section><section class="card" style="margin-top:12px"><div class="kicker">AI PRACTICE COACH</div><h2>下一步建議</h2><p id="summary">完成一次練習後會在這裡顯示。</p><div id="steps" class="table-list"></div></section>
+<section class="card" style="margin-top:12px"><div class="kicker">COURSE</div><h2>課程解鎖</h2><p id="courseProgressText">讀取中…</p><a class="btn primary" href="course.html">查看 10級 → 1級課程</a></section>
+<section class="card" style="margin-top:12px"><div class="kicker">REVIEW QUEUE</div><h2>今天要複習</h2><p>正式測驗低於 3★ 的課會自動排進這裡。</p><div id="reviewQueue" class="table-list"></div></section></main>
+<script src="../js/core/storage.js"></script>
+<script src="../js/core/events.js"></script>
+<script src="../js/core/router.js"></script>
+<script src="../js/core/error-client.js"></script>
+<script>
+document.querySelectorAll('[data-nav]').forEach(function(a){
+  a.href=Routes[a.dataset.nav];
+  if(document.body.dataset.page===a.dataset.nav)a.classList.add('active');
+});
+</script>
+<script src="../js/modules/ai/index.js"></script><script src="../js/modules/progression/index.js"></script><script src="../js/modules/lesson-session/index.js"></script><script src="../js/pages/progress.js"></script></body></html>

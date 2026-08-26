@@ -1,0 +1,2 @@
+
+const root=document.getElementById('errors');function render(){ErrorsUI.render(root)}refresh.onclick=render;clear.onclick=()=>{ErrorClient.clear();render()};copy.onclick=async()=>{const x=ErrorClient.latest();if(!x)return alert('目前沒有錯誤');const t=`PIANO V4.0 錯誤\n時間：${x.time}\n功能：${x.area}\n標題：${x.title}\n錯誤：${x.message}\n${x.stack||''}`;try{await navigator.clipboard.writeText(t);alert('已複製')}catch(e){alert(t)}};Events.on('error:new',render);render();

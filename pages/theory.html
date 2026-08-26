@@ -1,0 +1,21 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>樂理 · V5.2</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/theory.css"></head><body data-page="theory">
+<header class="topbar">
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.2</span></div>
+<nav class="nav">
+<a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
+<a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
+<a data-nav="rhythm">節奏</a><a data-nav="exam">測驗</a><a data-nav="library">曲庫</a>
+<a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
+</nav></header><main class="page"><section class="card"><div class="kicker">MUSIC THEORY</div><h1>樂理・音樂知識</h1>
+<div class="grid grid-2"><div class="field"><label>級別</label><select id="theoryGrade"><option value="10">10級</option><option value="9">9級</option><option value="8">8級</option><option value="7">7級</option><option value="6">6級</option><option value="5">5級</option><option value="4">4級</option><option value="3">3級</option><option value="2">2級</option><option value="1">1級</option></select></div><div><button id="newTheory" class="btn primary" style="margin-top:22px">開始新測驗</button></div></div>
+<div id="theoryQuiz"></div><div id="theoryResult" class="status" style="margin-top:10px">尚未開始。</div></section></main>
+
+<script src="../js/core/storage.js"></script>
+<script src="../js/core/events.js"></script>
+<script src="../js/core/router.js"></script>
+<script src="../js/core/error-client.js"></script>
+<script>
+document.querySelectorAll('[data-nav]').forEach(function(a){a.href=Routes[a.dataset.nav];if(document.body.dataset.page===a.dataset.nav)a.classList.add('active')});
+</script>
+<script src="../js/modules/theory/index.js"></script><script src="../js/modules/academy/index.js"></script><script src="../js/pages/theory.js"></script></body></html>

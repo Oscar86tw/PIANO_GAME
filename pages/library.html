@@ -1,0 +1,37 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>樂譜庫 · V5.2</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/library.css"></head><body data-page="library">
+<header class="topbar">
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.2</span></div>
+<nav class="nav">
+<a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
+<a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
+<a data-nav="rhythm">節奏</a><a data-nav="exam">測驗</a><a data-nav="library">曲庫</a>
+<a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
+</nav></header>
+<main class="page">
+<section class="card">
+<div class="kicker">1000 COMPLETE SCORES</div><h1>完整樂譜庫</h1>
+<p>V5.2 內建 1000 首完整原創教學樂譜，依技巧、視奏、節奏、古典風格、流行風格、卡通風格、動畫電影風格、雙手與聽奏分類。</p>
+<div class="grid grid-3">
+<div class="field"><label>搜尋</label><input id="search" placeholder="曲名 / 分類"></div>
+<div class="field"><label>分類</label><select id="category"><option value="">全部分類</option></select></div>
+<div class="field"><label>級別</label><select id="level"><option value="">全部級別</option></select></div><div class="field"><label>收藏 / 最近</label><select id="quick"><option value="">全部</option><option value="fav">我的收藏</option><option value="recent">最近使用</option></select></div>
+</div>
+<div id="libraryStats" class="status" style="margin-top:10px">載入中…</div>
+</section>
+<section class="card" style="margin-top:12px">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h2>樂譜</h2><span id="resultCount" class="tag"></span></div>
+<div id="songList" class="table-list"></div>
+<div id="pager" style="display:flex;gap:7px;justify-content:center;margin-top:12px"></div>
+</section>
+</main>
+<script src="../js/core/storage.js"></script>
+<script src="../js/core/events.js"></script>
+<script src="../js/core/router.js"></script>
+<script src="../js/core/error-client.js"></script>
+<script>
+document.querySelectorAll('[data-nav]').forEach(function(a){
+  a.href=Routes[a.dataset.nav];
+  if(document.body.dataset.page===a.dataset.nav)a.classList.add('active');
+});
+</script>
+<script src="../js/modules/library/index.js"></script><script src="../js/pages/library.js"></script></body></html>

@@ -1,0 +1,102 @@
+<!doctype html><html lang="zh-Hant"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>鋼琴練習 · V5.2</title>
+<link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/practice.css">
+</head><body data-page="practice">
+<header class="topbar">
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.2</span></div>
+<nav class="nav">
+<a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
+<a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
+<a data-nav="rhythm">節奏</a><a data-nav="exam">測驗</a><a data-nav="library">曲庫</a>
+<a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
+</nav></header>
+<main class="page practice-shell">
+
+<section class="card">
+  <div class="kicker">READY PRACTICE</div>
+  <div class="transport">
+    <button id="backBtn" class="btn">↶ 重來</button>
+    <button id="playBtn" class="btn primary">▶ 開始</button>
+    <button id="pauseBtn" class="btn">Ⅱ 暫停</button>
+    <span id="practiceStatus" class="status">READY</span>
+  </div>
+
+  <div class="practice-settings">
+    <div class="field"><label>BPM</label><input id="bpm" type="number" min="40" max="220"></div>
+    <div class="field"><label>手</label><select id="hand"><option>雙手</option><option>右手</option><option>左手</option></select></div>
+    <div class="field"><label>模式</label><select id="mode"><option>練習</option><option>考試</option><option>演奏</option><option>視奏</option><option>聽奏</option></select></div>
+    <div class="field"><label>速度</label><select id="speed"><option value="1">100%</option><option value=".8">80%</option><option value=".6">60%</option></select></div>
+    <div class="field"><label>輸入</label><select id="inputMode"><option value="none">未連接</option><option value="midi">MIDI</option><option value="microphone">麥克風</option></select></div>
+  </div>
+
+  <div class="input-actions">
+    <button id="connectInputBtn" class="btn">連接輸入</button>
+    <button id="metronomeBtn" class="btn">節拍器：關</button>
+    <button id="pianoDemoBtn" class="btn">譜面鋼琴聲：關</button>
+    <button id="fingeringBtn" class="btn">指法：顯示</button>
+    <button id="resetTempoBtn" class="btn">恢復原譜 BPM</button>
+  </div>
+
+  <div class="input-monitor-grid">
+    <div><small>輸入來源</small><b id="inputSourceValue">—</b></div>
+    <div><small>實際彈奏</small><b id="playedNoteValue">—</b></div>
+    <div><small>正確音</small><b id="expectedNoteValue">—</b></div>
+    <div><small>節拍誤差</small><b id="timingValue">—</b></div>
+  </div>
+  <div id="inputFeedback" class="status">尚未收到鋼琴輸入。</div>
+  <div id="practiceStars" class="star-score">☆☆☆☆☆ <span>尚未評分</span></div>
+</section>
+
+<section class="card staff-card">
+  <div class="staff-header">
+    <div>
+      <div class="kicker">GRAND STAFF</div><h2 id="songTitle">載入中</h2>
+      <div class="hand-legend"><span class="r">● 右手</span><span class="l">● 左手</span></div>
+    </div>
+    <div class="score-meta">
+      <span id="songLevel" class="tag"></span><span id="songCat" class="tag"></span>
+      <span id="noteCountTag" class="tag">0 notes</span>
+    </div>
+  </div>
+  <div class="staff-window">
+    <div class="staff-lines"><i class="line"></i><i class="line"></i><i class="line"></i><i class="line"></i><i class="line"></i></div>
+    <div class="staff-lines bass"><i class="line"></i><i class="line"></i><i class="line"></i><i class="line"></i><i class="line"></i></div>
+    <div class="playhead"></div>
+    <div id="scoreLayer" class="score-layer"></div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="kicker">LIVE SCORE</div>
+  <div class="result-panel">
+    <div><small>音高</small><b id="pitchResult">—</b></div>
+    <div><small>節拍</small><b id="rhythmResult">—</b></div>
+    <div><small>完全吻合</small><b id="exactResult">—</b></div>
+    <div><small>AI 建議</small><b id="aiResult">完成後顯示</b></div>
+  </div>
+</section>
+</main>
+
+<script src="../js/core/storage.js"></script>
+<script src="../js/core/events.js"></script>
+<script src="../js/core/router.js"></script>
+<script src="../js/core/error-client.js"></script>
+<script>
+document.querySelectorAll('[data-nav]').forEach(function(a){
+  a.href=Routes[a.dataset.nav];
+  if(document.body.dataset.page===a.dataset.nav)a.classList.add('active');
+});
+</script>
+<script src="../js/core/audio-engine.js"></script>
+<script src="../js/modules/library/index.js"></script>
+<script src="../js/modules/score-renderer/index.js"></script>
+<script src="../js/modules/practice/index.js"></script>
+<script src="../js/modules/input/index.js"></script>
+<script src="../js/modules/metronome/index.js"></script>
+<script src="../js/modules/scoring/index.js"></script>
+<script src="../js/modules/progression/index.js"></script>
+<script src="../js/modules/academy/index.js"></script>
+<script src="../js/modules/ai/index.js"></script>
+<script src="../js/pages/practice.js"></script>
+</body></html>

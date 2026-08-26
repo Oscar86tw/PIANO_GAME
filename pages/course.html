@@ -1,0 +1,63 @@
+<!doctype html><html lang="zh-Hant"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>兒童課程路線 · V5.2</title>
+<link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/course.css">
+</head><body data-page="course">
+<header class="topbar">
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.2</span></div>
+<nav class="nav">
+<a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
+<a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
+<a data-nav="rhythm">節奏</a><a data-nav="exam">測驗</a><a data-nav="library">曲庫</a>
+<a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
+</nav></header>
+<main class="page">
+  <section class="course-hero">
+    <div class="card">
+      <div class="kicker">10級 → 1級</div><h1>正規鋼琴學習路線</h1>
+      <p>每一級都要分別通過：技巧・音階・指法、五線譜・視奏、聽力・聽奏、曲目・演奏。每一類至少 3 顆星，而且總星星也達標，才解鎖下一級。</p>
+      <div class="course-summary">
+        <div><small>目前最高解鎖</small><b id="currentGrade">10級</b></div>
+        <div><small>總星星</small><b id="totalStars">0 ★</b></div>
+        <div><small>今日練習</small><b id="todayMinutes">0 分</b></div>
+        <div><small>每日目標</small><b>15 分</b></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="kicker">RULE</div><h2>解鎖方式</h2>
+      <p>不用每一關都拿 5 顆，但四個核心能力都至少要 3 顆星；不能用某一項高分補掉另一項完全不會。</p>
+      <button id="refreshBtn" class="btn primary">重新計算解鎖</button>
+      <button id="resetCourseBtn" class="btn bad" style="margin-top:8px">重設示範進度</button>
+    </div>
+  </section>
+  <section class="card" style="margin-top:12px">
+    <div class="kicker">FORMAL PEDAGOGY</div><h2>教學順序</h2>
+    <p>姿勢與手型 → 指號與五指位置 → 基本節奏 → 五線譜地標音 → 級進/跳進 → 音階與和弦 → 雙手協調 → 視奏 → 聽力/聽奏 → 樂句、力度、踏板與風格。</p>
+    <div class="mastery-rule-grid">
+      <div><strong>技巧</strong><small>音階・指法・手型・琶音</small></div>
+      <div><strong>視奏</strong><small>五線譜・節奏・隨機閱讀</small></div>
+      <div><strong>聽力</strong><small>旋律回奏・節奏・和聲</small></div>
+      <div><strong>曲目</strong><small>完整演奏・表情・風格</small></div>
+    </div>
+  </section>
+  <section class="card" style="margin-top:12px">
+    <div class="kicker">LEARNING PATH</div><h2>課程關卡</h2>
+    <div id="gradePath" class="grade-path" style="margin-top:12px"></div>
+  </section>
+</main>
+
+<script src="../js/core/storage.js"></script>
+<script src="../js/core/events.js"></script>
+<script src="../js/core/router.js"></script>
+<script src="../js/core/error-client.js"></script>
+<script>
+document.querySelectorAll('[data-nav]').forEach(function(a){
+  a.href=Routes[a.dataset.nav];
+  if(document.body.dataset.page===a.dataset.nav)a.classList.add('active');
+});
+</script>
+<script src="../js/core/audio-engine.js"></script>
+<script src="../js/modules/progression/index.js"></script>
+<script src="../js/modules/lesson-engine/index.js"></script>
+<script src="../js/pages/course.js"></script>
+</body></html>

@@ -1,0 +1,2 @@
+
+window.ErrorsUI={render(root){const rows=ErrorClient.all();root.innerHTML='';if(!rows.length){root.innerHTML='<div class="empty">目前沒有錯誤紀錄。</div>';return}[...rows].reverse().forEach(x=>{const d=document.createElement('div');d.className='error-row';d.innerHTML=`<strong>${x.area}｜${x.title}</strong><span>${x.time}</span><p>${x.message}</p><details><summary>詳細</summary><pre>${x.stack||'無 stack'}</pre></details>`;root.append(d)})}};

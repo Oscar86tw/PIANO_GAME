@@ -1,0 +1,2 @@
+
+window.SoundSettings={voices:[{id:'lite',name:'Lite Piano',desc:'最快速、最省資源'},{id:'studio',name:'Studio Grand',desc:'平衡、日常練習'},{id:'concert',name:'Concert Grand',desc:'較厚實、演奏感'},{id:'warm',name:'Warm Grand',desc:'柔和抒情'},{id:'bright',name:'Bright Grand',desc:'明亮清楚'},{id:'soft',name:'Soft Piano',desc:'柔和不刺耳'}],current:Store.get('piano-voice-v4','studio'),set(id){this.current=id;Store.set('piano-voice-v4',id);Events.emit('sound:changed',{id})}};

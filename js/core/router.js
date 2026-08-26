@@ -1,0 +1,18 @@
+window.AppBase=location.pathname.includes('/pages/')?'../':'';
+window.Routes={
+  home:AppBase+'index.html',
+  academy:AppBase+'pages/academy.html',
+  course:AppBase+'pages/course.html',
+  lesson:AppBase+'pages/lesson.html',
+  theory:AppBase+'pages/theory.html',
+  rhythm:AppBase+'pages/rhythm.html',
+  exam:AppBase+'pages/exam.html',
+  teacher:AppBase+'pages/teacher.html',
+  library:AppBase+'pages/library.html',
+  practice:AppBase+'pages/practice.html',
+  import:AppBase+'pages/import.html',
+  sound:AppBase+'pages/sound.html',
+  progress:AppBase+'pages/progress.html',
+  training:AppBase+'pages/training.html',
+  errors:AppBase+'pages/errors.html'
+};

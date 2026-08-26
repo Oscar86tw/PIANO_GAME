@@ -1,0 +1,145 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>訓練 · V5.2</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/training.css"></head><body data-page="training">
+<header class="topbar">
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.2</span></div>
+<nav class="nav">
+<a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
+<a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
+<a data-nav="rhythm">節奏</a><a data-nav="exam">測驗</a><a data-nav="library">曲庫</a>
+<a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
+</nav></header>
+<main class="page">
+  <section class="card">
+    <div class="kicker">KIDS TRAINING</div><h1>訓練中心</h1>
+    <p>包含音階練習、指法提示、雙手練習、視奏與聽奏。適合兒童、可直接手機操作。</p>
+    <div id="formalLessonCard" class="status" style="margin-top:10px">正在載入本級正式教材…</div><div class="tabbar">
+      <button class="active" data-tab="scalePane">音階練習</button>
+      <button data-tab="sightPane">視奏訓練</button>
+      <button data-tab="earPane">聽奏訓練</button>
+      <button data-tab="repertoirePane">兒童曲庫方向</button>
+    </div>
+
+    <div id="scalePane" class="train-pane active">
+      <div class="training-grid">
+        <div class="card">
+          <div class="kicker">SCALES</div><h2>音階 / 指法 / 雙手</h2>
+          <div class="grid grid-3">
+            <div class="field"><label>練習項目</label><select id="scaleSelect"></select></div>
+            <div class="field"><label>是否顯示指法</label><select id="showFingering"><option value="on">顯示</option><option value="off">隱藏</option></select></div>
+            <div class="field"><label>BPM</label><input id="scaleBpm" type="number" min="40" max="200"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+            <button id="renderScale" class="btn">重新顯示</button>
+            <button id="playScale" class="btn primary">▶ 播放示範</button>
+            <button id="openScalePractice" class="btn">到 Practice 練習</button>
+          </div>
+          <div class="staff-mini" style="margin-top:12px">
+            <div class="treble"><i class="line"></i><i class="line"></i><i class="line"></i><i class="line"></i><i class="line"></i></div>
+            <div id="scaleLayer" class="train-score-layer"></div>
+          </div>
+          <div id="scaleInfo" class="status" style="margin-top:10px">請選擇音階。</div>
+        </div>
+        <div class="card">
+          <div class="kicker">TRAINING GOAL</div><h2>目標</h2>
+          <div class="list-card"><strong>1. 音階練習</strong><p>從單手到雙手，對應級數練習。</p></div>
+          <div class="list-card"><strong>2. 指法功能</strong><p>音符上方顯示手指編號。</p></div>
+          <div class="list-card"><strong>3. 雙手</strong><p>支援雙手平行音階。</p></div>
+          <div class="list-card"><strong>4. 五線譜</strong><p>所有訓練都用五線譜呈現。</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sightPane" class="train-pane">
+      <div class="training-grid">
+        <div class="card">
+          <div class="kicker">SIGHT READING</div><h2>視奏訓練</h2>
+          <div class="grid grid-3">
+            <div class="field"><label>等級</label><select id="sightGrade"><option value="10">10級</option><option value="9">9級（隨機）</option></select></div>
+            <div class="field"><label>模式</label><select id="sightMode"><option>右手單音</option><option>左右手交替</option></select></div>
+            <div class="field"><label>長度</label><select id="sightLen"><option value="8">8 音</option><option value="12">12 音</option></select></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button id="generateSight" class="btn primary">產生視奏譜</button></div>
+          <div class="staff-mini" style="margin-top:12px">
+            <div class="treble"><i class="line"></i><i class="line"></i><i class="line"></i><i class="line"></i><i class="line"></i></div>
+            <div id="sightLayer" class="train-score-layer"></div>
+          </div>
+          <div id="sightInfo" class="status" style="margin-top:10px">10級：較穩定音型。9級：加入隨機視奏。</div>
+        </div>
+        <div class="card">
+          <div class="kicker">STAR REWARD</div><h2>星星獎勵</h2>
+          <div id="starRow" class="star-row"></div>
+          <p id="starText">完成一次視奏後會給 1～5 顆星。</p>
+          <button id="demoScoreBtn" class="btn">模擬評分</button>
+          <div class="list-card"><strong>6. 每次 1～5 顆星</strong><p>依完成度、音高與節拍給星星。</p></div>
+          <div class="list-card"><strong>7. 視奏訓練</strong><p>10級固定型、9級隨機視奏譜。</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="earPane" class="train-pane">
+      <div class="training-grid">
+        <div class="card">
+          <div class="kicker">EAR TRAINING</div><h2>聽奏訓練</h2>
+          <div class="grid grid-2">
+            <div class="field"><label>難度</label><select id="earLevel"><option value="3">3 音</option><option value="4">4 音</option><option value="5">5 音</option></select></div>
+            <div class="field"><label>音域</label><select id="earRange"><option value="C4-G4">C4 ~ G4</option><option value="C4-C5">C4 ~ C5</option></select></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+            <button id="earMidiBtn" class="btn">連接 MIDI</button><button id="earMicBtn" class="btn">開啟麥克風</button>
+            <button id="playEar" class="btn primary">▶ 播放題目</button>
+            <button id="clearEar" class="btn">清空作答</button>
+            <button id="checkEar" class="btn">檢查答案</button>
+          </div>
+          <div class="note-buttons" style="margin-top:12px" id="earButtons"></div>
+          <div class="staff-mini" style="margin-top:12px">
+            <div class="treble"><i class="line"></i><i class="line"></i><i class="line"></i><i class="line"></i><i class="line"></i></div>
+            <div id="earLayer" class="train-score-layer"></div>
+          </div>
+          <div id="earInfo" class="status" style="margin-top:10px">先播放，再按音名作答。</div>
+        </div>
+        <div class="card">
+          <div class="kicker">AUTO METRONOME</div><h2>拍子不對，自動開節拍器</h2>
+          <p>正式練習頁若節拍偏差過大，系統會自動開啟節拍器輔助。</p>
+          <button id="demoMetronome" class="btn">模擬節拍錯誤</button>
+          <div id="metroState" class="status" style="margin-top:10px">節拍器：關</div>
+          <div class="list-card"><strong>8. 聽奏訓練</strong><p>播出聲音，彈對就留在五線譜；彈錯會顯示修正音。</p></div>
+          <div class="list-card"><strong>5. 主動開節拍器</strong><p>當節拍判定不好時，自動輔助。</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="repertoirePane" class="train-pane">
+      <div class="training-grid">
+        <div class="card">
+          <div class="kicker">REPERTOIRE</div><h2>兒童容易上手曲庫方向</h2>
+          <div class="list-card"><strong>流行音樂</strong><p>簡化節奏、重複性高，利於快速上手。</p></div>
+          <div class="list-card"><strong>古典音樂</strong><p>短句、清楚句型，適合建立音樂性。</p></div>
+          <div class="list-card"><strong>卡通歌</strong><p>旋律熟悉，能提升學習動機。</p></div>
+          <div class="list-card"><strong>熱門歌</strong><p>挑簡化版、音域不要太大。</p></div>
+          <div class="list-card"><strong>宮崎駿</strong><p>旋律優美，可做兒童鋼琴簡化編曲。</p></div>
+        </div>
+        <div class="card">
+          <div class="kicker">CURRENT ADDED</div><h2>V5.2 已加入示範分類</h2>
+          <div id="repertoireList"></div>
+          <div class="list-card"><strong>9. 曲目方向</strong><p>流行、古典、卡通、熱門、宮崎駿，均以適合小孩容易上手為主。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="../js/core/storage.js"></script>
+<script src="../js/core/events.js"></script>
+<script src="../js/core/router.js"></script>
+<script src="../js/core/error-client.js"></script>
+<script>
+document.querySelectorAll('[data-nav]').forEach(function(a){
+  a.href=Routes[a.dataset.nav];
+  if(document.body.dataset.page===a.dataset.nav)a.classList.add('active');
+});
+</script>
+<script src="../js/core/audio-engine.js"></script>
+<script src="../js/modules/input/index.js"></script>
+<script src="../js/modules/progression/index.js"></script>
+<script src="../js/modules/academy/index.js"></script>
+<script src="../js/modules/lesson-engine/index.js"></script>
+<script src="../js/pages/training.js"></script>
+</body></html>

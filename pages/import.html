@@ -1,0 +1,30 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>匯入樂譜 · V5.2</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/import.css"></head><body data-page="import">
+<header class="topbar">
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.2</span></div>
+<nav class="nav">
+<a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
+<a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
+<a data-nav="rhythm">節奏</a><a data-nav="exam">測驗</a><a data-nav="library">曲庫</a>
+<a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
+</nav></header>
+<main class="page">
+<section class="card"><div class="kicker">PHOTO SCORE IMPORT</div><h1>拍照 / 匯入樂譜</h1><p>照片先保存為「待 OMR」。不會把照片假裝辨識成錯誤音符。</p><div class="grid grid-2"><div class="field"><label>曲名</label><input id="title"></div><div class="field"><label>作者 / 來源</label><input id="author"></div></div><div class="dropzone" style="margin-top:12px"><input id="photos" type="file" accept="image/*" multiple capture="environment"><p>直接拍照或一次選多張圖片</p></div><div id="preview" class="preview-grid"></div><div style="margin-top:10px"><button id="savePhoto" class="btn primary">加入我的拍照樂譜</button></div></section>
+<section class="card" style="margin-top:12px">
+<div class="kicker">MUSICXML / MIDI</div><h2>數位樂譜匯入 · 雙手 / 和弦</h2>
+<p>選擇 MusicXML / XML / MID / MIDI，解析成功後直接加入 V4 樂譜庫。MIDI 同時間多音會保留成和弦，並依中央 C 分成左右手。</p>
+<input id="digitalScoreFile" type="file" accept=".musicxml,.xml,.mid,.midi">
+<div id="digitalImportStatus" class="status" style="margin-top:10px">尚未選擇數位樂譜。</div>
+<div id="digitalImportDetail" class="status" style="margin-top:7px;display:none"></div>
+</section><section class="card" style="margin-top:12px"><h2>我的 MusicXML / MIDI 樂譜</h2><div id="digitalScoreList" class="table-list"></div></section>
+<section class="card" style="margin-top:12px"><h2>我的拍照樂譜</h2><div id="photoList" class="table-list"></div></section></main>
+<script src="../js/core/storage.js"></script>
+<script src="../js/core/events.js"></script>
+<script src="../js/core/router.js"></script>
+<script src="../js/core/error-client.js"></script>
+<script>
+document.querySelectorAll('[data-nav]').forEach(function(a){
+  a.href=Routes[a.dataset.nav];
+  if(document.body.dataset.page===a.dataset.nav)a.classList.add('active');
+});
+</script>
+<script src="../js/modules/importer/index.js"></script><script src="../js/pages/import.js"></script></body></html>

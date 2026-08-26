@@ -1,0 +1,57 @@
+<!doctype html><html lang="zh-Hant"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>正式課堂 · V5.2</title>
+<link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/lesson.css">
+</head><body data-page="course">
+<header class="topbar">
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.2</span></div>
+<nav class="nav">
+<a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
+<a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
+<a data-nav="rhythm">節奏</a><a data-nav="exam">測驗</a><a data-nav="library">曲庫</a>
+<a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
+</nav></header>
+<main class="page">
+  <section class="card">
+    <div class="kicker">FORMAL LESSON FLOW</div>
+    <h1 id="lessonTitle">載入課堂…</h1>
+    <p id="lessonGoal"></p>
+    <div class="lesson-progress"><div id="lessonProgressBar" style="width:0%"></div></div>
+    <div id="lessonProgressText" class="status" style="margin-top:8px">0 / 6</div>
+  </section>
+
+  <section class="lesson-layout" style="margin-top:12px">
+    <div class="card">
+      <div class="kicker">CLASS FLOW</div><h2>上課步驟</h2>
+      <div id="lessonSteps" class="lesson-stepper" style="margin-top:10px"></div>
+    </div>
+    <div>
+      <section class="card">
+        <div class="kicker">CURRENT TASK</div><h2>現在要做</h2>
+        <div id="currentTask" class="practice-box"></div>
+      </section>
+      <section class="card" style="margin-top:10px">
+        <div class="kicker">RESULT</div><h2>本課結果</h2>
+        <div id="lessonStars" class="star-big">☆☆☆☆☆</div>
+        <div id="lessonResult" class="status">尚未完成正式測驗。</div>
+      </section>
+    </div>
+  </section>
+</main>
+
+<script src="../js/core/storage.js"></script>
+<script src="../js/core/events.js"></script>
+<script src="../js/core/router.js"></script>
+<script src="../js/core/error-client.js"></script>
+<script>
+document.querySelectorAll('[data-nav]').forEach(function(a){
+  a.href=Routes[a.dataset.nav];
+  if(document.body.dataset.page===a.dataset.nav)a.classList.add('active');
+});
+</script>
+<script src="../js/core/audio-engine.js"></script>
+<script src="../js/modules/progression/index.js"></script>
+<script src="../js/modules/lesson-engine/index.js"></script>
+<script src="../js/modules/lesson-session/index.js"></script>
+<script src="../js/pages/lesson.js"></script>
+</body></html>

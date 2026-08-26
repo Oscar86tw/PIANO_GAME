@@ -1,0 +1,29 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>完整鋼琴學院 · V5.2</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/academy.css"></head>
+<body data-page="academy"><header class="topbar">
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.2</span></div>
+<nav class="nav">
+<a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
+<a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
+<a data-nav="rhythm">節奏</a><a data-nav="exam">測驗</a><a data-nav="library">曲庫</a>
+<a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
+</nav></header><main class="page">
+<section class="academy-grid">
+<div class="card"><div class="kicker">COMPLETE ACADEMY</div><h1>完整鋼琴學院</h1>
+<p>10級→1級，每級分成技巧、節奏、視奏、聽力、樂理、曲目六個核心能力；音樂表現與弱項複習為持續訓練。</p>
+<div class="summary-grid"><div><small>目前解鎖</small><b id="aGrade">10級</b></div><div><small>總星星</small><b id="aStars">0★</b></div><div><small>今日練習</small><b id="aToday">0分</b></div><div><small>每日目標</small><b>15分</b></div></div></div>
+<div class="card"><div class="kicker">QUICK START</div><h2>今天開始</h2><div class="quick-grid">
+<a class="btn primary" href="course.html">正式課堂</a><a class="btn" href="training.html">訓練中心</a>
+<a class="btn" href="theory.html">樂理</a><a class="btn" href="rhythm.html">節奏</a>
+<a class="btn" href="exam.html">模擬測驗</a><a class="btn" href="progress.html">弱項複習</a>
+</div></div></section>
+<section class="card" style="margin-top:12px"><div class="kicker">GRADE PATH</div><h2>完整能力路線</h2><div id="academyPath"></div></section>
+</main>
+<script src="../js/core/storage.js"></script>
+<script src="../js/core/events.js"></script>
+<script src="../js/core/router.js"></script>
+<script src="../js/core/error-client.js"></script>
+<script>
+document.querySelectorAll('[data-nav]').forEach(function(a){a.href=Routes[a.dataset.nav];if(document.body.dataset.page===a.dataset.nav)a.classList.add('active')});
+</script>
+<script src="../js/modules/academy/index.js"></script><script src="../js/pages/academy.js"></script></body></html>
