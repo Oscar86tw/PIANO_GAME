@@ -24,7 +24,7 @@ let state = {
   speed:1,mode:'play',hand:'right',micStream:null,audioCtx:null,analyser:null,
   audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,assistTimer:null,assistBeat:0,
   judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,
-  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1
+  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,demoSoundOn:false,pianoSampler:null,pianoLoading:false,demoPlayed:new Set(),demoVolume:0.45
 };
 
 function showView(name){
@@ -66,7 +66,7 @@ $('quickStart').addEventListener('click',()=>openPractice('sight','5 MIN'));
 
 function openPractice(songId,label='PLAY'){
   state.song=songId; state.running=false; state.paused=false; state.pauseTotal=0; state.judged=new Set(); state.goodStreak=0;
-  state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1;
+  state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set();
   state.tempoManual=false; state.tempoBpm=songs[songId].bpm;
   $('tempoInput').value=state.tempoBpm;
   $('practiceTitle').textContent=songs[songId].title;
@@ -83,7 +83,7 @@ $('pauseBtn').addEventListener('click',()=>{
   if(!state.running) return;
   state.paused=!state.paused;
   if(state.paused){
-    state.pauseStart=performance.now(); stopMetronome(false);
+    state.pauseStart=performance.now(); stopMetronome(false); try{state.pianoSampler?.releaseAll();}catch(e){}
   }else{
     state.pauseTotal+=performance.now()-state.pauseStart;
     if(state.metroOn) startMetronome();
@@ -115,6 +115,59 @@ $('tempoInput').addEventListener('change',()=>setTempo($('tempoInput').value,tru
 $('tempoMinus').addEventListener('click',()=>setTempo((state.tempoBpm||songs[state.song].bpm)-1,true));
 $('tempoPlus').addEventListener('click',()=>setTempo((state.tempoBpm||songs[state.song].bpm)+1,true));
 $('tempoReset').addEventListener('click',()=>setTempo(songs[state.song].bpm,false));
+
+const PIANO_BASE_URL='https://gleitz.github.io/midi-js-soundfonts/MusyngKite/acoustic_grand_piano-mp3/';
+const PIANO_SAMPLE_MAP={
+  'A0':'A0.mp3','C1':'C1.mp3','Eb1':'Eb1.mp3','Gb1':'Gb1.mp3',
+  'A1':'A1.mp3','C2':'C2.mp3','Eb2':'Eb2.mp3','Gb2':'Gb2.mp3',
+  'A2':'A2.mp3','C3':'C3.mp3','Eb3':'Eb3.mp3','Gb3':'Gb3.mp3',
+  'A3':'A3.mp3','C4':'C4.mp3','Eb4':'Eb4.mp3','Gb4':'Gb4.mp3',
+  'A4':'A4.mp3','C5':'C5.mp3','Eb5':'Eb5.mp3','Gb5':'Gb5.mp3',
+  'A5':'A5.mp3','C6':'C6.mp3','Eb6':'Eb6.mp3','Gb6':'Gb6.mp3',
+  'A6':'A6.mp3','C7':'C7.mp3','Eb7':'Eb7.mp3','Gb7':'Gb7.mp3','A7':'A7.mp3','C8':'C8.mp3'
+};
+function setSampleStatus(text,kind=''){
+  const el=$('pianoSampleStatus'); if(!el) return; el.textContent=text; el.className='sample-status'+(kind?' '+kind:'');
+}
+async function ensurePianoSampler(){
+  if(state.pianoSampler) return state.pianoSampler;
+  if(state.pianoLoading) return null;
+  if(!window.Tone){ setSampleStatus('鋼琴音色：Tone.js 載入失敗','error'); return null; }
+  state.pianoLoading=true; setSampleStatus('鋼琴音色：載入中…','loading');
+  try{
+    await Tone.start();
+    state.pianoSampler=new Tone.Sampler({urls:PIANO_SAMPLE_MAP,baseUrl:PIANO_BASE_URL,release:1.2}).toDestination();
+    await Tone.loaded();
+    state.pianoSampler.volume.value=Tone.gainToDb(Math.max(0.001,state.demoVolume));
+    setSampleStatus('鋼琴音色：已就緒','ready');
+    return state.pianoSampler;
+  }catch(err){
+    console.error(err); state.pianoSampler=null; setSampleStatus('鋼琴音色：載入失敗','error'); return null;
+  }finally{ state.pianoLoading=false; }
+}
+async function toggleDemoSound(){
+  const btn=$('demoSoundBtn');
+  if(!state.demoSoundOn){
+    btn.disabled=true; btn.textContent='鋼琴音色載入中…';
+    const sampler=await ensurePianoSampler();
+    btn.disabled=false;
+    if(!sampler){ btn.textContent='譜面鋼琴聲：關'; return; }
+    state.demoSoundOn=true; state.demoPlayed=new Set(); btn.textContent='譜面鋼琴聲：開'; btn.classList.add('is-on');
+    sampler.triggerAttackRelease('C4','8n',Tone.now(),0.8);
+  }else{
+    state.demoSoundOn=false; btn.textContent='譜面鋼琴聲：關'; btn.classList.remove('is-on'); state.demoPlayed=new Set();
+    try{ state.pianoSampler?.releaseAll(); }catch(e){}
+  }
+}
+$('demoSoundBtn').addEventListener('click',toggleDemoSound);
+$('demoVolume').addEventListener('input',()=>{
+  state.demoVolume=Math.max(0,Math.min(1,parseFloat($('demoVolume').value)||0));
+  if(state.pianoSampler && window.Tone) state.pianoSampler.volume.value=Tone.gainToDb(Math.max(0.001,state.demoVolume));
+});
+function playScoreSample(note){
+  if(!state.demoSoundOn || !state.pianoSampler || !window.Tone) return;
+  try{ state.pianoSampler.triggerAttackRelease(note,'8n',Tone.now(),0.85); }catch(e){console.error(e)}
+}
 
 function scoreBpm(){ return Math.max(30,Math.round(songs[state.song].bpm*state.speed)); }
 function effectiveBpm(){
@@ -173,14 +226,14 @@ function renderStaticScore(){
 function startPractice(){
   stopAnimationOnly();
   state.running=true; state.paused=false; state.pauseTotal=0; state.startAt=performance.now();
-  state.judged=new Set(); state.goodStreak=0; state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1;
+  state.judged=new Set(); state.goodStreak=0; state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set(); state.demoPlayed=new Set();
   $('recordCount').textContent='0'; $('playedNote').textContent='—'; $('timingDelta').textContent='—'; $('scoreNote').textContent='—';
   if(state.metroOn) startMetronome();
   gameLoop();
 }
 function restartPractice(){ if($('practiceView').classList.contains('active')){renderStaticScore(); startPractice();} }
 function stopAnimationOnly(){ if(state.gameRaf) cancelAnimationFrame(state.gameRaf); state.gameRaf=0; }
-function stopPractice(){ state.running=false; stopAnimationOnly(); stopMetronome(false); hideAssist(); }
+function stopPractice(){ state.running=false; stopAnimationOnly(); stopMetronome(false); hideAssist(); try{state.pianoSampler?.releaseAll();}catch(e){} }
 
 function gameLoop(){
   if(!state.running){return}
@@ -201,6 +254,9 @@ function gameLoop(){
     if(el) el.classList.toggle('current',d<0.22);
     if(d<delta){delta=d;nearest=i}
     if(el && e-expected>0.35) el.classList.add('passed');
+    if(state.demoSoundOn && !state.demoPlayed.has(i) && e>=expected){
+      state.demoPlayed.add(i); playScoreSample(note);
+    }
 
     if(e-expected>0.42 && !state.judged.has(i)){
       state.judged.add(i);

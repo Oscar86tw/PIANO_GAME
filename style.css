@@ -181,3 +181,12 @@ button{cursor:pointer}
 .sound-volume{display:flex;align-items:center;gap:8px;padding:0 4px;color:#79839a;font-size:.72rem;font-weight:800}
 .sound-volume input{width:120px;accent-color:#7569dc}
 @media(max-width:540px){.sound-volume{width:100%;justify-content:space-between}.sound-volume input{flex:1}}
+
+
+/* V1.3 real sampled piano */
+.sample-status{font-size:.7rem;color:#8791a7;padding:7px 10px;border-radius:999px;background:#f2f4f8;white-space:nowrap}
+.sample-status.ready{color:#367b61;background:#e8f6ef}
+.sample-status.loading{color:#6e68ad;background:#efedff}
+.sample-status.error{color:#a65e62;background:#fdecec}
+.soft-btn.is-on{background:#e9f7ef;color:#39795f;border-color:#bfe4d0}
+@media(max-width:540px){.sample-status{width:100%;text-align:center}}
