@@ -1,4 +1,4 @@
-# V5.6 Clean Architecture
+# V5.7 Clean Architecture
 
 ## Core
 - storage.js
@@ -31,20 +31,20 @@
 - 錯誤 → errors
 
 
-## V5.6 Polyphony ownership
+## V5.7 Polyphony ownership
 - MIDI polyphony parsing belongs to `js/modules/importer/`
 - visual hand/chord rendering belongs to `js/modules/practice/`
 - core remains unchanged
 
 
-## V5.6 Training ownership
+## V5.7 Training ownership
 - `pages/training.html`：訓練頁
 - `js/pages/training.js`：音階 / 視奏 / 聽奏 / 星星 / 曲庫分類
 - `data/scales.json`：音階資料
 - `practice`：節拍器自動輔助、指法切換、星星評分
 
 
-## V5.6 New modules
+## V5.7 New modules
 - `js/modules/input/index.js` — MIDI / microphone / virtual input
 - `js/modules/scoring/index.js` — pitch + rhythm + stars
 - `js/modules/metronome/index.js` — audible Web Audio metronome
@@ -52,7 +52,7 @@
 Practice owns display only; Input owns hardware; Scoring owns judgment; Metronome owns click scheduling.
 
 
-## V5.6 Progression
+## V5.7 Progression
 - `data/curriculum.json` — 10級到1級課程資料
 - `js/modules/progression/index.js` — 星星 / 解鎖 / 每日分鐘
 - `pages/course.html` — 課程路線 UI
@@ -61,21 +61,21 @@ Practice owns display only; Input owns hardware; Scoring owns judgment; Metronom
 Practice / Training only award results; Progression owns unlock rules.
 
 
-## V5.6 Formal Pedagogy
+## V5.7 Formal Pedagogy
 - `data/pedagogy.json` — formal teaching domains and mastery semantics
 - `data/curriculum.json` — per-grade technique/rhythm/reading/aural/repertoire requirements
 - Progression uses domain gates, not total-stars-only unlocking
 - Training reads the selected grade specification to generate sight-reading and ear-training difficulty
 
 
-## V5.6 Lesson Content
+## V5.7 Lesson Content
 - `data/lesson-bank.json` — actual lesson content by grade
 - `js/modules/lesson-engine/index.js` — grade-based exercise generator
 - Course displays real content
 - Training generates sight-reading / ear-training from the lesson bank
 
 
-## V5.6 Formal Lesson Session
+## V5.7 Formal Lesson Session
 - `LessonEngine` owns lesson content.
 - `LessonSession` owns required class-step state and review queue.
 - `Progression` owns stars/unlocks.
@@ -83,7 +83,7 @@ Practice / Training only award results; Progression owns unlock rules.
 - Course routes into Formal Lesson before Practice/Test.
 
 
-## V5.6 Complete Academy Modules
+## V5.7 Complete Academy Modules
 - academy: global curriculum / daily progress
 - lesson-session: formal lesson steps
 - lesson-engine: lesson content generation
@@ -103,21 +103,21 @@ New pages:
 - teacher.html
 
 
-## V5.6 Large Score Library
+## V5.7 Large Score Library
 - `data/scores-1000.json`: 1000 complete original pedagogical scores
 - `data/scores-1000-index.json`: category manifest
 - Library lazy-ish in-memory merge with existing/imported scores
 - UI pagination: 30 scores per page
 
 
-## V5.6 Score Renderer
+## V5.7 Score Renderer
 - `ScoreRenderer` owns score-to-staff visualization and measure splitting.
 - `Library` owns score discovery.
 - `Practice` can now limit practice to selected measure ranges.
 - Score Detail owns favorites / recents and range launch.
 
 
-## V5.6 Time Architecture
+## V5.7 Time Architecture
 AudioContext.currentTime
 → TransportMaster beat
 → Practice visual position
@@ -127,7 +127,7 @@ AudioContext.currentTime
 
 No independent visual/performance timer is allowed to define musical time.
 
-## V5.6 Staff Geometry
+## V5.7 Staff Geometry
 StaffGeometry is the sole geometry source for:
 - practice grand staff
 - score viewer
@@ -135,18 +135,18 @@ StaffGeometry is the sole geometry source for:
 - ledger-line threshold
 
 
-## V5.6 Event Lock
+## V5.7 Event Lock
 EventTimeline is the single event timing source:
 `{ index, startBeat, duration, endBeat, note }`
 
 Practice visual, DemoScheduler and ScoringEngine consume the same timeline.
 
-## V5.6 Audio Health
+## V5.7 Audio Health
 AudioEngine preloads samples in parallel and exposes health().
 Synth fallback guarantees audible output if sample loading fails.
 
 
-## V5.6 Audio Mixer
+## V5.7 Audio Mixer
 Audio routing:
 - Piano samples / synth fallback → pianoGain
 - Metronome click → metroGain
@@ -155,7 +155,7 @@ Audio routing:
 Volume settings persist independently of tempo/transport state.
 
 
-## V5.6 Lead-In Architecture
+## V5.7 Lead-In Architecture
 
 A 7-second ready buffer is represented as negative musical beat time:
 
@@ -170,3 +170,9 @@ This guarantees:
 - metronome first click starts at beat 0
 - scoring starts at beat 0
 - no separate countdown clock can drift
+
+
+## V5.7 Focus UX
+Settings drawer only changes presentation. It does not recreate or stop TransportMaster, EventTimeline, DemoScheduler, Metronome or ScoringEngine.
+
+Hand focus is a CSS emphasis layer; underlying score data remains unchanged.

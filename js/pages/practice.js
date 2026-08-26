@@ -39,13 +39,53 @@
   }
   renderScore();
   $('songTitle').textContent=song.title+(practiceM2?`｜小節 ${practiceM1}–${practiceM2}`:'');
+
+  const settingsDrawer=$('practiceSettingsDrawer');
+  const drawerToggle=$('settingsDrawerToggle');
+  const drawerClose=$('drawerCloseBtn');
+
+  function setDrawer(open){
+    if(!settingsDrawer)return;
+    settingsDrawer.classList.toggle('open',!!open);
+    if(drawerToggle)drawerToggle.textContent=open?'⚙ 收起設定':'⚙ 設定';
+  }
+  drawerToggle?.addEventListener('click',()=>setDrawer(!settingsDrawer.classList.contains('open')));
+  drawerClose?.addEventListener('click',()=>setDrawer(false));
+
+  function normalizeHand(value){
+    const v=String(value||'').toLowerCase();
+    if(v.includes('右')||v.includes('right')||v==='r')return 'right';
+    if(v.includes('左')||v.includes('left')||v==='l')return 'left';
+    return 'both';
+  }
+  function handLabel(h){return h==='right'?'右手':h==='left'?'左手':'雙手'}
+  function applyHandFocus(){
+    const h=normalizeHand($('hand')?.value);
+    document.body.classList.remove('hand-right','hand-left','hand-both');
+    document.body.classList.add('hand-'+h);
+    if($('focusHand'))$('focusHand').textContent=handLabel(h);
+  }
+  $('hand')?.addEventListener('change',()=>{applyHandFocus();renderScore()});
+  applyHandFocus();
+
+  if($('focusSongTitle'))$('focusSongTitle').textContent=song.title;
+  $('focusBackBtn')?.addEventListener('click',()=>history.back());
+  $('focusPlayBtn')?.addEventListener('click',()=>$('playBtn')?.click());
+  $('focusPauseBtn')?.addEventListener('click',()=>$('pauseBtn')?.click());
+
+  function setFocusState(kind,text){
+    const el=$('focusReady');if(!el)return;
+    el.className='focus-status '+kind;
+    el.textContent=text;
+  }
+  setFocusState('ready','READY');
   $('songLevel').textContent=song.level||'';$('songCat').textContent=song.category||'';$('bpm').value=song.bpm;
 
   function calcEffectiveBpm(){return Math.max(30,Math.min(240,(Number($('bpm').value)||song.bpm)*(Number($('speed').value)||1)))}
   function applyTempo(){
     effectiveBpm=calcEffectiveBpm();
     if(TransportMaster.isRunning()||paused)TransportMaster.setBpm(effectiveBpm);
-    $('masterBpm').textContent=Math.round(effectiveBpm);
+    $('masterBpm').textContent=Math.round(effectiveBpm);if($('focusBpm'))$('focusBpm').textContent=Math.round(effectiveBpm);
     $('practiceStatus').textContent=(practiceRunning?'PLAYING':paused?'PAUSED':'READY')+` · ${Math.round(effectiveBpm)} BPM`;
   }
 
@@ -78,7 +118,7 @@
     effectiveBpm=calcEffectiveBpm();
     Practice.reset(layer);TransportMaster.stop();
 
-    $('practiceStatus').textContent='READY · 7 秒準備時間';
+    setDrawer(false);document.body.classList.add('practice-focus-active');setFocusState('countdown','READY 7.0s');$('practiceStatus').textContent='READY · 7 秒準備時間';
     $('readyCountdown').textContent='READY 7.0s';
     $('readyCountdown').className='ready-countdown';
 
@@ -115,13 +155,13 @@
   $('pauseBtn').onclick=()=>{
     if(!practiceRunning)return;
     TransportMaster.pause();Practice.stop();DemoScheduler.cancelScheduled();Metronome.cancelScheduled();
-    practiceRunning=false;paused=true;$('practiceStatus').textContent='PAUSED · Master Clock 已凍結';$('readyCountdown').className='ready-countdown paused';$('practiceStatus').className='status';
+    practiceRunning=false;paused=true;$('practiceStatus').textContent='PAUSED · Master Clock 已凍結';$('readyCountdown').className='ready-countdown paused';setFocusState('paused','PAUSED');$('practiceStatus').className='status';
   };
 
   $('backBtn').onclick=()=>{
     TransportMaster.stop();Practice.reset(layer);DemoScheduler.disable();Metronome.cancelScheduled();
     practiceRunning=false;paused=false;
-    $('practiceStatus').textContent='READY';$('practiceStatus').className='status';$('readyCountdown').textContent='READY 7.0s';$('readyCountdown').className='ready-countdown';
+    $('practiceStatus').textContent='READY';$('practiceStatus').className='status';$('readyCountdown').textContent='READY 7.0s';$('readyCountdown').className='ready-countdown';document.body.classList.remove('practice-focus-active');setDrawer(true);setFocusState('ready','READY');
     $('playedNoteValue').textContent='—';$('expectedNoteValue').textContent='—';$('timingValue').textContent='—';$('inputFeedback').textContent='已重來，準備後按開始。';updateStars(0);
   };
 
@@ -168,7 +208,7 @@
 
   Events.on('practice:done',()=>{
     practiceRunning=false;paused=false;DemoScheduler.disable();Metronome.cancelScheduled();
-    const s=ScoringEngine.stop();updateSummary();$('practiceStatus').textContent='FINISHED';$('practiceStatus').className='status ok';
+    const s=ScoringEngine.stop();updateSummary();$('practiceStatus').textContent='FINISHED';$('practiceStatus').className='status ok';setFocusState('ready','FINISHED');
     const ai=AICoach.build({pitch:s.pitch,rhythm:s.rhythm,timing:s.avgTiming||0});$('aiResult').textContent=ai.summary;
     Store.set('last-practice-v4',{song:song.id,stats:{pitch:s.pitch,rhythm:s.rhythm,timing:s.avgTiming||0,exact:s.exact,stars:s.stars},time:Date.now()});
     if(academyLessonId)Academy.award(academyLessonId,s.stars,s.score,Math.max(2,Math.round((Number(layer.dataset.totalBeats)||8)*60/effectiveBpm/60)),{pitch:s.pitch,rhythm:s.rhythm,exact:s.exact});
@@ -183,11 +223,11 @@
     if(practiceRunning){
       if(beat<0){
         const sec=Math.max(0,(-beat)*60/Math.max(1,TransportMaster.bpm()));
-        $('readyCountdown').textContent=`READY ${sec.toFixed(1)}s`;
+        $('readyCountdown').textContent=`READY ${sec.toFixed(1)}s`;setFocusState('countdown',`READY ${sec.toFixed(1)}s`);
         $('readyCountdown').className='ready-countdown';
         $('practiceStatus').textContent=`READY · ${sec.toFixed(1)} 秒後開始`;
       }else{
-        $('readyCountdown').textContent='GO';
+        $('readyCountdown').textContent='GO';setFocusState('playing','PLAY');
         $('readyCountdown').className='ready-countdown go';
         if($('practiceStatus').textContent.startsWith('READY')) {
           $('practiceStatus').textContent=inputConnected?'PLAYING · 同步即時判定':'PLAYING · 同步播放';

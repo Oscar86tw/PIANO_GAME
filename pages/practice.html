@@ -1,10 +1,10 @@
 <!doctype html><html lang="zh-Hant"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>鋼琴練習 · V5.6</title>
+<title>鋼琴練習 · V5.7</title>
 <link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/practice.css">
 </head><body data-page="practice">
 <header class="topbar">
-<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.6</span></div>
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.7</span></div>
 <nav class="nav">
 <a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
 <a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
@@ -13,6 +13,29 @@
 </nav></header>
 <main class="page practice-shell">
 
+<section class="focus-toolbar card">
+  <div class="focus-left">
+    <button id="focusBackBtn" class="btn">← 返回</button>
+    <div><small>FOCUS PRACTICE</small><strong id="focusSongTitle">練習</strong></div>
+  </div>
+  <div class="focus-center">
+    <span id="focusReady" class="focus-status ready">READY</span>
+    <span class="focus-chip">BPM <b id="focusBpm">—</b></span>
+    <span class="focus-chip">手 <b id="focusHand">雙手</b></span>
+  </div>
+  <div class="focus-actions">
+    <button id="focusPlayBtn" class="btn primary">▶ 開始</button>
+    <button id="focusPauseBtn" class="btn">Ⅱ 暫停</button>
+    <button id="settingsDrawerToggle" class="btn">⚙ 設定</button>
+  </div>
+</section>
+
+
+<div id="practiceSettingsDrawer" class="practice-settings-drawer open">
+  <div class="drawer-handle-row">
+    <div><small>練習設定</small><strong>設定完成後即可收起，專心看五線譜</strong></div>
+    <button id="drawerCloseBtn" class="btn">收起 ↑</button>
+  </div>
 <section class="card">
   <div class="kicker">READY PRACTICE</div>
   <div class="transport">
@@ -53,7 +76,9 @@
   <div id="practiceStars" class="star-score">☆☆☆☆☆ <span>尚未評分</span></div>
 </section>
 
-<section class="card staff-card">
+
+</div>
+<section class="card staff-card focus-staff-card">
   <div class="staff-header">
     <div>
       <div class="kicker">GRAND STAFF</div><h2 id="songTitle">載入中</h2>

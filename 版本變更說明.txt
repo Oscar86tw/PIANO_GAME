@@ -1,17 +1,17 @@
-PIANO LEARNING V5.6
-主題：7-SECOND READY BUFFER
+PIANO LEARNING V5.7
+主題：FOCUS PRACTICE + SETTINGS DRAWER
 
 新增：
-- 按開始後固定 7 秒準備時間
-- READY 7.0s → 0.0s 倒數
-- 第一顆音符從右側往藍線移動
-- Beat 0 才開始出聲
-- Beat 0 才開始 Scoring
-- Beat 0 才開始節拍器第一拍
-- 準備時間內彈琴不算錯
+- 設定抽屜
+- 按開始後自動收起
+- 練習中精簡控制列
+- 五線譜自動放大為主畫面
+- 右手 / 左手 / 雙手視覺專注模式
+- 可隨時重新展開設定
 
-同步方式：
-- 不使用另一個獨立倒數 clock
-- TransportMaster 從負 beat 開始
-- 第一顆音符仍然 startBeat 0
-- 五線譜 / 琴聲 / 節拍器 / Scoring 繼續共用 AudioContext Master Clock
+保留：
+- 7秒 READY
+- Master Clock
+- Audio Mixer
+- MIDI / 麥克風
+- Scoring / Stars
