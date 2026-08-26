@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#080510" />
-  <title>PIANO GAME ARCADE V0.2</title>
+  <title>PIANO GAME ARCADE V0.3</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -26,6 +26,14 @@
     <section class="machine-panel">
       <aside class="song-select panel">
         <div class="panel-title">SELECT MUSIC</div>
+        <div class="difficulty-tabs" id="difficultyTabs">
+          <button type="button" data-level="BEGINNER">BEGINNER</button>
+          <button type="button" data-level="EASY">EASY</button>
+          <button type="button" data-level="NORMAL" class="active">NORMAL</button>
+          <button type="button" data-level="HARD">HARD</button>
+          <button type="button" data-level="MASTER">MASTER</button>
+        </div>
+        <div class="library-meta"><span id="libraryCount">10 SONGS</span><span>50 TOTAL</span></div>
         <div id="songCards" class="song-cards"></div>
         <div class="mini-controls">
           <label>MODE<select id="modeSelect"><option value="follow">FOLLOW ME</option><option value="free">FREE PLAY</option></select></label>
@@ -38,14 +46,19 @@
           <div><span>SCORE</span><strong id="score">000000</strong></div>
           <div><span>COMBO</span><strong id="combo">0</strong></div>
           <div><span>ACCURACY</span><strong id="accuracy">--%</strong></div>
+          <div><span>TIME</span><strong id="timeLeft">00:00</strong></div>
         </div>
 
         <div class="stage">
           <div class="stage-glow"></div>
           <div class="song-banner">
             <small>NOW PLAYING</small>
-            <h2 id="songTitle">Twinkle Twinkle Little Star</h2>
-            <div id="difficulty" class="difficulty">★ EASY</div>
+            <h2 id="songTitle">Ode to Joy</h2>
+            <div class="song-info-row">
+              <div id="difficulty" class="difficulty">★★★ NORMAL</div>
+              <div id="bpmInfo" class="difficulty">BPM 108</div>
+              <div id="durationInfo" class="difficulty">01:15</div>
+            </div>
           </div>
 
           <div class="note-highway-wrap">
@@ -65,7 +78,11 @@
           </div>
 
           <div class="progress-track"><div id="progressBar"></div></div>
-          <div class="progress-text"><span id="noteIndex">0</span> / <span id="noteTotal">0</span></div>
+          <div class="progress-text">
+            <span>TIME <b id="elapsedTime">00:00</b></span>
+            <span>MEASURE <b id="measureInfo">1 / 1</b></span>
+            <span>NOTE <b id="noteIndex">0</b> / <b id="noteTotal">0</b></span>
+          </div>
           <div class="meter"><div id="levelMeter"></div></div>
         </div>
       </section>
@@ -77,6 +94,7 @@
         <div class="mission-box"><span>MISSION</span><strong>90%+</strong><small>Get 3 Stars!</small></div>
         <button id="micBtn" class="arcade-btn mic">MIC ON</button>
         <button id="startBtn" class="arcade-btn start">START</button>
+        <button id="pauseBtn" class="arcade-btn reset">PAUSE</button>
         <button id="resetBtn" class="arcade-btn reset">RESET</button>
         <p class="hint" id="hint">先啟動麥克風，再按 START。</p>
       </aside>

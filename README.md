@@ -1,17 +1,16 @@
-# PIANO RUSH ARCADE V0.2
+# PIANO RUSH ARCADE V0.3
 
-街機風真實鋼琴互動遊戲原型。
+街機式真鋼琴互動練習原型。
 
-## 功能
-- 真鋼琴麥克風單音辨識
-- 畫面琴鍵測試
-- 街機選曲卡
-- 3-2-1-GO 倒數
-- SCORE / COMBO / ACCURACY / RANK
-- GREAT / PERFECT / MARVELOUS / MISS 判定動畫
-- 三星結算
-- 音符 Highway 視覺
-- 手機、平板、桌機響應式版面
+## V0.3
+- 50 首樂譜槽位
+- 5 個難度分類，每類 10 首：BEGINNER / EASY / NORMAL / HARD / MASTER
+- BPM、歌曲時間、音符數顯示
+- 真正時間軸遊戲：歌曲時間持續前進，彈錯不停止
+- 音符 Highway 按時間向判定線移動
+- MARVELOUS / PERFECT / GREAT / TOO EARLY / TOO LATE / WRONG NOTE / MISS
+- TIME / 進度條 / 小節 / 音符進度
+- PAUSE / RESUME
+- 麥克風單音辨識與畫面琴鍵測試
 
-## 使用
-GitHub Pages 建議使用 HTTPS。第一次使用麥克風時允許瀏覽器存取音訊。
+> 目前 50 首為遊戲資料庫與街機流程示範；後續可將每首替換成正式 MIDI / MusicXML 樂譜資料。
