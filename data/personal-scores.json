@@ -35,5 +35,294 @@
       "Dueling High School Bands",
       "The Wampus Cats"
     ]
+  },
+  {
+    "id": "user_thunder_hawks_page1",
+    "title": "The Thunder Hawks｜迅雷鷹隊",
+    "subtitle": "Thunder Hawks",
+    "composer": "教材譜面",
+    "sourceType": "UserUploadedScoreImage",
+    "copyright": "User-provided study material",
+    "category": "學校教材",
+    "collection": "個人教材匯入",
+    "level": "未指定",
+    "bpm": 96,
+    "tempoText": "嚴謹的行進速度",
+    "timeSig": [
+      4,
+      4
+    ],
+    "key": "未指定",
+    "complete": false,
+    "photoScore": true,
+    "pageImages": [
+      "assets/user-scores/thunder_hawks/page-01.png"
+    ],
+    "visibleMeasures": "1–16（依上傳頁面）",
+    "practiceNotes": [
+      "教材技巧：落下與瞬間力量",
+      "右手音型與左手低音伴奏",
+      "可見重覆前小節標記"
+    ],
+    "tags": [
+      "學校教材",
+      "個人教材",
+      "照片樂譜",
+      "Thunder Hawks"
+    ]
+  },
+  {
+    "id": "user_moonlight_sonata_pages12",
+    "title": "Moonlight Sonata｜月光奏鳴曲",
+    "subtitle": "月光奏鳴曲",
+    "composer": "貝多芬（教材改編）",
+    "sourceType": "UserUploadedScoreImage",
+    "copyright": "User-provided study material",
+    "category": "學校教材",
+    "collection": "個人教材匯入",
+    "level": "未指定",
+    "bpm": 60,
+    "tempoText": "Adagio",
+    "timeSig": [
+      4,
+      4
+    ],
+    "key": "大調 / 小調（依教材標示）",
+    "complete": false,
+    "photoScore": true,
+    "pageImages": [
+      "assets/user-scores/moonlight/page-01.png",
+      "assets/user-scores/moonlight/page-02.png"
+    ],
+    "visibleMeasures": "1–18（依上傳兩頁）",
+    "practiceNotes": [
+      "課題：音樂性的魔力",
+      "可見 Adagio",
+      "雙手分解和弦伴奏與旋律線",
+      "依你上傳的兩頁保存"
+    ],
+    "tags": [
+      "學校教材",
+      "個人教材",
+      "照片樂譜",
+      "Moonlight Sonata",
+      "Beethoven"
+    ]
+  },
+  {
+    "id": "user_virtuoso_chord_patterns",
+    "title": "Virtuoso Chord Patterns｜精湛的和弦進行",
+    "subtitle": "CHORDS",
+    "composer": "教材譜面",
+    "sourceType": "UserUploadedScoreImage",
+    "copyright": "User-provided study material",
+    "category": "技巧訓練",
+    "collection": "個人教材匯入",
+    "level": "未指定",
+    "bpm": 80,
+    "tempoText": "Allegretto / Moderato / Allegretto",
+    "timeSig": [
+      6,
+      8
+    ],
+    "key": "F 大調 / D 小調",
+    "complete": false,
+    "photoScore": true,
+    "pageImages": [
+      "assets/user-scores/virtuoso_chords/page-01.png"
+    ],
+    "visibleMeasures": "1–16（依上傳頁面）",
+    "practiceNotes": [
+      "左手和弦音型練習",
+      "F 大調與 D 小調",
+      "可見速度建議：♩.=60 / 80 / 100"
+    ],
+    "tags": [
+      "技巧訓練",
+      "個人教材",
+      "照片樂譜",
+      "Virtuoso Chord Patterns",
+      "和弦"
+    ]
+  },
+  {
+    "id": "user_virtuoso_scale_patterns",
+    "title": "Virtuoso Scale Patterns｜精湛的音階進行",
+    "subtitle": "SCALES",
+    "composer": "教材譜面",
+    "sourceType": "UserUploadedScoreImage",
+    "copyright": "User-provided study material",
+    "category": "技巧訓練",
+    "collection": "個人教材匯入",
+    "level": "未指定",
+    "bpm": 104,
+    "tempoText": "Allegro",
+    "timeSig": [
+      4,
+      4
+    ],
+    "key": "F 大調 / D 小調",
+    "complete": false,
+    "photoScore": true,
+    "pageImages": [
+      "assets/user-scores/virtuoso_scales/page-01.png"
+    ],
+    "visibleMeasures": "1–8（依上傳頁面）",
+    "practiceNotes": [
+      "右手音階進行練習",
+      "F 大調與 D 小調",
+      "可見速度建議：♩=60 / 80 / 104–112"
+    ],
+    "tags": [
+      "技巧訓練",
+      "個人教材",
+      "照片樂譜",
+      "Virtuoso Scale Patterns",
+      "音階"
+    ]
+  },
+  {
+    "id": "user_silver_rain_etude_pages12",
+    "title": "Silver Rain Etude｜銀雨練習曲",
+    "subtitle": "Silver Rain Etude",
+    "composer": "N. Faber",
+    "sourceType": "UserUploadedScoreImage",
+    "copyright": "User-provided study material",
+    "category": "學校教材",
+    "collection": "個人教材匯入",
+    "level": "未指定",
+    "bpm": 94,
+    "tempoText": "Allegro (♩=88–100)",
+    "timeSig": [
+      4,
+      4
+    ],
+    "key": "大調 / 小調（依教材標示）",
+    "complete": false,
+    "photoScore": true,
+    "pageImages": [
+      "assets/user-scores/silver_rain/page-01.png",
+      "assets/user-scores/silver_rain/page-02.png"
+    ],
+    "visibleMeasures": "1–11（依上傳兩頁）",
+    "practiceNotes": [
+      "課題：音樂性的魔力",
+      "右手快速音型與左手伴奏",
+      "可見 cresc. / rit. / a tempo / pp / f"
+    ],
+    "tags": [
+      "學校教材",
+      "個人教材",
+      "照片樂譜",
+      "Silver Rain Etude",
+      "N. Faber"
+    ]
+  },
+  {
+    "id": "user_g_scale_contrary_motion",
+    "title": "G Scale in Contrary Motion｜反向進行 G 大調音階",
+    "subtitle": "兩個八度",
+    "composer": "教材譜面",
+    "sourceType": "UserUploadedScoreImage",
+    "copyright": "User-provided study material",
+    "category": "技巧訓練",
+    "collection": "個人教材匯入",
+    "level": "未指定",
+    "bpm": 72,
+    "tempoText": "Moderato",
+    "timeSig": [
+      4,
+      4
+    ],
+    "key": "G Major",
+    "complete": false,
+    "photoScore": true,
+    "pageImages": [
+      "assets/user-scores/gscale_toccata/page-01.png"
+    ],
+    "visibleMeasures": "頁面上半部（依上傳頁面）",
+    "practiceNotes": [
+      "雙手反向進行音階",
+      "G 大調，兩個八度",
+      "與下方 Scale Toccata in G 共用同一頁照片"
+    ],
+    "tags": [
+      "技巧訓練",
+      "個人教材",
+      "照片樂譜",
+      "G Scale in Contrary Motion",
+      "G Major"
+    ]
+  },
+  {
+    "id": "user_scale_toccata_in_g",
+    "title": "Scale Toccata in G｜G 大調音階觸技曲",
+    "subtitle": "Op.101, No.91",
+    "composer": "徹爾尼（教材標示原曲）",
+    "sourceType": "UserUploadedScoreImage",
+    "copyright": "User-provided study material",
+    "category": "技巧訓練",
+    "collection": "個人教材匯入",
+    "level": "未指定",
+    "bpm": 104,
+    "tempoText": "Andante / Moderato / Allegro",
+    "timeSig": [
+      4,
+      4
+    ],
+    "key": "G Major",
+    "complete": false,
+    "photoScore": true,
+    "pageImages": [
+      "assets/user-scores/gscale_toccata/page-01.png"
+    ],
+    "visibleMeasures": "頁面下半部（依上傳頁面）",
+    "practiceNotes": [
+      "G 大調音階觸技練習",
+      "可見建議速度：♪=72 / ♩=104 / ♪=132",
+      "與上方 G Scale in Contrary Motion 共用同一頁照片"
+    ],
+    "tags": [
+      "技巧訓練",
+      "個人教材",
+      "照片樂譜",
+      "Scale Toccata in G",
+      "Czerny"
+    ]
+  },
+  {
+    "id": "user_circle_shapes",
+    "title": "Circle Shapes｜圓圈圈",
+    "subtitle": "Circle Shapes",
+    "composer": "教材譜面",
+    "sourceType": "UserUploadedScoreImage",
+    "copyright": "User-provided study material",
+    "category": "學校教材",
+    "collection": "個人教材匯入",
+    "level": "未指定",
+    "bpm": 90,
+    "tempoText": "Moderato",
+    "timeSig": [
+      6,
+      8
+    ],
+    "key": "Em / Am / B7",
+    "complete": false,
+    "photoScore": true,
+    "pageImages": [
+      "assets/user-scores/circle_shapes/page-01.png"
+    ],
+    "visibleMeasures": "1–16（依上傳頁面）",
+    "practiceNotes": [
+      "課題：手腕帶動半圓 / 全圓",
+      "口訣 over and under and hold",
+      "含跨越、漸強與終止和弦"
+    ],
+    "tags": [
+      "學校教材",
+      "個人教材",
+      "照片樂譜",
+      "Circle Shapes"
+    ]
   }
 ]

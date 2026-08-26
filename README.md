@@ -517,3 +517,19 @@ Metronome → MetroGain → MasterGain → Output
 - 未提供的後續頁不自行補入
 
 新增 `data/personal-scores.json`，Library 會優先合併個人教材。
+
+
+## V5.9 — 使用者教材批次匯入（照片樂譜）
+
+本次新增 8 張使用者提供教材照片，整理成以下照片樂譜條目：
+- The Thunder Hawks｜迅雷鷹隊
+- Moonlight Sonata｜月光奏鳴曲（2 頁）
+- Virtuoso Chord Patterns｜精湛的和弦進行
+- Virtuoso Scale Patterns｜精湛的音階進行
+- Silver Rain Etude｜銀雨練習曲（2 頁）
+- G Scale in Contrary Motion｜反向進行 G 大調音階
+- Scale Toccata in G｜G 大調音階觸技曲
+- Circle Shapes｜圓圈圈
+
+以上皆放入：學校教材 / 技巧訓練 → 個人教材匯入。
+目前先以原始照片樂譜保存，可在樂譜庫直接開啟；若之後要做同步播放、碰線判定、節拍器同步與自動評分，再另外建立音符事件資料。

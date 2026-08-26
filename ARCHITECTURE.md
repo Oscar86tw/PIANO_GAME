@@ -182,3 +182,11 @@ Hand focus is a CSS emphasis layer; underlying score data remains unchanged.
 `data/personal-scores.json` stores user-provided score-image metadata.
 Score Detail can render `photoScore` entries directly from `pageImages`.
 Photo-only scores are viewable immediately; playable EventTimeline data can be added later without replacing the original scan.
+
+
+## V5.9 Personal Score Batch Import
+
+- 新增 personal score images 共 8 張教材照片。
+- personal-scores.json 新增 8 個條目（含多頁條目與共用頁面條目）。
+- 圖檔置於 assets/user-scores/*。
+- 仍採 photoScore 模式，由 score-detail.js 直接讀取 pageImages 渲染。
