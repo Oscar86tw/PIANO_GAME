@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V1.5</title>
+  <title>PIANO LEARNING V1.6</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V1.5</div>
+        <div class="version-badge">VERSION V1.6</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -28,29 +28,41 @@
 
       <section id="coursesPanel" class="tab-panel active">
         <div class="section-title">
-          <div><small>LEARN</small><h2>循序課程</h2></div>
-          <span>6 個主題</span>
+          <div><small>LEARN</small><h2>完整分級課程</h2></div>
+          <span>預備級＋Level 1–8</span>
         </div>
-        <div class="course-grid">
-          <button class="course-card" data-song="twinkle">
-            <span class="course-icon">♪</span><b>認識音符</b><small>C–G 五個音</small><em>第 1 課</em>
-          </button>
-          <button class="course-card" data-song="ode">
-            <span class="course-icon">♩</span><b>節奏基礎</b><small>四分音符與拍點</small><em>第 2 課</em>
-          </button>
-          <button class="course-card" data-song="mary">
-            <span class="course-icon">✋</span><b>右手練習</b><small>1–5 指固定手位</small><em>第 3 課</em>
-          </button>
-          <button class="course-card" data-song="scale">
-            <span class="course-icon">↙</span><b>左手練習</b><small>低音區基礎</small><em>第 4 課</em>
-          </button>
-          <button class="course-card" data-song="canon">
-            <span class="course-icon">♫</span><b>雙手合奏</b><small>左右手配合</small><em>第 5 課</em>
-          </button>
-          <button class="course-card" data-song="sight">
-            <span class="course-icon">𝄞</span><b>視譜練習</b><small>看譜直接彈</small><em>第 6 課</em>
-          </button>
+
+        <div class="curriculum-toolbar">
+          <label>程度
+            <select id="levelFilter">
+              <option value="prep">預備級</option>
+              <option value="1">Level 1</option>
+              <option value="2">Level 2</option>
+              <option value="3">Level 3</option>
+              <option value="4">Level 4</option>
+              <option value="5">Level 5</option>
+              <option value="6">Level 6</option>
+              <option value="7">Level 7</option>
+              <option value="8">Level 8</option>
+            </select>
+          </label>
+          <label>分類
+            <select id="categoryFilter">
+              <option value="all">全部分類</option>
+              <option value="notes">識譜</option>
+              <option value="rhythm">節奏</option>
+              <option value="technique">技巧</option>
+              <option value="scales">音階・琶音</option>
+              <option value="chords">和弦・和聲</option>
+              <option value="sight">視奏</option>
+              <option value="ear">聽力</option>
+              <option value="repertoire">曲目・演奏</option>
+            </select>
+          </label>
         </div>
+
+        <div id="curriculumSummary" class="curriculum-summary"></div>
+        <div id="curriculumGrid" class="course-grid curriculum-grid"></div>
       </section>
 
       <section id="songsPanel" class="tab-panel">
@@ -100,6 +112,15 @@
 
       <div class="top-progress"><div id="topProgressBar"></div></div>
 
+      <section class="prepare-banner" id="prepareBanner">
+        <div>
+          <small>READY</small>
+          <strong>先完成設定，再按播放開始</strong>
+          <span>可以先開麥克風、節拍器、譜面鋼琴聲，調整 BPM、速度與左右手。</span>
+        </div>
+        <button id="readyPlayBtn" class="ready-play">▶ 開始</button>
+      </section>
+
       <section class="practice-stage" id="practiceStage">
         <div class="staff-shell">
           <div class="clef">𝄞</div>
@@ -115,6 +136,23 @@
               <b id="assistBpm">90 BPM</b>
             </div>
           </div>
+        </div>
+
+        <div class="transport-bar" aria-label="播放控制">
+          <button id="rewindBtn" class="transport-btn" type="button" title="倒回一小節">↶<span>倒回</span></button>
+          <button id="playBtn" class="transport-btn primary-transport" type="button" title="播放">▶<span>播放</span></button>
+          <button id="pauseTransportBtn" class="transport-btn" type="button" title="暫停">Ⅱ<span>暫停</span></button>
+          <button id="recordBtn" class="transport-btn" type="button" title="查看練習紀錄">●<span>紀錄</span></button>
+          <div class="transport-time"><small>位置</small><b id="transportTime">00:00</b></div>
+        </div>
+
+        <div id="recordDrawer" class="record-drawer" hidden>
+          <div class="record-head">
+            <div><small>PRACTICE LOG</small><strong>本次練習紀錄</strong></div>
+            <button id="closeRecordBtn" type="button">關閉</button>
+          </div>
+          <div id="recordSummary" class="record-summary">尚未開始練習。</div>
+          <div id="recordList" class="record-list"></div>
         </div>
 
         <div class="practice-footer">

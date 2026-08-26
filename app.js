@@ -19,6 +19,131 @@ const library = [
   ['canon','Canon Theme','Normal','01:02']
 ];
 
+
+const curriculum = {
+  prep:{
+    name:'預備級',
+    summary:'建立鋼琴方向感、基本拍感、五線譜起步與正確坐姿。',
+    items:{
+      notes:['鍵盤高低音方向','中央 C','高音譜號 C–G'],
+      rhythm:['穩定四分音符','二分音符','4 拍脈動'],
+      technique:['坐姿與手型','手指編號 1–5','放鬆落鍵'],
+      scales:['五指位置 C–G','反向五指練習'],
+      chords:['聽辨高低音','C 大三和弦入門'],
+      sight:['2–4 小節超短視奏'],
+      ear:['高/低音辨認','相同/不同旋律'],
+      repertoire:['單手短曲','固定手位兒歌']
+    }
+  },
+  1:{name:'Level 1',summary:'建立基本識譜、節奏、五指技巧與簡單雙手配合。',items:{
+    notes:['高音譜表音域擴展','低音譜號入門','升降記號'],
+    rhythm:['四分/二分/全音符','四分休止符','2/4、3/4、4/4'],
+    technique:['連奏與斷奏','左右手五指型','基本力度'],
+    scales:['C/G/F 大調五指型','一個八度音階入門'],
+    chords:['I 和弦','C/G/F 基本和弦'],
+    sight:['固定手位視奏','簡單節奏視奏'],
+    ear:['拍點模仿','旋律方向辨認'],
+    repertoire:['簡單古典/民謠','左右手輪流']
+  }},
+  2:{name:'Level 2',summary:'加強低音譜號、手位移動、八分音符與基礎和弦。',items:{
+    notes:['雙譜表閱讀','跨越中央 C','更多升降音'],
+    rhythm:['八分音符','附點二分音符','弱起概念'],
+    technique:['換手位','拇指穿指入門','簡單踏板'],
+    scales:['C/G/D/F 大調','A/D 小調入門'],
+    chords:['I–V7','分解和弦入門'],
+    sight:['不固定手位短譜','雙手簡單視奏'],
+    ear:['節奏回拍','大小調色彩'],
+    repertoire:['簡易古典主題','流行旋律配簡單和弦']
+  }},
+  3:{name:'Level 3',summary:'建立完整一個八度音階、三連音、雙手協調與基礎樂句。',items:{
+    notes:['更寬音域','臨時記號','八度記號'],
+    rhythm:['三連音','附點四分+八分','切分入門'],
+    technique:['音階指法','手腕轉移','聲部平衡'],
+    scales:['大調/和聲小調一個八度','主和弦琶音'],
+    chords:['I–IV–V','轉位入門'],
+    sight:['較長雙手視奏','簡單調號'],
+    ear:['旋律記憶','強弱拍辨認'],
+    repertoire:['古典小品','電影/動畫簡易改編']
+  }},
+  4:{name:'Level 4',summary:'擴充調號、兩個八度音階、踏板與伴奏型。',items:{
+    notes:['多升降號調性','和弦音型閱讀'],
+    rhythm:['十六分音符入門','切分節奏','複拍子入門'],
+    technique:['兩個八度音階','旋律歌唱性','踏板換和聲'],
+    scales:['兩個八度大/小調','琶音擴展'],
+    chords:['七和弦入門','伴奏型變化'],
+    sight:['雙手不同節奏','多調性視奏'],
+    ear:['終止式感受','旋律錯音辨識'],
+    repertoire:['古典舞曲','抒情曲與流行伴奏']
+  }},
+  5:{name:'Level 5',summary:'中級核心：速度、平衡、和聲理解、視奏與聽力全面提升。',items:{
+    notes:['多聲部閱讀','裝飾音入門'],
+    rhythm:['複合拍子','複雜切分','速度變化'],
+    technique:['快速音階','重複音','聲部控制'],
+    scales:['常用大/小調兩個八度以上','反向/半音階入門'],
+    chords:['屬七和弦','和聲進行分析'],
+    sight:['限時視奏','多聲部簡譜'],
+    ear:['音程辨認','節奏/旋律複述'],
+    repertoire:['巴洛克/古典/浪漫/現代各類作品']
+  }},
+  6:{name:'Level 6',summary:'進階技巧、風格理解與更高速度的音階、琶音及視奏。',items:{
+    notes:['多譜號與複雜織體','裝飾記號'],
+    rhythm:['不規則重音','複合節奏層次'],
+    technique:['八度技巧入門','快速琶音','旋律與伴奏分層'],
+    scales:['更多調性與半音階','琶音轉位'],
+    chords:['擴展和弦','和聲功能'],
+    sight:['調性變化視奏','快速掃譜'],
+    ear:['和弦性質','終止式辨識'],
+    repertoire:['較完整奏鳴曲樂章','印象派/近現代入門']
+  }},
+  7:{name:'Level 7',summary:'高階控制：速度、音色、複雜和聲、風格與舞台完整度。',items:{
+    notes:['高密度譜面閱讀','多聲部獨立'],
+    rhythm:['跨拍型態','多層節奏'],
+    technique:['快速八度','大跳','細緻音色控制'],
+    scales:['全調性音階/琶音深化','三度/六度概念'],
+    chords:['調性轉換','擴張和聲'],
+    sight:['高難度即時視奏','風格辨識'],
+    ear:['複雜音程/和弦','旋律與低音追蹤'],
+    repertoire:['大型作品節選','完整舞台演奏訓練']
+  }},
+  8:{name:'Level 8',summary:'高級演奏準備：完整技巧、音樂詮釋、快速視奏與自主練習能力。',items:{
+    notes:['複雜總譜式閱讀','高密度和聲'],
+    rhythm:['自由速度與精準脈動並存','複雜節拍'],
+    technique:['高速度音階琶音','八度/和弦/大跳綜合技巧'],
+    scales:['全調性綜合技術','快速音階與琶音'],
+    chords:['進階和聲與轉調','伴奏即興基礎'],
+    sight:['高階限時視奏','快速抓結構'],
+    ear:['和聲/節奏/旋律整合聽辨'],
+    repertoire:['高級曲目','完整演奏與錄音檢討']
+  }}
+};
+
+const categoryNames={
+  notes:'識譜',rhythm:'節奏',technique:'技巧',scales:'音階・琶音',
+  chords:'和弦・和聲',sight:'視奏',ear:'聽力',repertoire:'曲目・演奏'
+};
+
+function renderCurriculum(){
+  const level=$('levelFilter').value;
+  const cat=$('categoryFilter').value;
+  const data=curriculum[level];
+  $('curriculumSummary').innerHTML=`<b>${data.name}</b>　${data.summary}`;
+  const root=$('curriculumGrid'); root.innerHTML='';
+  Object.entries(data.items).forEach(([key,skills],idx)=>{
+    if(cat!=='all' && cat!==key) return;
+    const card=document.createElement('button');
+    card.type='button'; card.className='course-card curriculum-card';
+    const demoSongs=['twinkle','ode','mary','scale','canon','sight'];
+    card.dataset.song=demoSongs[idx%demoSongs.length];
+    card.innerHTML=`<span class="course-icon">${['𝄞','♩','✋','↗','♬','👀','👂','♫'][idx]}</span>
+      <b>${categoryNames[key]}</b>
+      <small>${data.name}</small>
+      <span class="course-category">${categoryNames[key]}</span>
+      <ul class="skill-list">${skills.map(s=>`<li>${s}</li>`).join('')}</ul>`;
+    card.addEventListener('click',()=>openPractice(card.dataset.song,'LEARN'));
+    root.appendChild(card);
+  });
+}
+
 let state = {
   song:'twinkle',running:false,paused:false,startAt:0,pauseStart:0,pauseTotal:0,
   speed:1,mode:'play',hand:'right',micStream:null,audioCtx:null,analyser:null,
@@ -52,15 +177,16 @@ function renderSongList(level='all'){
   });
 }
 renderSongList();
+$('levelFilter').addEventListener('change',renderCurriculum);
+$('categoryFilter').addEventListener('change',renderCurriculum);
+renderCurriculum();
+
 
 document.querySelectorAll('.filter').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active'); renderSongList(btn.dataset.level);
   });
-});
-document.querySelectorAll('.course-card').forEach(btn=>{
-  btn.addEventListener('click',()=>openPractice(btn.dataset.song,'LEARN'));
 });
 $('quickStart').addEventListener('click',()=>openPractice('sight','5 MIN'));
 
@@ -74,22 +200,95 @@ function openPractice(songId,label='PLAY'){
   $('practiceModeLabel').textContent=label;
   showView('practice');
   renderStaticScore();
-  setTimeout(startPractice,250);
+  enterReadyState();
 }
+
+
+function fmtTime(sec){
+  sec=Math.max(0,Math.floor(sec||0));
+  return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+}
+function enterReadyState(){
+  state.running=false; state.paused=false; state.pauseTotal=0; state.lastMasterBeat=-1;
+  $('prepareBanner').classList.remove('running');
+  $('topProgressBar').style.width='0%';
+  $('transportTime').textContent='00:00';
+  $('playBtn').classList.remove('active');
+  $('pauseTransportBtn').classList.remove('active');
+  if(state.metroOn) stopMetronome(false);
+  hideAssist();
+}
+function playFromCurrent(){
+  if(!state.running){
+    startPractice();
+  }else if(state.paused){
+    state.pauseTotal+=performance.now()-state.pauseStart;
+    state.paused=false;
+    $('pauseTransportBtn').classList.remove('active');
+    $('playBtn').classList.add('active');
+  }
+  $('prepareBanner').classList.add('running');
+}
+function pausePractice(){
+  if(!state.running || state.paused) return;
+  state.paused=true;
+  state.pauseStart=performance.now();
+  $('pauseTransportBtn').classList.add('active');
+  $('playBtn').classList.remove('active');
+  stopAllPianoVoices();
+}
+function seekTo(sec){
+  sec=Math.max(0,Math.min(effectiveDuration(),sec));
+  const now=performance.now();
+  state.startAt=now-sec*1000;
+  state.pauseTotal=0;
+  if(state.paused) state.pauseStart=now;
+  state.lastMasterBeat=-1;
+  state.demoPlayed=new Set();
+  state.judged=new Set([...state.judged].filter(i=>noteTime(i)<sec));
+  renderStaticScore();
+}
+function rewindMeasure(){
+  const current=state.running?elapsed():0;
+  const measure=beatSeconds()*4;
+  seekTo(Math.max(0,current-measure));
+}
+function renderRecordDrawer(){
+  const log=state.performanceLog||[];
+  const exact=log.filter(x=>x.pitchCorrect&&x.rhythmCorrect).length;
+  const pitch=log.filter(x=>x.pitchCorrect).length;
+  const rhythm=log.filter(x=>x.rhythmCorrect).length;
+  $('recordSummary').textContent=log.length
+    ? `共 ${log.length} 筆｜音高正確 ${Math.round(pitch/log.length*100)}%｜節拍正確 ${Math.round(rhythm/log.length*100)}%｜完全吻合 ${Math.round(exact/log.length*100)}%`
+    : '尚未有彈奏紀錄。';
+  const root=$('recordList'); root.innerHTML='';
+  log.slice(-40).reverse().forEach(x=>{
+    const row=document.createElement('div'); row.className='record-row';
+    const exactOk=x.pitchCorrect&&x.rhythmCorrect;
+    row.innerHTML=`<b>#${x.index+1}</b><span>譜 ${x.expectedNote||'—'} → 彈 ${x.playedNote||'—'}</span>
+      <span class="${exactOk?'ok':'bad'}">${exactOk?'吻合':'需練習'}</span>
+      <span>${x.timingErrorMs==null?'MISS':(x.timingErrorMs>0?'+':'')+x.timingErrorMs+' ms'}</span>`;
+    root.appendChild(row);
+  });
+}
+$('readyPlayBtn').addEventListener('click',playFromCurrent);
+$('playBtn').addEventListener('click',playFromCurrent);
+$('pauseTransportBtn').addEventListener('click',pausePractice);
+$('rewindBtn').addEventListener('click',rewindMeasure);
+$('recordBtn').addEventListener('click',()=>{
+  renderRecordDrawer();
+  $('recordDrawer').hidden=!$('recordDrawer').hidden;
+  $('recordBtn').classList.toggle('active',!$('recordDrawer').hidden);
+});
+$('closeRecordBtn').addEventListener('click',()=>{
+  $('recordDrawer').hidden=true;
+  $('recordBtn').classList.remove('active');
+});
 
 $('backBtn').addEventListener('click',()=>{
   stopPractice(); showView('home');
 });
-$('pauseBtn').addEventListener('click',()=>{
-  if(!state.running) return;
-  state.paused=!state.paused;
-  if(state.paused){
-    state.pauseStart=performance.now(); stopMetronome(false); stopAllPianoVoices()
-  }else{
-    state.pauseTotal+=performance.now()-state.pauseStart;
-    startMetronome();
-  }
-});
+$('pauseBtn').addEventListener('click',pausePractice);
 
 $('speedSelect').addEventListener('change',()=>{
   state.speed=parseFloat($('speedSelect').value)||1;
@@ -98,7 +297,7 @@ $('speedSelect').addEventListener('change',()=>{
   state.tempoBpm=Math.max(30,Math.round(songs[state.song].bpm*state.speed));
   $('tempoInput').value=state.tempoBpm;
   renderStaticScore();
-  restartPractice();
+  if(state.running) restartPractice();
 });
 $('practiceMode').addEventListener('change',()=>{state.mode=$('practiceMode').value;});
 $('handSelect').addEventListener('change',()=>{state.hand=$('handSelect').value;});
@@ -355,14 +554,22 @@ function renderStaticScore(){
 function startPractice(){
   stopAnimationOnly();
   state.running=true; state.paused=false; state.pauseTotal=0; state.startAt=performance.now();
+  $('prepareBanner').classList.add('running');
+  $('playBtn').classList.add('active');
+  $('pauseTransportBtn').classList.remove('active');
   state.judged=new Set(); state.goodStreak=0; state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set(); state.lastMasterBeat=-1;
   $('recordCount').textContent='0'; $('playedNote').textContent='—'; $('timingDelta').textContent='—'; $('scoreNote').textContent='—';
   startMetronome();
   gameLoop();
 }
-function restartPractice(){ if($('practiceView').classList.contains('active')){renderStaticScore(); startPractice();} }
+function restartPractice(){
+  if(!$('practiceView').classList.contains('active')) return;
+  renderStaticScore();
+  if(state.running) startPractice();
+  else enterReadyState();
+}
 function stopAnimationOnly(){ if(state.gameRaf) cancelAnimationFrame(state.gameRaf); state.gameRaf=0; }
-function stopPractice(){ state.running=false; stopAnimationOnly(); stopMetronome(false); hideAssist(); stopAllPianoVoices() }
+function stopPractice(){ state.running=false; state.paused=false; stopAnimationOnly(); stopMetronome(false); hideAssist(); $('playBtn')?.classList.remove('active'); $('pauseTransportBtn')?.classList.remove('active'); stopAllPianoVoices() }
 
 function updateMasterBeat(e){
   const beatIndex=Math.floor(e/beatSeconds());
@@ -393,6 +600,7 @@ function gameLoop(){
   const x=playhead-lead-e*pxPerSec;
   root.style.transform=`translateX(${x}px)`;
   $('topProgressBar').style.width=Math.min(100,e/effectiveDuration()*100)+'%';
+  $('transportTime').textContent=fmtTime(e);
 
   let nearest=-1,delta=99;
   s.notes.forEach((note,i)=>{
@@ -420,7 +628,7 @@ function gameLoop(){
   });
   state.currentTargetIndex=nearest;
   if(nearest>=0) $('scoreNote').textContent=s.notes[nearest];
-  if(e>=effectiveDuration()){savePracticeSummary();stopPractice();return}
+  if(e>=effectiveDuration()){savePracticeSummary();stopPractice();$('playBtn').classList.remove('active');$('transportTime').textContent=fmtTime(effectiveDuration());return}
   state.gameRaf=requestAnimationFrame(gameLoop);
 }
 

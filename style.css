@@ -190,3 +190,56 @@ button{cursor:pointer}
 .sample-status.error{color:#a65e62;background:#fdecec}
 .soft-btn.is-on{background:#e9f7ef;color:#39795f;border-color:#bfe4d0}
 @media(max-width:540px){.sample-status{width:100%;text-align:center}}
+
+
+/* V1.6 — Ready mode, transport controls, graded curriculum */
+.curriculum-toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,240px));gap:10px;margin:12px 0 14px}
+.curriculum-toolbar label{font-size:.72rem;color:#7a849b;font-weight:800}
+.curriculum-toolbar select{display:block;width:100%;margin-top:5px;padding:10px;border:1px solid #dfe3ee;background:white;border-radius:10px;color:#35405a}
+.curriculum-summary{background:#fff;border:1px solid #e2e6ef;border-radius:16px;padding:14px 16px;margin-bottom:12px;color:#67738d}
+.curriculum-summary b{color:#4a5674}
+.curriculum-grid .course-card{min-height:185px}
+.course-category{display:inline-block;margin-top:12px;padding:4px 8px;background:#f2f0ff;border-radius:999px;color:#6c63c4;font-size:.67rem;font-weight:900}
+.skill-list{margin:8px 0 0;padding-left:18px;color:#778197;font-size:.75rem;line-height:1.55}
+
+.prepare-banner{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:18px;padding:14px 16px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.24);border-radius:16px;color:#fff}
+.prepare-banner small{display:block;font-size:.66rem;letter-spacing:.16em;opacity:.7}
+.prepare-banner strong{display:block;font-size:1.02rem;margin:2px 0}
+.prepare-banner span{display:block;font-size:.78rem;opacity:.83}
+.ready-play{border:0;border-radius:999px;background:#fff;color:#665bd0;padding:12px 20px;font-weight:900;white-space:nowrap}
+.prepare-banner.running{opacity:.55}
+.prepare-banner.running .ready-play{display:none}
+
+.transport-bar{display:grid;grid-template-columns:repeat(4,minmax(88px,120px)) 1fr;gap:8px;align-items:center;margin-top:16px;background:#ffffffea;border-radius:17px;padding:10px}
+.transport-btn{min-height:50px;border:1px solid #e0e4ee;background:#f7f8fb;color:#56627d;border-radius:12px;font-weight:900;font-size:1.05rem}
+.transport-btn span{display:block;font-size:.63rem;margin-top:2px;font-weight:800;color:#7d879d}
+.transport-btn.primary-transport{background:#7569dc;color:white;border-color:#7569dc}
+.transport-btn.primary-transport span{color:#e8e5ff}
+.transport-btn.active{box-shadow:inset 0 0 0 2px #7569dc}
+.transport-time{text-align:right;padding-right:8px}
+.transport-time small{display:block;color:#8993a9;font-size:.65rem}
+.transport-time b{color:#45526f;font-variant-numeric:tabular-nums}
+
+.record-drawer{margin-top:8px;background:#fff;border-radius:17px;padding:14px;border:1px solid #e1e5ef}
+.record-drawer[hidden]{display:none}
+.record-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.record-head small{display:block;color:#8278cf;font-size:.64rem;letter-spacing:.14em;font-weight:900}
+.record-head strong{display:block}
+.record-head button{border:1px solid #e1e5ef;background:#f8f9fc;border-radius:9px;padding:8px 12px;color:#69748f}
+.record-summary{margin-top:10px;padding:10px;background:#f7f8fc;border-radius:10px;color:#68748d;font-size:.8rem}
+.record-list{margin-top:8px;display:grid;gap:6px;max-height:230px;overflow:auto}
+.record-row{display:grid;grid-template-columns:42px 1fr 1fr 80px;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid #edf0f5;font-size:.74rem}
+.record-row .ok{color:#3e9a69}.record-row .bad{color:#c57676}
+
+@media(max-width:700px){
+  .curriculum-toolbar{grid-template-columns:1fr}
+  .transport-bar{grid-template-columns:repeat(4,1fr)}
+  .transport-time{grid-column:1/-1;text-align:center}
+  .transport-btn{min-width:0}
+  .prepare-banner{align-items:flex-start;flex-direction:column}
+  .ready-play{width:100%}
+}
+@media(max-width:480px){
+  .record-row{grid-template-columns:34px 1fr 1fr}
+  .record-row span:last-child{grid-column:2/-1}
+}
