@@ -1,0 +1,3 @@
+
+.teacher-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.teacher-stat{border:1px solid #e2e6ef;border-radius:11px;padding:10px;text-align:center}.teacher-stat small{display:block;color:#8993a7}.teacher-stat b{display:block;margin-top:4px}
+@media(max-width:650px){.teacher-grid{grid-template-columns:1fr 1fr}}

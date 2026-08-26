@@ -1,0 +1,88 @@
+{
+  "publicDomain": [
+    {
+      "title": "Ode to Joy",
+      "composer": "L. van Beethoven",
+      "level": "beginner",
+      "status": "public-domain-source",
+      "category": "古典"
+    },
+    {
+      "title": "Minuet in G major, BWV Anh. 114",
+      "composer": "Christian Petzold",
+      "level": "elementary",
+      "status": "public-domain-source",
+      "category": "古典"
+    },
+    {
+      "title": "Bourrée in E minor, BWV 996",
+      "composer": "J. S. Bach",
+      "level": "intermediate",
+      "status": "public-domain-source",
+      "category": "古典"
+    },
+    {
+      "title": "Für Elise",
+      "composer": "L. van Beethoven",
+      "level": "intermediate",
+      "status": "public-domain-source",
+      "category": "古典"
+    },
+    {
+      "title": "The Entertainer",
+      "composer": "Scott Joplin",
+      "level": "intermediate",
+      "status": "public-domain-source",
+      "category": "古典/拉格泰姆"
+    }
+  ],
+  "originalStyle": [
+    {
+      "title": "Kids Pop Starter",
+      "category": "流行音樂",
+      "level": "beginner"
+    },
+    {
+      "title": "Cartoon Melody Easy",
+      "category": "卡通歌",
+      "level": "beginner"
+    },
+    {
+      "title": "Moonlight Journey",
+      "category": "電影風格",
+      "level": "intermediate"
+    },
+    {
+      "title": "Animated Sky",
+      "category": "動畫風格",
+      "level": "elementary"
+    },
+    {
+      "title": "Warm Town Waltz",
+      "category": "動畫風格",
+      "level": "elementary"
+    }
+  ],
+  "licensedImportSlots": [
+    {
+      "category": "熱門歌",
+      "label": "授權 / 自有 MusicXML 或 MIDI 匯入"
+    },
+    {
+      "category": "卡通歌",
+      "label": "授權 / 自有 MusicXML 或 MIDI 匯入"
+    },
+    {
+      "category": "宮崎駿",
+      "label": "授權 / 自有 MusicXML 或 MIDI 匯入"
+    },
+    {
+      "category": "Disney",
+      "label": "授權 / 自有 MusicXML 或 MIDI 匯入"
+    },
+    {
+      "category": "電影配樂",
+      "label": "授權 / 自有 MusicXML 或 MIDI 匯入"
+    }
+  ]
+}

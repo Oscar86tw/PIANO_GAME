@@ -1,0 +1,84 @@
+{
+  "version": "V5.1",
+  "total": 1000,
+  "type": "Complete original educational scores",
+  "categories": [
+    {
+      "name": "音階・技巧",
+      "count": 160,
+      "range": [
+        1,
+        160
+      ]
+    },
+    {
+      "name": "視奏練習",
+      "count": 160,
+      "range": [
+        161,
+        320
+      ]
+    },
+    {
+      "name": "節奏練習",
+      "count": 120,
+      "range": [
+        321,
+        440
+      ]
+    },
+    {
+      "name": "古典風格原創",
+      "count": 140,
+      "range": [
+        441,
+        580
+      ]
+    },
+    {
+      "name": "流行風格原創",
+      "count": 120,
+      "range": [
+        581,
+        700
+      ]
+    },
+    {
+      "name": "卡通風格原創",
+      "count": 100,
+      "range": [
+        701,
+        800
+      ]
+    },
+    {
+      "name": "動畫・電影風格原創",
+      "count": 100,
+      "range": [
+        801,
+        900
+      ]
+    },
+    {
+      "name": "雙手練習",
+      "count": 60,
+      "range": [
+        901,
+        960
+      ]
+    },
+    {
+      "name": "聽奏練習",
+      "count": 40,
+      "range": [
+        961,
+        1000
+      ]
+    }
+  ],
+  "copyrightPolicy": {
+    "builtIn": "1000 original educational complete scores",
+    "publicDomain": "Can be added when verified public-domain score data is available",
+    "copyrightedPopular": "Use licensed/self-owned MusicXML or MIDI import; do not bundle unlicensed complete scores"
+  }
+}

@@ -1,0 +1,2 @@
+
+.library-toolbar{display:grid;grid-template-columns:1.3fr .7fr .7fr;gap:8px;margin-bottom:12px}.song-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:11px;border:1px solid #e3e6ee;border-radius:12px;background:#fff}.song-row strong{display:block}.song-row small{display:block;color:#8c95a8;margin-top:3px}@media(max-width:700px){.library-toolbar{grid-template-columns:1fr}.song-row{grid-template-columns:1fr auto}}

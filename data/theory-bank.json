@@ -1,0 +1,542 @@
+{
+  "10": [
+    {
+      "id": "g10_theory_1",
+      "topic": "音名字母 A–G",
+      "prompt": "10級樂理：音名字母 A–G 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 0,
+      "explanation": "本題檢查「音名字母 A–G」是否能辨認與應用。"
+    },
+    {
+      "id": "g10_theory_2",
+      "topic": "指號 1–5",
+      "prompt": "10級樂理：指號 1–5 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 1,
+      "explanation": "本題檢查「指號 1–5」是否能辨認與應用。"
+    },
+    {
+      "id": "g10_theory_3",
+      "topic": "線/間概念",
+      "prompt": "10級樂理：線/間概念 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 2,
+      "explanation": "本題檢查「線/間概念」是否能辨認與應用。"
+    },
+    {
+      "id": "g10_theory_4",
+      "topic": "拍號 4/4",
+      "prompt": "10級樂理：拍號 4/4 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 3,
+      "explanation": "本題檢查「拍號 4/4」是否能辨認與應用。"
+    }
+  ],
+  "9": [
+    {
+      "id": "g9_theory_1",
+      "topic": "高低音譜號",
+      "prompt": "9級樂理：高低音譜號 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 0,
+      "explanation": "本題檢查「高低音譜號」是否能辨認與應用。"
+    },
+    {
+      "id": "g9_theory_2",
+      "topic": "小節線",
+      "prompt": "9級樂理：小節線 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 1,
+      "explanation": "本題檢查「小節線」是否能辨認與應用。"
+    },
+    {
+      "id": "g9_theory_3",
+      "topic": "力度 p/f",
+      "prompt": "9級樂理：力度 p/f 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 2,
+      "explanation": "本題檢查「力度 p/f」是否能辨認與應用。"
+    },
+    {
+      "id": "g9_theory_4",
+      "topic": "連奏/斷奏記號",
+      "prompt": "9級樂理：連奏/斷奏記號 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 3,
+      "explanation": "本題檢查「連奏/斷奏記號」是否能辨認與應用。"
+    }
+  ],
+  "8": [
+    {
+      "id": "g8_theory_1",
+      "topic": "全音/半音",
+      "prompt": "8級樂理：全音/半音 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 0,
+      "explanation": "本題檢查「全音/半音」是否能辨認與應用。"
+    },
+    {
+      "id": "g8_theory_2",
+      "topic": "升降還原記號",
+      "prompt": "8級樂理：升降還原記號 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 1,
+      "explanation": "本題檢查「升降還原記號」是否能辨認與應用。"
+    },
+    {
+      "id": "g8_theory_3",
+      "topic": "大調音階結構入門",
+      "prompt": "8級樂理：大調音階結構入門 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 2,
+      "explanation": "本題檢查「大調音階結構入門」是否能辨認與應用。"
+    },
+    {
+      "id": "g8_theory_4",
+      "topic": "三和弦",
+      "prompt": "8級樂理：三和弦 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 3,
+      "explanation": "本題檢查「三和弦」是否能辨認與應用。"
+    }
+  ],
+  "7": [
+    {
+      "id": "g7_theory_1",
+      "topic": "調號 1–2 升降",
+      "prompt": "7級樂理：調號 1–2 升降 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 0,
+      "explanation": "本題檢查「調號 1–2 升降」是否能辨認與應用。"
+    },
+    {
+      "id": "g7_theory_2",
+      "topic": "主音/屬音",
+      "prompt": "7級樂理：主音/屬音 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 1,
+      "explanation": "本題檢查「主音/屬音」是否能辨認與應用。"
+    },
+    {
+      "id": "g7_theory_3",
+      "topic": "I/V7",
+      "prompt": "7級樂理：I/V7 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 2,
+      "explanation": "本題檢查「I/V7」是否能辨認與應用。"
+    },
+    {
+      "id": "g7_theory_4",
+      "topic": "大調/小調",
+      "prompt": "7級樂理：大調/小調 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 3,
+      "explanation": "本題檢查「大調/小調」是否能辨認與應用。"
+    }
+  ],
+  "6": [
+    {
+      "id": "g6_theory_1",
+      "topic": "關係大小調",
+      "prompt": "6級樂理：關係大小調 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 0,
+      "explanation": "本題檢查「關係大小調」是否能辨認與應用。"
+    },
+    {
+      "id": "g6_theory_2",
+      "topic": "和弦轉位",
+      "prompt": "6級樂理：和弦轉位 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 1,
+      "explanation": "本題檢查「和弦轉位」是否能辨認與應用。"
+    },
+    {
+      "id": "g6_theory_3",
+      "topic": "音程 2–5 度",
+      "prompt": "6級樂理：音程 2–5 度 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 2,
+      "explanation": "本題檢查「音程 2–5 度」是否能辨認與應用。"
+    },
+    {
+      "id": "g6_theory_4",
+      "topic": "簡單終止式",
+      "prompt": "6級樂理：簡單終止式 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 3,
+      "explanation": "本題檢查「簡單終止式」是否能辨認與應用。"
+    }
+  ],
+  "5": [
+    {
+      "id": "g5_theory_1",
+      "topic": "major/minor triads",
+      "prompt": "5級樂理：major/minor triads 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 0,
+      "explanation": "本題檢查「major/minor triads」是否能辨認與應用。"
+    },
+    {
+      "id": "g5_theory_2",
+      "topic": "I–IV–V–I",
+      "prompt": "5級樂理：I–IV–V–I 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 1,
+      "explanation": "本題檢查「I–IV–V–I」是否能辨認與應用。"
+    },
+    {
+      "id": "g5_theory_3",
+      "topic": "常用音程",
+      "prompt": "5級樂理：常用音程 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 2,
+      "explanation": "本題檢查「常用音程」是否能辨認與應用。"
+    },
+    {
+      "id": "g5_theory_4",
+      "topic": "簡單曲式 A/B",
+      "prompt": "5級樂理：簡單曲式 A/B 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 3,
+      "explanation": "本題檢查「簡單曲式 A/B」是否能辨認與應用。"
+    }
+  ],
+  "4": [
+    {
+      "id": "g4_theory_1",
+      "topic": "三和弦轉位",
+      "prompt": "4級樂理：三和弦轉位 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 0,
+      "explanation": "本題檢查「三和弦轉位」是否能辨認與應用。"
+    },
+    {
+      "id": "g4_theory_2",
+      "topic": "屬七和弦入門",
+      "prompt": "4級樂理：屬七和弦入門 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 1,
+      "explanation": "本題檢查「屬七和弦入門」是否能辨認與應用。"
+    },
+    {
+      "id": "g4_theory_3",
+      "topic": "複合拍",
+      "prompt": "4級樂理：複合拍 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 2,
+      "explanation": "本題檢查「複合拍」是否能辨認與應用。"
+    },
+    {
+      "id": "g4_theory_4",
+      "topic": "樂句/終止",
+      "prompt": "4級樂理：樂句/終止 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 3,
+      "explanation": "本題檢查「樂句/終止」是否能辨認與應用。"
+    }
+  ],
+  "3": [
+    {
+      "id": "g3_theory_1",
+      "topic": "dominant 7th",
+      "prompt": "3級樂理：dominant 7th 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 0,
+      "explanation": "本題檢查「dominant 7th」是否能辨認與應用。"
+    },
+    {
+      "id": "g3_theory_2",
+      "topic": "cadence",
+      "prompt": "3級樂理：cadence 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 1,
+      "explanation": "本題檢查「cadence」是否能辨認與應用。"
+    },
+    {
+      "id": "g3_theory_3",
+      "topic": "binary/ternary",
+      "prompt": "3級樂理：binary/ternary 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 2,
+      "explanation": "本題檢查「binary/ternary」是否能辨認與應用。"
+    },
+    {
+      "id": "g3_theory_4",
+      "topic": "常用術語",
+      "prompt": "3級樂理：常用術語 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 3,
+      "explanation": "本題檢查「常用術語」是否能辨認與應用。"
+    }
+  ],
+  "2": [
+    {
+      "id": "g2_theory_1",
+      "topic": "和聲功能",
+      "prompt": "2級樂理：和聲功能 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 0,
+      "explanation": "本題檢查「和聲功能」是否能辨認與應用。"
+    },
+    {
+      "id": "g2_theory_2",
+      "topic": "轉調入門",
+      "prompt": "2級樂理：轉調入門 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 1,
+      "explanation": "本題檢查「轉調入門」是否能辨認與應用。"
+    },
+    {
+      "id": "g2_theory_3",
+      "topic": "曲式分析",
+      "prompt": "2級樂理：曲式分析 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 2,
+      "explanation": "本題檢查「曲式分析」是否能辨認與應用。"
+    },
+    {
+      "id": "g2_theory_4",
+      "topic": "速度/表情術語",
+      "prompt": "2級樂理：速度/表情術語 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 3,
+      "explanation": "本題檢查「速度/表情術語」是否能辨認與應用。"
+    }
+  ],
+  "1": [
+    {
+      "id": "g1_theory_1",
+      "topic": "和聲分析",
+      "prompt": "1級樂理：和聲分析 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 0,
+      "explanation": "本題檢查「和聲分析」是否能辨認與應用。"
+    },
+    {
+      "id": "g1_theory_2",
+      "topic": "曲式",
+      "prompt": "1級樂理：曲式 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 1,
+      "explanation": "本題檢查「曲式」是否能辨認與應用。"
+    },
+    {
+      "id": "g1_theory_3",
+      "topic": "調性關係",
+      "prompt": "1級樂理：調性關係 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 2,
+      "explanation": "本題檢查「調性關係」是否能辨認與應用。"
+    },
+    {
+      "id": "g1_theory_4",
+      "topic": "演奏術語與風格",
+      "prompt": "1級樂理：演奏術語與風格 的基本判斷題",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "answer": 3,
+      "explanation": "本題檢查「演奏術語與風格」是否能辨認與應用。"
+    }
+  ]
+}

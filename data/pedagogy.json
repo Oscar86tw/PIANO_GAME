@@ -1,0 +1,35 @@
+{
+  "name": "PIANO LEARNING V4.6 Formal Pedagogy",
+  "note": "Custom 10→1 learning path based on standard piano pedagogy; not an official equivalence table for any single examination board.",
+  "domains": [
+    {
+      "id": "technique",
+      "title": "技巧・音階・指法",
+      "purpose": "姿勢、手型、指法、音階、琶音、和弦與觸鍵"
+    },
+    {
+      "id": "sight",
+      "title": "五線譜・視奏",
+      "purpose": "節奏、譜表、音域、隨機視奏與即時閱讀"
+    },
+    {
+      "id": "ear",
+      "title": "聽力・聽奏",
+      "purpose": "高低、旋律回奏、節奏、和聲與終止感"
+    },
+    {
+      "id": "repertoire",
+      "title": "曲目・演奏",
+      "purpose": "音樂表現、樂句、力度、踏板、風格與完整演奏"
+    }
+  ],
+  "unlockRule": "Each domain must reach at least 3 stars, and the grade total must also meet its threshold.",
+  "assistanceRule": "Metronome is an assistance tool triggered after repeated timing instability; it does not replace independent pulse.",
+  "starMeaning": {
+    "1": "尚未掌握，需要分解練習",
+    "2": "部分掌握，需要慢速重練",
+    "3": "達標，可進入下一階段但仍需複習",
+    "4": "穩定掌握",
+    "5": "非常穩定，可提高速度或難度"
+  }
+}

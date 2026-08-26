@@ -1,0 +1,45 @@
+.course-hero{display:grid;grid-template-columns:1.4fr .6fr;gap:12px}
+.course-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.course-summary>div{border:1px solid #e1e5ec;border-radius:11px;padding:10px;text-align:center;background:#fafbfc}
+.course-summary small{display:block;color:#8b95a9;font-size:.6rem}
+.course-summary b{display:block;margin-top:4px;font-size:1.02rem}
+.grade-path{display:grid;gap:12px}
+.grade-card{border:1px solid #e1e5ec;border-radius:16px;background:#fff;padding:14px;position:relative}
+.grade-card.locked{opacity:.62;background:#f7f8fa}
+.grade-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.grade-title small{display:block;color:#8b95a9;margin-top:3px}
+.grade-lock{border-radius:999px;padding:5px 8px;font-size:.64rem;font-weight:900;background:#f1f2f6;color:#7f899c}
+.grade-card.unlocked .grade-lock{background:#edf7f0;color:#4e7d62}
+.star-meter{margin-top:10px}
+.star-meter-bar{height:9px;border-radius:999px;background:#eceef3;overflow:hidden}
+.star-meter-fill{height:100%;background:#7569d8;width:0}
+.star-meter-text{display:flex;justify-content:space-between;gap:8px;margin-top:5px;font-size:.65rem;color:#7c879b}
+.lesson-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:11px}
+.lesson-card{border:1px solid #e2e6ef;border-radius:12px;padding:10px;background:#fff}
+.lesson-card.disabled{opacity:.55}
+.lesson-card strong{display:block}
+.lesson-card small{display:block;color:#8b95a8;margin-top:3px}
+.lesson-stars{margin-top:7px;color:#efbb32;letter-spacing:1px}
+.lesson-card .btn{width:100%;margin-top:8px}
+.unlock-note{margin-top:8px;padding:8px 10px;border-radius:10px;background:#f6f4ff;color:#7066b7;font-size:.7rem}
+@media(max-width:900px){.course-hero{grid-template-columns:1fr}.lesson-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.course-summary{grid-template-columns:1fr 1fr}.lesson-grid{grid-template-columns:1fr}}
+.mastery-rule-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.mastery-rule-grid>div{border:1px solid #e2e6ef;border-radius:11px;padding:10px;background:#fafbfc}
+.mastery-rule-grid strong{display:block;color:#4c5871}
+.mastery-rule-grid small{display:block;color:#8b95a8;margin-top:3px}
+.grade-objectives{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.grade-objectives>div{border:1px solid #e5e8ee;border-radius:10px;padding:9px;background:#fcfcfd}
+.grade-objectives small{display:block;color:#8b95a9;font-size:.6rem}
+.grade-objectives span{display:block;margin-top:3px;font-size:.7rem;color:#5d687f;line-height:1.45}
+.domain-pass{color:#4f8262}.domain-fail{color:#a26a3d}
+.mastery-gate{margin-top:8px;padding:8px 10px;border-radius:10px;background:#f7f5ff;color:#6d63b4;font-size:.69rem}
+@media(max-width:700px){.mastery-rule-grid,.grade-objectives{grid-template-columns:1fr 1fr}}
+
+.grade-detail{margin-top:10px;border:1px solid #e4e7ee;border-radius:11px;background:#fbfbfd}
+.grade-detail summary{cursor:pointer;padding:9px 11px;font-weight:800;color:#657088}
+.grade-detail-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 10px 10px}
+.grade-detail-body>div{background:#fff;border:1px solid #e8eaf0;border-radius:9px;padding:8px}
+.grade-detail-body strong{font-size:.72rem}
+.grade-detail-body ul{margin:6px 0 0;padding-left:18px;color:#7b8599;font-size:.67rem;line-height:1.5}
+@media(max-width:650px){.grade-detail-body{grid-template-columns:1fr}}

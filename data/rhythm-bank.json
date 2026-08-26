@@ -1,0 +1,1254 @@
+{
+  "10": [
+    {
+      "id": "g10_rhythm_1",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 60,
+      "skill": "四分音符"
+    },
+    {
+      "id": "g10_rhythm_2",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 62,
+      "skill": "二分音符"
+    },
+    {
+      "id": "g10_rhythm_3",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 64,
+      "skill": "全音符"
+    },
+    {
+      "id": "g10_rhythm_4",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 66,
+      "skill": "四分休止符"
+    },
+    {
+      "id": "g10_rhythm_5",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 68,
+      "skill": "4/4 拍"
+    },
+    {
+      "id": "g10_rhythm_6",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 70,
+      "skill": "四分音符"
+    },
+    {
+      "id": "g10_rhythm_7",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 72,
+      "skill": "二分音符"
+    },
+    {
+      "id": "g10_rhythm_8",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 74,
+      "skill": "全音符"
+    }
+  ],
+  "9": [
+    {
+      "id": "g9_rhythm_1",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 66,
+      "skill": "3/4、4/4"
+    },
+    {
+      "id": "g9_rhythm_2",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 68,
+      "skill": "附點二分音符"
+    },
+    {
+      "id": "g9_rhythm_3",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 70,
+      "skill": "四分休止符"
+    },
+    {
+      "id": "g9_rhythm_4",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 72,
+      "skill": "基本弱起"
+    },
+    {
+      "id": "g9_rhythm_5",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 74,
+      "skill": "3/4、4/4"
+    },
+    {
+      "id": "g9_rhythm_6",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 76,
+      "skill": "附點二分音符"
+    },
+    {
+      "id": "g9_rhythm_7",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 78,
+      "skill": "四分休止符"
+    },
+    {
+      "id": "g9_rhythm_8",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "bpm": 80,
+      "skill": "基本弱起"
+    }
+  ],
+  "8": [
+    {
+      "id": "g8_rhythm_1",
+      "timeSig": [
+        2,
+        4
+      ],
+      "durations": [
+        0.5,
+        0.5,
+        1,
+        1
+      ],
+      "bpm": 72,
+      "skill": "八分音符"
+    },
+    {
+      "id": "g8_rhythm_2",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        0.5,
+        1,
+        1,
+        0.5
+      ],
+      "bpm": 74,
+      "skill": "二分休止符"
+    },
+    {
+      "id": "g8_rhythm_3",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        0.5,
+        0.5
+      ],
+      "bpm": 76,
+      "skill": "tie 延音線"
+    },
+    {
+      "id": "g8_rhythm_4",
+      "timeSig": [
+        2,
+        4
+      ],
+      "durations": [
+        1,
+        0.5,
+        0.5,
+        1
+      ],
+      "bpm": 78,
+      "skill": "2/4、3/4、4/4"
+    },
+    {
+      "id": "g8_rhythm_5",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        0.5,
+        0.5,
+        1,
+        1
+      ],
+      "bpm": 80,
+      "skill": "八分音符"
+    },
+    {
+      "id": "g8_rhythm_6",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.5,
+        1,
+        1,
+        0.5
+      ],
+      "bpm": 82,
+      "skill": "二分休止符"
+    },
+    {
+      "id": "g8_rhythm_7",
+      "timeSig": [
+        2,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        0.5,
+        0.5
+      ],
+      "bpm": 84,
+      "skill": "tie 延音線"
+    },
+    {
+      "id": "g8_rhythm_8",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        1,
+        0.5,
+        0.5,
+        1
+      ],
+      "bpm": 86,
+      "skill": "2/4、3/4、4/4"
+    }
+  ],
+  "7": [
+    {
+      "id": "g7_rhythm_1",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.5,
+        0.5,
+        1,
+        1
+      ],
+      "bpm": 76,
+      "skill": "6/8"
+    },
+    {
+      "id": "g7_rhythm_2",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.5,
+        1,
+        1,
+        0.5
+      ],
+      "bpm": 78,
+      "skill": "附點四分音符"
+    },
+    {
+      "id": "g7_rhythm_3",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        0.5,
+        0.5
+      ],
+      "bpm": 80,
+      "skill": "八分休止符"
+    },
+    {
+      "id": "g7_rhythm_4",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        1,
+        0.5,
+        0.5,
+        1
+      ],
+      "bpm": 82,
+      "skill": "弱起"
+    },
+    {
+      "id": "g7_rhythm_5",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.5,
+        0.5,
+        1,
+        1
+      ],
+      "bpm": 84,
+      "skill": "6/8"
+    },
+    {
+      "id": "g7_rhythm_6",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.5,
+        1,
+        1,
+        0.5
+      ],
+      "bpm": 86,
+      "skill": "附點四分音符"
+    },
+    {
+      "id": "g7_rhythm_7",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        1,
+        0.5,
+        0.5
+      ],
+      "bpm": 88,
+      "skill": "八分休止符"
+    },
+    {
+      "id": "g7_rhythm_8",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        1,
+        0.5,
+        0.5,
+        1
+      ],
+      "bpm": 90,
+      "skill": "弱起"
+    }
+  ],
+  "6": [
+    {
+      "id": "g6_rhythm_1",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        0.5,
+        1.5,
+        0.5,
+        1.5
+      ],
+      "bpm": 80,
+      "skill": "6/8"
+    },
+    {
+      "id": "g6_rhythm_2",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1.5,
+        0.5,
+        1.5,
+        0.5
+      ],
+      "bpm": 82,
+      "skill": "切分入門"
+    },
+    {
+      "id": "g6_rhythm_3",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.5,
+        1.5,
+        0.5,
+        1.5
+      ],
+      "bpm": 84,
+      "skill": "附點節奏"
+    },
+    {
+      "id": "g6_rhythm_4",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        1.5,
+        0.5,
+        1.5,
+        0.5
+      ],
+      "bpm": 86,
+      "skill": "拍內細分"
+    },
+    {
+      "id": "g6_rhythm_5",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.5,
+        1.5,
+        0.5,
+        1.5
+      ],
+      "bpm": 88,
+      "skill": "6/8"
+    },
+    {
+      "id": "g6_rhythm_6",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        1.5,
+        0.5,
+        1.5,
+        0.5
+      ],
+      "bpm": 90,
+      "skill": "切分入門"
+    },
+    {
+      "id": "g6_rhythm_7",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        0.5,
+        1.5,
+        0.5,
+        1.5
+      ],
+      "bpm": 92,
+      "skill": "附點節奏"
+    },
+    {
+      "id": "g6_rhythm_8",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1.5,
+        0.5,
+        1.5,
+        0.5
+      ],
+      "bpm": 94,
+      "skill": "拍內細分"
+    }
+  ],
+  "5": [
+    {
+      "id": "g5_rhythm_1",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.5,
+        1.5,
+        0.5,
+        1.5
+      ],
+      "bpm": 84,
+      "skill": "切分"
+    },
+    {
+      "id": "g5_rhythm_2",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        1.5,
+        0.5,
+        1.5,
+        0.5
+      ],
+      "bpm": 86,
+      "skill": "三連音"
+    },
+    {
+      "id": "g5_rhythm_3",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.5,
+        1.5,
+        0.5,
+        1.5
+      ],
+      "bpm": 88,
+      "skill": "複合拍"
+    },
+    {
+      "id": "g5_rhythm_4",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        1.5,
+        0.5,
+        1.5,
+        0.5
+      ],
+      "bpm": 90,
+      "skill": "速度穩定"
+    },
+    {
+      "id": "g5_rhythm_5",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.5,
+        1.5,
+        0.5,
+        1.5
+      ],
+      "bpm": 92,
+      "skill": "切分"
+    },
+    {
+      "id": "g5_rhythm_6",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        1.5,
+        0.5,
+        1.5,
+        0.5
+      ],
+      "bpm": 94,
+      "skill": "三連音"
+    },
+    {
+      "id": "g5_rhythm_7",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.5,
+        1.5,
+        0.5,
+        1.5
+      ],
+      "bpm": 96,
+      "skill": "複合拍"
+    },
+    {
+      "id": "g5_rhythm_8",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        1.5,
+        0.5,
+        1.5,
+        0.5
+      ],
+      "bpm": 98,
+      "skill": "速度穩定"
+    }
+  ],
+  "4": [
+    {
+      "id": "g4_rhythm_1",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.25,
+        0.5,
+        1,
+        2
+      ],
+      "bpm": 88,
+      "skill": "三連音"
+    },
+    {
+      "id": "g4_rhythm_2",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.25,
+        0.5,
+        1,
+        2,
+        0.25
+      ],
+      "bpm": 90,
+      "skill": "較複雜切分"
+    },
+    {
+      "id": "g4_rhythm_3",
+      "timeSig": [
+        9,
+        8
+      ],
+      "durations": [
+        0.5,
+        1,
+        2,
+        0.25,
+        0.25
+      ],
+      "bpm": 92,
+      "skill": "6/8、9/8"
+    },
+    {
+      "id": "g4_rhythm_4",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        1,
+        2,
+        0.25,
+        0.25,
+        0.5
+      ],
+      "bpm": 94,
+      "skill": "三連音"
+    },
+    {
+      "id": "g4_rhythm_5",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        2,
+        0.25,
+        0.25,
+        0.5,
+        1
+      ],
+      "bpm": 96,
+      "skill": "較複雜切分"
+    },
+    {
+      "id": "g4_rhythm_6",
+      "timeSig": [
+        9,
+        8
+      ],
+      "durations": [
+        0.25,
+        0.25,
+        0.5,
+        1,
+        2
+      ],
+      "bpm": 98,
+      "skill": "6/8、9/8"
+    },
+    {
+      "id": "g4_rhythm_7",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.5,
+        1,
+        2,
+        0.25
+      ],
+      "bpm": 100,
+      "skill": "三連音"
+    },
+    {
+      "id": "g4_rhythm_8",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.5,
+        1,
+        2,
+        0.25,
+        0.25
+      ],
+      "bpm": 102,
+      "skill": "較複雜切分"
+    }
+  ],
+  "3": [
+    {
+      "id": "g3_rhythm_1",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.25,
+        0.5,
+        1,
+        2
+      ],
+      "bpm": 90,
+      "skill": "十六分組合"
+    },
+    {
+      "id": "g3_rhythm_2",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.5,
+        1,
+        2,
+        0.25
+      ],
+      "bpm": 92,
+      "skill": "複合拍"
+    },
+    {
+      "id": "g3_rhythm_3",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.5,
+        1,
+        2,
+        0.25,
+        0.25
+      ],
+      "bpm": 94,
+      "skill": "rubato 與 pulse"
+    },
+    {
+      "id": "g3_rhythm_4",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        1,
+        2,
+        0.25,
+        0.25,
+        0.5
+      ],
+      "bpm": 96,
+      "skill": "十六分組合"
+    },
+    {
+      "id": "g3_rhythm_5",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        2,
+        0.25,
+        0.25,
+        0.5,
+        1
+      ],
+      "bpm": 98,
+      "skill": "複合拍"
+    },
+    {
+      "id": "g3_rhythm_6",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.25,
+        0.25,
+        0.5,
+        1,
+        2
+      ],
+      "bpm": 100,
+      "skill": "rubato 與 pulse"
+    },
+    {
+      "id": "g3_rhythm_7",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.5,
+        1,
+        2,
+        0.25
+      ],
+      "bpm": 102,
+      "skill": "十六分組合"
+    },
+    {
+      "id": "g3_rhythm_8",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.5,
+        1,
+        2,
+        0.25,
+        0.25
+      ],
+      "bpm": 104,
+      "skill": "複合拍"
+    }
+  ],
+  "2": [
+    {
+      "id": "g2_rhythm_1",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.25,
+        0.5,
+        1,
+        2
+      ],
+      "bpm": 96,
+      "skill": "十六分組合"
+    },
+    {
+      "id": "g2_rhythm_2",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.5,
+        1,
+        2,
+        0.25
+      ],
+      "bpm": 98,
+      "skill": "複雜切分"
+    },
+    {
+      "id": "g2_rhythm_3",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.5,
+        1,
+        2,
+        0.25,
+        0.25
+      ],
+      "bpm": 100,
+      "skill": "變拍"
+    },
+    {
+      "id": "g2_rhythm_4",
+      "timeSig": [
+        5,
+        4
+      ],
+      "durations": [
+        1,
+        2,
+        0.25,
+        0.25,
+        0.5
+      ],
+      "bpm": 102,
+      "skill": "速度控制"
+    },
+    {
+      "id": "g2_rhythm_5",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        2,
+        0.25,
+        0.25,
+        0.5,
+        1
+      ],
+      "bpm": 104,
+      "skill": "十六分組合"
+    },
+    {
+      "id": "g2_rhythm_6",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.25,
+        0.5,
+        1,
+        2
+      ],
+      "bpm": 106,
+      "skill": "複雜切分"
+    },
+    {
+      "id": "g2_rhythm_7",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.25,
+        0.5,
+        1,
+        2,
+        0.25
+      ],
+      "bpm": 108,
+      "skill": "變拍"
+    },
+    {
+      "id": "g2_rhythm_8",
+      "timeSig": [
+        5,
+        4
+      ],
+      "durations": [
+        0.5,
+        1,
+        2,
+        0.25,
+        0.25
+      ],
+      "bpm": 110,
+      "skill": "速度控制"
+    }
+  ],
+  "1": [
+    {
+      "id": "g1_rhythm_1",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.25,
+        0.5,
+        1,
+        2
+      ],
+      "bpm": 100,
+      "skill": "複雜節奏整合"
+    },
+    {
+      "id": "g1_rhythm_2",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.5,
+        1,
+        2,
+        0.25
+      ],
+      "bpm": 102,
+      "skill": "變拍"
+    },
+    {
+      "id": "g1_rhythm_3",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.5,
+        1,
+        2,
+        0.25,
+        0.25
+      ],
+      "bpm": 104,
+      "skill": "rubato 與穩定 pulse"
+    },
+    {
+      "id": "g1_rhythm_4",
+      "timeSig": [
+        5,
+        4
+      ],
+      "durations": [
+        1,
+        2,
+        0.25,
+        0.25,
+        0.5
+      ],
+      "bpm": 106,
+      "skill": "複雜節奏整合"
+    },
+    {
+      "id": "g1_rhythm_5",
+      "timeSig": [
+        7,
+        8
+      ],
+      "durations": [
+        2,
+        0.25,
+        0.25,
+        0.5,
+        1
+      ],
+      "bpm": 108,
+      "skill": "變拍"
+    },
+    {
+      "id": "g1_rhythm_6",
+      "timeSig": [
+        3,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.25,
+        0.5,
+        1,
+        2
+      ],
+      "bpm": 110,
+      "skill": "rubato 與穩定 pulse"
+    },
+    {
+      "id": "g1_rhythm_7",
+      "timeSig": [
+        4,
+        4
+      ],
+      "durations": [
+        0.25,
+        0.5,
+        1,
+        2,
+        0.25
+      ],
+      "bpm": 112,
+      "skill": "複雜節奏整合"
+    },
+    {
+      "id": "g1_rhythm_8",
+      "timeSig": [
+        6,
+        8
+      ],
+      "durations": [
+        0.5,
+        1,
+        2,
+        0.25,
+        0.25
+      ],
+      "bpm": 114,
+      "skill": "變拍"
+    }
+  ]
+}

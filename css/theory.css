@@ -1,0 +1,5 @@
+
+.quiz-option{display:block;width:100%;text-align:left;margin-top:7px}
+.quiz-option.correct{border-color:#a9d0b5;background:#f0f9f3;color:#4c7c5e}
+.quiz-option.wrong{border-color:#e2b1b6;background:#fff2f3;color:#99545b}
+.question-card{border:1px solid #e2e6ef;border-radius:13px;padding:12px;margin-top:9px}

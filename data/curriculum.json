@@ -1,0 +1,1305 @@
+[
+  {
+    "grade": 10,
+    "id": "grade_10",
+    "title": "10級",
+    "stage": "Foundation 1",
+    "goal": "建立坐姿、手型、指號、鍵盤方向、基本 pulse 與地標音。",
+    "keys": [
+      "C 五指位置"
+    ],
+    "technique": [
+      "坐姿與琴椅距離",
+      "手腕放鬆與圓手型",
+      "左右手 1–5 指號",
+      "C 五指位置單手"
+    ],
+    "rhythm": [
+      "四分音符",
+      "二分音符",
+      "全音符",
+      "四分休止符",
+      "4/4 拍"
+    ],
+    "reading": [
+      "Middle C",
+      "高音譜表 C–G",
+      "音符向上/向下",
+      "級進"
+    ],
+    "aural": [
+      "高/低音",
+      "2–3 音回奏",
+      "基本節奏模仿"
+    ],
+    "theory": [
+      "音名字母 A–G",
+      "指號 1–5",
+      "線/間概念",
+      "拍號 4/4"
+    ],
+    "repertoire": [
+      "8–16 小節兒歌",
+      "卡通熟悉旋律",
+      "5 指位置短曲"
+    ],
+    "tempo": "♩=60–80",
+    "sight": {
+      "hands": "單手/輪替",
+      "range": [
+        "C3",
+        "G4"
+      ],
+      "length": 6,
+      "rhythms": [
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2
+      ],
+      "random": false
+    },
+    "ear": {
+      "length": 3,
+      "range": [
+        "C3",
+        "G4"
+      ],
+      "mode": "旋律回奏"
+    },
+    "lessons": [
+      {
+        "id": "g10_technique",
+        "domain": "technique",
+        "title": "技巧・音階・指法",
+        "icon": "🎹",
+        "target": "坐姿與琴椅距離",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g10_rhythm",
+        "domain": "rhythm",
+        "title": "節奏・拍感",
+        "icon": "🥁",
+        "target": "四分音符",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g10_reading",
+        "domain": "reading",
+        "title": "五線譜・視奏",
+        "icon": "🎼",
+        "target": "6 音視奏・Middle C",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g10_aural",
+        "domain": "aural",
+        "title": "聽力・聽奏",
+        "icon": "👂",
+        "target": "3 音・高/低音",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g10_theory",
+        "domain": "theory",
+        "title": "樂理・音樂知識",
+        "icon": "✏️",
+        "target": "音名字母 A–G",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g10_repertoire",
+        "domain": "repertoire",
+        "title": "曲目・演奏",
+        "icon": "🎵",
+        "target": "8–16 小節兒歌",
+        "maxStars": 5,
+        "core": true
+      }
+    ],
+    "mastery": {
+      "minimumEachDomainStars": 3,
+      "minimumTotalStars": 20,
+      "mustPassAllDomains": true
+    }
+  },
+  {
+    "grade": 9,
+    "id": "grade_9",
+    "title": "9級",
+    "stage": "Foundation 2",
+    "goal": "建立左右手五指位置、基本力度與奏法，開始隨機視奏。",
+    "keys": [
+      "C、G 五指位置"
+    ],
+    "technique": [
+      "C/G 五指練習",
+      "左右手分開",
+      "legato / staccato",
+      "基本手指獨立"
+    ],
+    "rhythm": [
+      "3/4、4/4",
+      "附點二分音符",
+      "四分休止符",
+      "基本弱起"
+    ],
+    "reading": [
+      "Bass C–G 地標",
+      "級進/三度跳進",
+      "雙譜表辨認"
+    ],
+    "aural": [
+      "3 音旋律回奏",
+      "相同/不同節奏",
+      "強/弱辨認"
+    ],
+    "theory": [
+      "高低音譜號",
+      "小節線",
+      "力度 p/f",
+      "連奏/斷奏記號"
+    ],
+    "repertoire": [
+      "卡通/流行簡化 16 小節",
+      "初級古典短曲"
+    ],
+    "tempo": "♩=66–84",
+    "sight": {
+      "hands": "單手/輪替",
+      "range": [
+        "C3",
+        "C5"
+      ],
+      "length": 8,
+      "rhythms": [
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2
+      ],
+      "random": true
+    },
+    "ear": {
+      "length": 3,
+      "range": [
+        "C3",
+        "C5"
+      ],
+      "mode": "旋律回奏"
+    },
+    "lessons": [
+      {
+        "id": "g9_technique",
+        "domain": "technique",
+        "title": "技巧・音階・指法",
+        "icon": "🎹",
+        "target": "C/G 五指練習",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g9_rhythm",
+        "domain": "rhythm",
+        "title": "節奏・拍感",
+        "icon": "🥁",
+        "target": "3/4、4/4",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g9_reading",
+        "domain": "reading",
+        "title": "五線譜・視奏",
+        "icon": "🎼",
+        "target": "8 音視奏・Bass C–G 地標",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g9_aural",
+        "domain": "aural",
+        "title": "聽力・聽奏",
+        "icon": "👂",
+        "target": "3 音・3 音旋律回奏",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g9_theory",
+        "domain": "theory",
+        "title": "樂理・音樂知識",
+        "icon": "✏️",
+        "target": "高低音譜號",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g9_repertoire",
+        "domain": "repertoire",
+        "title": "曲目・演奏",
+        "icon": "🎵",
+        "target": "卡通/流行簡化 16 小節",
+        "maxStars": 5,
+        "core": true
+      }
+    ],
+    "mastery": {
+      "minimumEachDomainStars": 3,
+      "minimumTotalStars": 20,
+      "mustPassAllDomains": true
+    }
+  },
+  {
+    "grade": 8,
+    "id": "grade_8",
+    "title": "8級",
+    "stage": "Elementary 1",
+    "goal": "一個八度音階、八分音符、雙手簡單配合與基本三和弦。",
+    "keys": [
+      "C、G、F 大調"
+    ],
+    "technique": [
+      "一個八度音階 hands separately",
+      "C/G/F 主和弦",
+      "固定伴奏型",
+      "基本換指"
+    ],
+    "rhythm": [
+      "八分音符",
+      "二分休止符",
+      "tie 延音線",
+      "2/4、3/4、4/4"
+    ],
+    "reading": [
+      "一個八度音域",
+      "2/3/4 度辨認",
+      "升降記號入門"
+    ],
+    "aural": [
+      "4 音回奏",
+      "2/3度方向",
+      "2/4、3/4、4/4 拍號"
+    ],
+    "theory": [
+      "全音/半音",
+      "升降還原記號",
+      "大調音階結構入門",
+      "三和弦"
+    ],
+    "repertoire": [
+      "兒童流行簡編",
+      "簡單舞曲",
+      "固定伴奏雙手曲"
+    ],
+    "tempo": "♩=72–92",
+    "sight": {
+      "hands": "雙手",
+      "range": [
+        "A2",
+        "C5"
+      ],
+      "length": 8,
+      "rhythms": [
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2
+      ],
+      "random": true
+    },
+    "ear": {
+      "length": 4,
+      "range": [
+        "A2",
+        "C5"
+      ],
+      "mode": "旋律回奏"
+    },
+    "lessons": [
+      {
+        "id": "g8_technique",
+        "domain": "technique",
+        "title": "技巧・音階・指法",
+        "icon": "🎹",
+        "target": "一個八度音階 hands separately",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g8_rhythm",
+        "domain": "rhythm",
+        "title": "節奏・拍感",
+        "icon": "🥁",
+        "target": "八分音符",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g8_reading",
+        "domain": "reading",
+        "title": "五線譜・視奏",
+        "icon": "🎼",
+        "target": "8 音視奏・一個八度音域",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g8_aural",
+        "domain": "aural",
+        "title": "聽力・聽奏",
+        "icon": "👂",
+        "target": "4 音・4 音回奏",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g8_theory",
+        "domain": "theory",
+        "title": "樂理・音樂知識",
+        "icon": "✏️",
+        "target": "全音/半音",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g8_repertoire",
+        "domain": "repertoire",
+        "title": "曲目・演奏",
+        "icon": "🎵",
+        "target": "兒童流行簡編",
+        "maxStars": 5,
+        "core": true
+      }
+    ],
+    "mastery": {
+      "minimumEachDomainStars": 3,
+      "minimumTotalStars": 20,
+      "mustPassAllDomains": true
+    }
+  },
+  {
+    "grade": 7,
+    "id": "grade_7",
+    "title": "7級",
+    "stage": "Elementary 2",
+    "goal": "調號、I–V7–I、6/8 與踏板入門，發展完整雙手樂句。",
+    "keys": [
+      "C、G、F、D 大調",
+      "A 小調"
+    ],
+    "technique": [
+      "一個八度音階",
+      "I–V7–I",
+      "分解和弦",
+      "踏板換踏基本"
+    ],
+    "rhythm": [
+      "6/8",
+      "附點四分音符",
+      "八分休止符",
+      "弱起"
+    ],
+    "reading": [
+      "調號",
+      "跨五線譜音域",
+      "和弦堆疊"
+    ],
+    "aural": [
+      "4 音跳進旋律",
+      "大/小調情緒",
+      "句尾辨認"
+    ],
+    "theory": [
+      "調號 1–2 升降",
+      "主音/屬音",
+      "I/V7",
+      "大調/小調"
+    ],
+    "repertoire": [
+      "動畫/電影簡編",
+      "古典性格小品",
+      "基本踏板曲"
+    ],
+    "tempo": "♩=76–96",
+    "sight": {
+      "hands": "雙手",
+      "range": [
+        "G2",
+        "D5"
+      ],
+      "length": 10,
+      "rhythms": [
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2
+      ],
+      "random": true
+    },
+    "ear": {
+      "length": 4,
+      "range": [
+        "G2",
+        "D5"
+      ],
+      "mode": "旋律回奏"
+    },
+    "lessons": [
+      {
+        "id": "g7_technique",
+        "domain": "technique",
+        "title": "技巧・音階・指法",
+        "icon": "🎹",
+        "target": "一個八度音階",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g7_rhythm",
+        "domain": "rhythm",
+        "title": "節奏・拍感",
+        "icon": "🥁",
+        "target": "6/8",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g7_reading",
+        "domain": "reading",
+        "title": "五線譜・視奏",
+        "icon": "🎼",
+        "target": "10 音視奏・調號",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g7_aural",
+        "domain": "aural",
+        "title": "聽力・聽奏",
+        "icon": "👂",
+        "target": "4 音・4 音跳進旋律",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g7_theory",
+        "domain": "theory",
+        "title": "樂理・音樂知識",
+        "icon": "✏️",
+        "target": "調號 1–2 升降",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g7_repertoire",
+        "domain": "repertoire",
+        "title": "曲目・演奏",
+        "icon": "🎵",
+        "target": "動畫/電影簡編",
+        "maxStars": 5,
+        "core": true
+      }
+    ],
+    "mastery": {
+      "minimumEachDomainStars": 3,
+      "minimumTotalStars": 22,
+      "mustPassAllDomains": true
+    }
+  },
+  {
+    "grade": 6,
+    "id": "grade_6",
+    "title": "6級",
+    "stage": "Intermediate 1",
+    "goal": "兩個八度、琶音基礎、6/8、切分與左右手不同節奏。",
+    "keys": [
+      "C、G、D、F、Bb 大調",
+      "A、E 小調"
+    ],
+    "technique": [
+      "兩個八度 hands separately",
+      "部分音階 hands together",
+      "主和弦琶音",
+      "和弦轉位"
+    ],
+    "rhythm": [
+      "6/8",
+      "切分入門",
+      "附點節奏",
+      "拍內細分"
+    ],
+    "reading": [
+      "ledger lines",
+      "分解和弦",
+      "左右手不同節奏"
+    ],
+    "aural": [
+      "5 音旋律",
+      "I/V 和聲感",
+      "八分音符節奏模仿"
+    ],
+    "theory": [
+      "關係大小調",
+      "和弦轉位",
+      "音程 2–5 度",
+      "簡單終止式"
+    ],
+    "repertoire": [
+      "流行抒情簡編",
+      "巴洛克/古典入門",
+      "完整 24–32 小節"
+    ],
+    "tempo": "♩=80–104",
+    "sight": {
+      "hands": "雙手",
+      "range": [
+        "F2",
+        "E5"
+      ],
+      "length": 12,
+      "rhythms": [
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2
+      ],
+      "random": true
+    },
+    "ear": {
+      "length": 5,
+      "range": [
+        "F2",
+        "E5"
+      ],
+      "mode": "旋律回奏"
+    },
+    "lessons": [
+      {
+        "id": "g6_technique",
+        "domain": "technique",
+        "title": "技巧・音階・指法",
+        "icon": "🎹",
+        "target": "兩個八度 hands separately",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g6_rhythm",
+        "domain": "rhythm",
+        "title": "節奏・拍感",
+        "icon": "🥁",
+        "target": "6/8",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g6_reading",
+        "domain": "reading",
+        "title": "五線譜・視奏",
+        "icon": "🎼",
+        "target": "12 音視奏・ledger lines",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g6_aural",
+        "domain": "aural",
+        "title": "聽力・聽奏",
+        "icon": "👂",
+        "target": "5 音・5 音旋律",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g6_theory",
+        "domain": "theory",
+        "title": "樂理・音樂知識",
+        "icon": "✏️",
+        "target": "關係大小調",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g6_repertoire",
+        "domain": "repertoire",
+        "title": "曲目・演奏",
+        "icon": "🎵",
+        "target": "流行抒情簡編",
+        "maxStars": 5,
+        "core": true
+      }
+    ],
+    "mastery": {
+      "minimumEachDomainStars": 3,
+      "minimumTotalStars": 22,
+      "mustPassAllDomains": true
+    }
+  },
+  {
+    "grade": 5,
+    "id": "grade_5",
+    "title": "5級",
+    "stage": "Intermediate 2",
+    "goal": "兩個八度雙手、harmonic minor、三連音、樂句與踏板音色。",
+    "keys": [
+      "常用 4♯/4♭ 內大調",
+      "關係小調"
+    ],
+    "technique": [
+      "兩個八度 hands together",
+      "harmonic minor",
+      "主和弦琶音",
+      "轉位與終止式"
+    ],
+    "rhythm": [
+      "切分",
+      "三連音",
+      "複合拍",
+      "速度穩定"
+    ],
+    "reading": [
+      "較寬音域",
+      "簡單多聲部",
+      "裝飾音入門"
+    ],
+    "aural": [
+      "5 音旋律",
+      "大/小三和弦",
+      "終止感"
+    ],
+    "theory": [
+      "major/minor triads",
+      "I–IV–V–I",
+      "常用音程",
+      "簡單曲式 A/B"
+    ],
+    "repertoire": [
+      "動畫風格簡編",
+      "古典原作短曲",
+      "踏板與樂句"
+    ],
+    "tempo": "♩=84–108",
+    "sight": {
+      "hands": "雙手",
+      "range": [
+        "E2",
+        "F5"
+      ],
+      "length": 12,
+      "rhythms": [
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2
+      ],
+      "random": true
+    },
+    "ear": {
+      "length": 5,
+      "range": [
+        "E2",
+        "F5"
+      ],
+      "mode": "旋律＋節奏＋和聲"
+    },
+    "lessons": [
+      {
+        "id": "g5_technique",
+        "domain": "technique",
+        "title": "技巧・音階・指法",
+        "icon": "🎹",
+        "target": "兩個八度 hands together",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g5_rhythm",
+        "domain": "rhythm",
+        "title": "節奏・拍感",
+        "icon": "🥁",
+        "target": "切分",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g5_reading",
+        "domain": "reading",
+        "title": "五線譜・視奏",
+        "icon": "🎼",
+        "target": "12 音視奏・較寬音域",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g5_aural",
+        "domain": "aural",
+        "title": "聽力・聽奏",
+        "icon": "👂",
+        "target": "5 音・5 音旋律",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g5_theory",
+        "domain": "theory",
+        "title": "樂理・音樂知識",
+        "icon": "✏️",
+        "target": "major/minor triads",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g5_repertoire",
+        "domain": "repertoire",
+        "title": "曲目・演奏",
+        "icon": "🎵",
+        "target": "動畫風格簡編",
+        "maxStars": 5,
+        "core": true
+      }
+    ],
+    "mastery": {
+      "minimumEachDomainStars": 3,
+      "minimumTotalStars": 22,
+      "mustPassAllDomains": true
+    }
+  },
+  {
+    "grade": 4,
+    "id": "grade_4",
+    "title": "4級",
+    "stage": "Upper Intermediate 1",
+    "goal": "旋律小調、兩個八度琶音、兩聲部、9/8 與更成熟的聲部控制。",
+    "keys": [
+      "5♯/5♭ 內大調與小調"
+    ],
+    "technique": [
+      "major / harmonic / melodic minor",
+      "兩個八度琶音",
+      "contrary motion",
+      "聲部控制"
+    ],
+    "rhythm": [
+      "三連音",
+      "較複雜切分",
+      "6/8、9/8"
+    ],
+    "reading": [
+      "兩聲部",
+      "內聲部和弦",
+      "較多臨時記號"
+    ],
+    "aural": [
+      "6 音旋律",
+      "I/IV/V 和聲感",
+      "節奏重現"
+    ],
+    "theory": [
+      "三和弦轉位",
+      "屬七和弦入門",
+      "複合拍",
+      "樂句/終止"
+    ],
+    "repertoire": [
+      "古典原作中級短曲",
+      "電影/流行中級編曲",
+      "兩聲部作品"
+    ],
+    "tempo": "♩=88–112",
+    "sight": {
+      "hands": "雙手",
+      "range": [
+        "D2",
+        "G5"
+      ],
+      "length": 14,
+      "rhythms": [
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2
+      ],
+      "random": true
+    },
+    "ear": {
+      "length": 6,
+      "range": [
+        "D2",
+        "G5"
+      ],
+      "mode": "旋律＋節奏＋和聲"
+    },
+    "lessons": [
+      {
+        "id": "g4_technique",
+        "domain": "technique",
+        "title": "技巧・音階・指法",
+        "icon": "🎹",
+        "target": "major / harmonic / melodic minor",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g4_rhythm",
+        "domain": "rhythm",
+        "title": "節奏・拍感",
+        "icon": "🥁",
+        "target": "三連音",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g4_reading",
+        "domain": "reading",
+        "title": "五線譜・視奏",
+        "icon": "🎼",
+        "target": "14 音視奏・兩聲部",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g4_aural",
+        "domain": "aural",
+        "title": "聽力・聽奏",
+        "icon": "👂",
+        "target": "6 音・6 音旋律",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g4_theory",
+        "domain": "theory",
+        "title": "樂理・音樂知識",
+        "icon": "✏️",
+        "target": "三和弦轉位",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g4_repertoire",
+        "domain": "repertoire",
+        "title": "曲目・演奏",
+        "icon": "🎵",
+        "target": "古典原作中級短曲",
+        "maxStars": 5,
+        "core": true
+      }
+    ],
+    "mastery": {
+      "minimumEachDomainStars": 3,
+      "minimumTotalStars": 24,
+      "mustPassAllDomains": true
+    }
+  },
+  {
+    "grade": 3,
+    "id": "grade_3",
+    "title": "3級",
+    "stage": "Upper Intermediate 2",
+    "goal": "chromatic、dominant 7th、多聲部、裝飾音與時期風格。",
+    "keys": [
+      "多數常用大/小調"
+    ],
+    "technique": [
+      "音階/琶音多調",
+      "chromatic scale",
+      "dominant 7th",
+      "聲部力度分離"
+    ],
+    "rhythm": [
+      "十六分組合",
+      "複合拍",
+      "rubato 與 pulse"
+    ],
+    "reading": [
+      "多聲部",
+      "裝飾音",
+      "跨手/換譜表"
+    ],
+    "aural": [
+      "6 音旋律",
+      "和弦色彩",
+      "拍號/風格辨認"
+    ],
+    "theory": [
+      "dominant 7th",
+      "cadence",
+      "binary/ternary",
+      "常用術語"
+    ],
+    "repertoire": [
+      "巴洛克/古典/浪漫短曲",
+      "較完整流行編曲",
+      "多聲部曲"
+    ],
+    "tempo": "♩=90–116",
+    "sight": {
+      "hands": "雙手",
+      "range": [
+        "C2",
+        "A5"
+      ],
+      "length": 16,
+      "rhythms": [
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2
+      ],
+      "random": true
+    },
+    "ear": {
+      "length": 6,
+      "range": [
+        "C2",
+        "A5"
+      ],
+      "mode": "旋律＋節奏＋和聲"
+    },
+    "lessons": [
+      {
+        "id": "g3_technique",
+        "domain": "technique",
+        "title": "技巧・音階・指法",
+        "icon": "🎹",
+        "target": "音階/琶音多調",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g3_rhythm",
+        "domain": "rhythm",
+        "title": "節奏・拍感",
+        "icon": "🥁",
+        "target": "十六分組合",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g3_reading",
+        "domain": "reading",
+        "title": "五線譜・視奏",
+        "icon": "🎼",
+        "target": "16 音視奏・多聲部",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g3_aural",
+        "domain": "aural",
+        "title": "聽力・聽奏",
+        "icon": "👂",
+        "target": "6 音・6 音旋律",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g3_theory",
+        "domain": "theory",
+        "title": "樂理・音樂知識",
+        "icon": "✏️",
+        "target": "dominant 7th",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g3_repertoire",
+        "domain": "repertoire",
+        "title": "曲目・演奏",
+        "icon": "🎵",
+        "target": "巴洛克/古典/浪漫短曲",
+        "maxStars": 5,
+        "core": true
+      }
+    ],
+    "mastery": {
+      "minimumEachDomainStars": 3,
+      "minimumTotalStars": 24,
+      "mustPassAllDomains": true
+    }
+  },
+  {
+    "grade": 2,
+    "id": "grade_2",
+    "title": "2級",
+    "stage": "Advanced 1",
+    "goal": "全調性系統、高密度視奏、voicing、複雜節奏與完整演奏。",
+    "keys": [
+      "全調性系統化"
+    ],
+    "technique": [
+      "音階/琶音流暢",
+      "chromatic",
+      "dominant/diminished 7th",
+      "voicing"
+    ],
+    "rhythm": [
+      "十六分組合",
+      "複雜切分",
+      "變拍",
+      "速度控制"
+    ],
+    "reading": [
+      "大音域快速閱讀",
+      "密集和弦",
+      "多聲部"
+    ],
+    "aural": [
+      "7 音旋律",
+      "和弦/終止式",
+      "複雜節奏"
+    ],
+    "theory": [
+      "和聲功能",
+      "轉調入門",
+      "曲式分析",
+      "速度/表情術語"
+    ],
+    "repertoire": [
+      "完整中高級古典",
+      "電影/流行完整編曲",
+      "舞台連續演奏"
+    ],
+    "tempo": "♩=96–120",
+    "sight": {
+      "hands": "雙手",
+      "range": [
+        "B1",
+        "B5"
+      ],
+      "length": 18,
+      "rhythms": [
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2
+      ],
+      "random": true
+    },
+    "ear": {
+      "length": 7,
+      "range": [
+        "B1",
+        "B5"
+      ],
+      "mode": "旋律＋節奏＋和聲"
+    },
+    "lessons": [
+      {
+        "id": "g2_technique",
+        "domain": "technique",
+        "title": "技巧・音階・指法",
+        "icon": "🎹",
+        "target": "音階/琶音流暢",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g2_rhythm",
+        "domain": "rhythm",
+        "title": "節奏・拍感",
+        "icon": "🥁",
+        "target": "十六分組合",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g2_reading",
+        "domain": "reading",
+        "title": "五線譜・視奏",
+        "icon": "🎼",
+        "target": "18 音視奏・大音域快速閱讀",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g2_aural",
+        "domain": "aural",
+        "title": "聽力・聽奏",
+        "icon": "👂",
+        "target": "7 音・7 音旋律",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g2_theory",
+        "domain": "theory",
+        "title": "樂理・音樂知識",
+        "icon": "✏️",
+        "target": "和聲功能",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g2_repertoire",
+        "domain": "repertoire",
+        "title": "曲目・演奏",
+        "icon": "🎵",
+        "target": "完整中高級古典",
+        "maxStars": 5,
+        "core": true
+      }
+    ],
+    "mastery": {
+      "minimumEachDomainStars": 3,
+      "minimumTotalStars": 24,
+      "mustPassAllDomains": true
+    }
+  },
+  {
+    "grade": 1,
+    "id": "grade_1",
+    "title": "1級",
+    "stage": "Advanced 2",
+    "goal": "綜合演奏能力：完整技術、快速閱讀、聽力、分析、自主練習與詮釋。",
+    "keys": [
+      "全調性"
+    ],
+    "technique": [
+      "全調性音階/琶音",
+      "高速均勻",
+      "高階和弦/終止式",
+      "觸鍵與聲部控制"
+    ],
+    "rhythm": [
+      "複雜節奏整合",
+      "變拍",
+      "rubato 與穩定 pulse"
+    ],
+    "reading": [
+      "快速視奏",
+      "大跨度",
+      "多聲部",
+      "風格化閱讀"
+    ],
+    "aural": [
+      "8 音回奏",
+      "和聲進行",
+      "節奏",
+      "風格/樂句分析"
+    ],
+    "theory": [
+      "和聲分析",
+      "曲式",
+      "調性關係",
+      "演奏術語與風格"
+    ],
+    "repertoire": [
+      "完整古典作品",
+      "完整授權/自有流行電影動畫編曲",
+      "自主詮釋"
+    ],
+    "tempo": "♩=100–132",
+    "sight": {
+      "hands": "雙手",
+      "range": [
+        "A1",
+        "C6"
+      ],
+      "length": 20,
+      "rhythms": [
+        0.25,
+        0.5,
+        0.75,
+        1,
+        1.5,
+        2
+      ],
+      "random": true
+    },
+    "ear": {
+      "length": 8,
+      "range": [
+        "A1",
+        "C6"
+      ],
+      "mode": "旋律＋節奏＋和聲"
+    },
+    "lessons": [
+      {
+        "id": "g1_technique",
+        "domain": "technique",
+        "title": "技巧・音階・指法",
+        "icon": "🎹",
+        "target": "全調性音階/琶音",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g1_rhythm",
+        "domain": "rhythm",
+        "title": "節奏・拍感",
+        "icon": "🥁",
+        "target": "複雜節奏整合",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g1_reading",
+        "domain": "reading",
+        "title": "五線譜・視奏",
+        "icon": "🎼",
+        "target": "20 音視奏・快速視奏",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g1_aural",
+        "domain": "aural",
+        "title": "聽力・聽奏",
+        "icon": "👂",
+        "target": "8 音・8 音回奏",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g1_theory",
+        "domain": "theory",
+        "title": "樂理・音樂知識",
+        "icon": "✏️",
+        "target": "和聲分析",
+        "maxStars": 5,
+        "core": true
+      },
+      {
+        "id": "g1_repertoire",
+        "domain": "repertoire",
+        "title": "曲目・演奏",
+        "icon": "🎵",
+        "target": "完整古典作品",
+        "maxStars": 5,
+        "core": true
+      }
+    ],
+    "mastery": {
+      "minimumEachDomainStars": 3,
+      "minimumTotalStars": 24,
+      "mustPassAllDomains": true
+    }
+  }
+]

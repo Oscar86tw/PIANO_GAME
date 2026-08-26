@@ -1,0 +1,863 @@
+[
+  {
+    "grade": 10,
+    "techniqueExercises": [
+      {
+        "title": "坐姿與手型",
+        "task": "坐直、肩膀放鬆、手腕自然、手指圓弧",
+        "starsRule": "正確完成 3 項=3★；全部穩定=5★"
+      },
+      {
+        "title": "C 五指位置",
+        "notes": [
+          "C4",
+          "D4",
+          "E4",
+          "F4",
+          "G4"
+        ],
+        "fingers": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "hand": "右手",
+        "bpm": 60
+      },
+      {
+        "title": "左手 C 五指位置",
+        "notes": [
+          "C3",
+          "D3",
+          "E3",
+          "F3",
+          "G3"
+        ],
+        "fingers": [
+          5,
+          4,
+          3,
+          2,
+          1
+        ],
+        "hand": "左手",
+        "bpm": 60
+      }
+    ],
+    "rhythmDurations": [
+      1,
+      2,
+      4
+    ],
+    "sightReadingPatterns": [
+      {
+        "name": "地標音辨認",
+        "length": 6,
+        "motion": "級進",
+        "hands": "右手",
+        "timeSig": [
+          4,
+          4
+        ]
+      },
+      {
+        "name": "節奏讀譜",
+        "length": 4,
+        "rhythmOnly": true,
+        "timeSig": [
+          4,
+          4
+        ]
+      }
+    ],
+    "sightRange": [
+      "C4",
+      "G4"
+    ],
+    "auralTasks": [
+      "高音/低音辨認",
+      "2–3 音回奏",
+      "四分/二分節奏模仿"
+    ],
+    "repertoireTasks": [
+      "兒歌 8–16 小節",
+      "卡通熟悉旋律",
+      "雙手不強求同步"
+    ],
+    "lessonFlow": [
+      "示範 / 說明",
+      "慢速分解",
+      "單手或局部練習",
+      "正常速度",
+      "隨機測驗",
+      "1–5 星評分",
+      "未達 3 星則安排複習"
+    ]
+  },
+  {
+    "grade": 9,
+    "techniqueExercises": [
+      {
+        "title": "C 五指上行下行",
+        "notes": [
+          "C4",
+          "D4",
+          "E4",
+          "F4",
+          "G4",
+          "F4",
+          "E4",
+          "D4",
+          "C4"
+        ],
+        "fingers": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          4,
+          3,
+          2,
+          1
+        ],
+        "hand": "右手",
+        "bpm": 66
+      },
+      {
+        "title": "G 五指位置",
+        "notes": [
+          "G4",
+          "A4",
+          "B4",
+          "C5",
+          "D5"
+        ],
+        "fingers": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "hand": "右手",
+        "bpm": 66
+      },
+      {
+        "title": "Legato / Staccato 對比",
+        "task": "同一句先連奏再斷奏",
+        "bpm": 64
+      }
+    ],
+    "rhythmDurations": [
+      1,
+      2,
+      3
+    ],
+    "sightReadingPatterns": [
+      {
+        "name": "級進＋三度跳進",
+        "length": 8,
+        "motion": "step-third",
+        "hands": "單手輪替",
+        "timeSig": [
+          4,
+          4
+        ]
+      },
+      {
+        "name": "3/4 視奏",
+        "length": 8,
+        "motion": "級進",
+        "hands": "右手",
+        "timeSig": [
+          3,
+          4
+        ]
+      }
+    ],
+    "sightRange": [
+      "B3",
+      "A4"
+    ],
+    "auralTasks": [
+      "3 音旋律回奏",
+      "相同/不同節奏",
+      "強/弱辨認"
+    ],
+    "repertoireTasks": [
+      "卡通 / 流行簡化 16 小節",
+      "初級古典 8–16 小節",
+      "加入 forte / piano"
+    ],
+    "lessonFlow": [
+      "示範 / 說明",
+      "慢速分解",
+      "單手或局部練習",
+      "正常速度",
+      "隨機測驗",
+      "1–5 星評分",
+      "未達 3 星則安排複習"
+    ]
+  },
+  {
+    "grade": 8,
+    "techniqueExercises": [
+      {
+        "title": "C Major 一個八度",
+        "notes": [
+          "C4",
+          "D4",
+          "E4",
+          "F4",
+          "G4",
+          "A4",
+          "B4",
+          "C5"
+        ],
+        "fingers": [
+          1,
+          2,
+          3,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "hand": "右手",
+        "bpm": 72
+      },
+      {
+        "title": "G Major 一個八度",
+        "notes": [
+          "G4",
+          "A4",
+          "B4",
+          "C5",
+          "D5",
+          "E5",
+          "F#5",
+          "G5"
+        ],
+        "fingers": [
+          1,
+          2,
+          3,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "hand": "右手",
+        "bpm": 72
+      },
+      {
+        "title": "I 和弦形狀",
+        "chords": [
+          [
+            "C4",
+            "E4",
+            "G4"
+          ],
+          [
+            "G3",
+            "B3",
+            "D4"
+          ]
+        ],
+        "bpm": 60
+      }
+    ],
+    "rhythmDurations": [
+      0.5,
+      1,
+      2
+    ],
+    "sightReadingPatterns": [
+      {
+        "name": "八分音符視奏",
+        "length": 8,
+        "motion": "step-third-fourth",
+        "hands": "雙手簡單",
+        "timeSig": [
+          4,
+          4
+        ]
+      },
+      {
+        "name": "臨時記號入門",
+        "length": 8,
+        "accidentals": 1,
+        "hands": "右手",
+        "timeSig": [
+          4,
+          4
+        ]
+      }
+    ],
+    "sightRange": [
+      "A3",
+      "C5"
+    ],
+    "auralTasks": [
+      "4 音回奏",
+      "2度/3度方向",
+      "2/4、3/4、4/4 拍號辨認"
+    ],
+    "repertoireTasks": [
+      "兒童流行簡編",
+      "簡單舞曲",
+      "雙手固定伴奏"
+    ],
+    "lessonFlow": [
+      "示範 / 說明",
+      "慢速分解",
+      "單手或局部練習",
+      "正常速度",
+      "隨機測驗",
+      "1–5 星評分",
+      "未達 3 星則安排複習"
+    ]
+  },
+  {
+    "grade": 7,
+    "techniqueExercises": [
+      {
+        "title": "C / G / F 一個八度",
+        "task": "左右手分開，各自均勻",
+        "bpm": 76
+      },
+      {
+        "title": "I–V7–I",
+        "chords": [
+          [
+            "C4",
+            "E4",
+            "G4"
+          ],
+          [
+            "B3",
+            "D4",
+            "F4",
+            "G4"
+          ],
+          [
+            "C4",
+            "E4",
+            "G4"
+          ]
+        ],
+        "bpm": 60
+      },
+      {
+        "title": "踏板換踏入門",
+        "task": "和聲更換後換踏板，不混濁",
+        "bpm": 56
+      }
+    ],
+    "rhythmDurations": [
+      0.5,
+      1,
+      1.5,
+      2
+    ],
+    "sightReadingPatterns": [
+      {
+        "name": "6/8 視奏",
+        "length": 10,
+        "motion": "mixed",
+        "hands": "雙手",
+        "timeSig": [
+          6,
+          8
+        ]
+      },
+      {
+        "name": "調號視奏",
+        "length": 10,
+        "keyChoices": [
+          "G",
+          "F",
+          "D"
+        ],
+        "hands": "雙手",
+        "timeSig": [
+          4,
+          4
+        ]
+      }
+    ],
+    "sightRange": [
+      "G3",
+      "D5"
+    ],
+    "auralTasks": [
+      "4 音回奏含跳進",
+      "大調/小調情緒",
+      "樂句句尾辨認"
+    ],
+    "repertoireTasks": [
+      "動畫 / 電影簡編",
+      "古典性格小品",
+      "開始踏板"
+    ],
+    "lessonFlow": [
+      "示範 / 說明",
+      "慢速分解",
+      "單手或局部練習",
+      "正常速度",
+      "隨機測驗",
+      "1–5 星評分",
+      "未達 3 星則安排複習"
+    ]
+  },
+  {
+    "grade": 6,
+    "techniqueExercises": [
+      {
+        "title": "C Major 兩個八度",
+        "task": "雙手分開，換指平順",
+        "bpm": 80
+      },
+      {
+        "title": "G / D / F 音階",
+        "task": "兩個八度 hands separately",
+        "bpm": 80
+      },
+      {
+        "title": "主和弦琶音",
+        "task": "根音位置 1 個八度",
+        "bpm": 66
+      }
+    ],
+    "rhythmDurations": [
+      0.5,
+      1,
+      1.5,
+      2,
+      3
+    ],
+    "sightReadingPatterns": [
+      {
+        "name": "雙手不同節奏",
+        "length": 12,
+        "hands": "雙手",
+        "timeSig": [
+          4,
+          4
+        ]
+      },
+      {
+        "name": "Ledger Line 視奏",
+        "length": 12,
+        "hands": "雙手",
+        "timeSig": [
+          3,
+          4
+        ]
+      }
+    ],
+    "sightRange": [
+      "F3",
+      "E5"
+    ],
+    "auralTasks": [
+      "5 音回奏",
+      "I/V 感覺",
+      "八分音符節奏模仿"
+    ],
+    "repertoireTasks": [
+      "流行抒情簡編",
+      "巴洛克/古典短曲",
+      "要求樂句"
+    ],
+    "lessonFlow": [
+      "示範 / 說明",
+      "慢速分解",
+      "單手或局部練習",
+      "正常速度",
+      "隨機測驗",
+      "1–5 星評分",
+      "未達 3 星則安排複習"
+    ]
+  },
+  {
+    "grade": 5,
+    "techniqueExercises": [
+      {
+        "title": "常用大調雙手兩個八度",
+        "task": "C/G/D/F/Bb hands together",
+        "bpm": 84
+      },
+      {
+        "title": "Harmonic Minor",
+        "task": "A/E/D minor hands separately",
+        "bpm": 76
+      },
+      {
+        "title": "三和弦轉位",
+        "task": "Root / 1st / 2nd inversion",
+        "bpm": 66
+      }
+    ],
+    "rhythmDurations": [
+      0.5,
+      0.75,
+      1,
+      1.5,
+      2
+    ],
+    "sightReadingPatterns": [
+      {
+        "name": "三連音入門",
+        "length": 12,
+        "hands": "雙手",
+        "timeSig": [
+          4,
+          4
+        ]
+      },
+      {
+        "name": "切分視奏",
+        "length": 12,
+        "hands": "雙手",
+        "timeSig": [
+          4,
+          4
+        ]
+      }
+    ],
+    "sightRange": [
+      "E3",
+      "F5"
+    ],
+    "auralTasks": [
+      "5 音旋律",
+      "大/小三和弦",
+      "終止感辨認"
+    ],
+    "repertoireTasks": [
+      "宮崎駿風格簡編",
+      "古典原作短曲",
+      "踏板與音色"
+    ],
+    "lessonFlow": [
+      "示範 / 說明",
+      "慢速分解",
+      "單手或局部練習",
+      "正常速度",
+      "隨機測驗",
+      "1–5 星評分",
+      "未達 3 星則安排複習"
+    ]
+  },
+  {
+    "grade": 4,
+    "techniqueExercises": [
+      {
+        "title": "Major / Harmonic / Melodic Minor",
+        "task": "兩個八度、均勻",
+        "bpm": 88
+      },
+      {
+        "title": "兩個八度琶音",
+        "task": "常用調 hands separately",
+        "bpm": 72
+      },
+      {
+        "title": "Contrary Motion",
+        "task": "C / G 基本反向音階",
+        "bpm": 72
+      }
+    ],
+    "rhythmDurations": [
+      0.5,
+      0.75,
+      1,
+      1.5,
+      2,
+      3
+    ],
+    "sightReadingPatterns": [
+      {
+        "name": "兩聲部視奏",
+        "length": 14,
+        "hands": "雙手",
+        "voices": 2,
+        "timeSig": [
+          4,
+          4
+        ]
+      },
+      {
+        "name": "9/8 入門",
+        "length": 14,
+        "hands": "雙手",
+        "timeSig": [
+          9,
+          8
+        ]
+      }
+    ],
+    "sightRange": [
+      "D3",
+      "G5"
+    ],
+    "auralTasks": [
+      "6 音旋律",
+      "I/IV/V 和聲感",
+      "節奏重現"
+    ],
+    "repertoireTasks": [
+      "古典原作中級短曲",
+      "電影/流行中級編曲",
+      "聲部控制"
+    ],
+    "lessonFlow": [
+      "示範 / 說明",
+      "慢速分解",
+      "單手或局部練習",
+      "正常速度",
+      "隨機測驗",
+      "1–5 星評分",
+      "未達 3 星則安排複習"
+    ]
+  },
+  {
+    "grade": 3,
+    "techniqueExercises": [
+      {
+        "title": "Chromatic Scale",
+        "task": "一個八度，標準替代指法",
+        "bpm": 84
+      },
+      {
+        "title": "Dominant 7th 形狀",
+        "task": "常用調分解和弦",
+        "bpm": 72
+      },
+      {
+        "title": "聲部平衡",
+        "task": "旋律突出、伴奏降低",
+        "bpm": 72
+      }
+    ],
+    "rhythmDurations": [
+      0.25,
+      0.5,
+      0.75,
+      1,
+      1.5,
+      2
+    ],
+    "sightReadingPatterns": [
+      {
+        "name": "裝飾音＋多聲部",
+        "length": 16,
+        "hands": "雙手",
+        "voices": 2,
+        "timeSig": [
+          4,
+          4
+        ]
+      },
+      {
+        "name": "換譜表視奏",
+        "length": 16,
+        "hands": "雙手",
+        "clefChanges": true,
+        "timeSig": [
+          3,
+          4
+        ]
+      }
+    ],
+    "sightRange": [
+      "C3",
+      "A5"
+    ],
+    "auralTasks": [
+      "6 音旋律",
+      "和弦色彩",
+      "拍號/風格辨認"
+    ],
+    "repertoireTasks": [
+      "巴洛克/古典/浪漫各類",
+      "較完整流行編曲",
+      "裝飾音"
+    ],
+    "lessonFlow": [
+      "示範 / 說明",
+      "慢速分解",
+      "單手或局部練習",
+      "正常速度",
+      "隨機測驗",
+      "1–5 星評分",
+      "未達 3 星則安排複習"
+    ]
+  },
+  {
+    "grade": 2,
+    "techniqueExercises": [
+      {
+        "title": "全調性音階循環",
+        "task": "抽選 4 調，雙手",
+        "bpm": 96
+      },
+      {
+        "title": "Arpeggio / Dominant 7th",
+        "task": "抽選調性完成",
+        "bpm": 84
+      },
+      {
+        "title": "Voicing 練習",
+        "task": "四聲部和弦指定上聲部突出",
+        "bpm": 72
+      }
+    ],
+    "rhythmDurations": [
+      0.25,
+      0.5,
+      0.75,
+      1,
+      1.5,
+      2,
+      3
+    ],
+    "sightReadingPatterns": [
+      {
+        "name": "密集和弦視奏",
+        "length": 18,
+        "hands": "雙手",
+        "chords": true,
+        "timeSig": [
+          4,
+          4
+        ]
+      },
+      {
+        "name": "變拍視奏",
+        "length": 18,
+        "hands": "雙手",
+        "mixedMeters": [
+          [
+            3,
+            4
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            6,
+            8
+          ]
+        ]
+      }
+    ],
+    "sightRange": [
+      "B2",
+      "B5"
+    ],
+    "auralTasks": [
+      "7 音旋律",
+      "終止式",
+      "複雜節奏重現"
+    ],
+    "repertoireTasks": [
+      "完整中高級曲目",
+      "電影/流行完整編曲",
+      "舞台連續演奏"
+    ],
+    "lessonFlow": [
+      "示範 / 說明",
+      "慢速分解",
+      "單手或局部練習",
+      "正常速度",
+      "隨機測驗",
+      "1–5 星評分",
+      "未達 3 星則安排複習"
+    ]
+  },
+  {
+    "grade": 1,
+    "techniqueExercises": [
+      {
+        "title": "全調性隨機抽選",
+        "task": "音階、琶音、和弦隨機抽題",
+        "bpm": 104
+      },
+      {
+        "title": "速度均勻度",
+        "task": "長段落維持一致 pulse",
+        "bpm": 100
+      },
+      {
+        "title": "觸鍵與聲部控制",
+        "task": "旋律、內聲、低音三層平衡",
+        "bpm": 84
+      }
+    ],
+    "rhythmDurations": [
+      0.25,
+      0.5,
+      0.75,
+      1,
+      1.5,
+      2,
+      3,
+      4
+    ],
+    "sightReadingPatterns": [
+      {
+        "name": "綜合快速視奏",
+        "length": 20,
+        "hands": "雙手",
+        "voices": 2,
+        "chords": true,
+        "timeSig": [
+          4,
+          4
+        ]
+      },
+      {
+        "name": "風格化視奏",
+        "length": 20,
+        "hands": "雙手",
+        "styleChoices": [
+          "Baroque",
+          "Classical",
+          "Romantic",
+          "Pop"
+        ]
+      }
+    ],
+    "sightRange": [
+      "A2",
+      "C6"
+    ],
+    "auralTasks": [
+      "8 音綜合回奏",
+      "和聲進行",
+      "風格與樂句分析"
+    ],
+    "repertoireTasks": [
+      "完整高階曲目",
+      "不同時期至少兩種風格",
+      "自主詮釋與演奏"
+    ],
+    "lessonFlow": [
+      "示範 / 說明",
+      "慢速分解",
+      "單手或局部練習",
+      "正常速度",
+      "隨機測驗",
+      "1–5 星評分",
+      "未達 3 星則安排複習"
+    ]
+  }
+]

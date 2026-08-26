@@ -1,0 +1,19 @@
+
+.score-sheet{background:#fff;border:1px solid #e1e5ec;border-radius:14px;padding:14px;overflow:auto}
+.engrave-measure{position:relative;display:inline-block;width:260px;height:270px;margin:0 0 12px -1px;vertical-align:top;border-right:1px solid #d6dae2}
+.engrave-line{position:absolute;left:0;right:0;height:1px;background:#515864}
+.engrave-brace{position:absolute;left:2px;top:63px;font-family:serif;font-size:126px;line-height:1;color:#636b78;transform:scaleX(.5)}
+.engrave-clef{position:absolute;font-family:serif;color:#3f4652}
+.engrave-clef.treble{left:18px;top:37px;font-size:56px}.engrave-clef.bass{left:23px;top:169px;font-size:37px}
+.measure-number{position:absolute;left:7px;top:8px;font-size:.62rem;color:#9098a8}
+.engrave-barline{position:absolute;right:0;top:54px;width:1px;height:173px;background:#4e5663}
+.engrave-note{position:absolute;width:14px;height:10px;border-radius:50%;background:#3e4654;transform:rotate(-16deg)}
+.engrave-note.left{background:#6c60ca}.engrave-note:after{content:"";position:absolute;width:2px;height:31px;right:1px;bottom:6px;background:inherit}
+.engrave-note.whole{background:transparent;border:2px solid #3e4654}.engrave-note.whole:after{display:none}
+.engrave-note.half{background:#fff;border:2px solid #3e4654}.engrave-note.left.half{border-color:#6c60ca}.engrave-note.half:after{background:#3e4654}
+.engrave-rest{position:absolute;font-family:serif;font-size:24px;color:#4f5662}
+.engrave-accidental{position:absolute;font-size:16px;color:#3f4652}.engrave-finger{position:absolute;font-size:.65rem;color:#9a7a31;font-weight:900}
+.engrave-ledger{position:absolute;width:24px;height:1px;background:#4f5662}
+.score-meta-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.score-meta-grid>div{border:1px solid #e1e5ec;border-radius:10px;padding:8px;text-align:center}.score-meta-grid small{display:block;color:#8b95a7;font-size:.6rem}.score-meta-grid b{display:block;margin-top:3px}
+@media(max-width:700px){.score-meta-grid{grid-template-columns:1fr 1fr 1fr}.engrave-measure{width:230px}}

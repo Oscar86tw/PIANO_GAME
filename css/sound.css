@@ -1,0 +1,2 @@
+
+.voice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.voice-card{border:1px solid #e2e6ef;border-radius:14px;padding:12px;background:#fff}.voice-card.active{border-color:#bcb4ee;background:#faf9ff}.voice-card strong{display:block}.voice-card small{display:block;color:#8d96a9;margin-top:3px}@media(max-width:700px){.voice-grid{grid-template-columns:1fr}}
