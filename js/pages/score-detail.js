@@ -7,7 +7,7 @@
    if(hasSyncEvents&&window.ScoreRenderer?.splitMeasures){const measures=ScoreRenderer.splitMeasures(song); rendered={measures,totalMeasures:measures.length};}
    scoreSheet.style.display='none';
    photoScoreView.style.display='block';
-   const imgHtml=song.pageImages.map((src,i)=>{const realSrc=String(src).startsWith('data:')?src:`../${src}`;return `<figure class="photo-score-page"><img src="${realSrc}" alt="${song.title} 第${i+1}頁"><figcaption>第 ${i+1} 頁${song.visibleMeasures?`｜${song.visibleMeasures}`:''}</figcaption></figure>`}).join('');
+   const imgHtml=(await Promise.all(song.pageImages.map(async(src,i)=>{let realSrc;if(String(src).startsWith('idb:'))realSrc=await PhotoStore.url(String(src).slice(4));else realSrc=String(src).startsWith('data:')?src:`../${src}`;return `<figure class="photo-score-page"><img src="${realSrc||''}" alt="${song.title} 第${i+1}頁"><figcaption>第 ${i+1} 頁${song.visibleMeasures?`｜${song.visibleMeasures}`:''}</figcaption></figure>`}))).join('');
    photoScoreView.innerHTML=`<div class="kicker">PHOTO SCORE</div><h2>上傳教材譜面</h2>${hasSyncEvents?'<div class="status ok">已建立同步練習版：可以直接進入同步練習。</div>':'<div class="status">目前已加入曲庫。若要節拍器、五線譜與音符同步，請到「匯入樂譜」頁按「轉同步版」。</div>'}${imgHtml}`;
  }else{
    rendered=ScoreRenderer.renderScore(scoreSheet,song);

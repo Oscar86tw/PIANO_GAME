@@ -22,3 +22,6 @@
  .preview-card img{height:210px}
  .camera-save-row .btn{width:100%;padding:12px}
 }
+
+/* V6.4 photo manager */
+.preview-card{overflow:hidden}.preview-card img{transition:transform .18s ease;transform-origin:center}.camera-status{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.camera-status span{background:#f4f5f9;border-radius:999px;padding:5px 8px;font-size:.68rem}.preview-actions{display:flex;gap:5px;flex-wrap:wrap}.preview-actions button{border:1px solid #dfe3eb;background:#fff;border-radius:8px;padding:6px 8px}

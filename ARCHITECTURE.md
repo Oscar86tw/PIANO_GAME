@@ -216,8 +216,15 @@ Photo-only scores are viewable immediately; playable EventTimeline data can be a
 - No animation pulses or flashes are used.
 
 
-## V6.3 Mobile Camera UX
+## V6.4 Mobile Camera UX
 - cameraInput: capture=environment 單頁拍攝。
 - galleryInput: 多頁相簿選取。
 - pendingPhotos: 尚未存入曲庫的本次照片佇列，可排序與刪除。
 - savePhotoToLibrary() 繼續負責壓縮並寫入 photo-library-v61。
+
+
+## V6.4 PhotoStore
+- `js/core/photo-store.js` owns IndexedDB `PianoLearningPhotoStoreV64`.
+- Library metadata remains lightweight in localStorage; page images are referenced as `idb:<pageId>`.
+- Score detail resolves IndexedDB refs asynchronously to object URLs.
+- Import page provides mobile reorder/rotate/delete and storage quota status.

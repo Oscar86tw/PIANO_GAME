@@ -117,36 +117,33 @@
 
   function listPhotos(){return Store.get(PHOTO_LIBRARY_KEY,[])}
   function savePhotos(rows){Store.set(PHOTO_LIBRARY_KEY,rows)}
-  function readDataURL(file){
-    return new Promise((resolve,reject)=>{
-      const img=new Image(),fr=new FileReader();
-      fr.onload=()=>{img.onload=()=>{
-        const max=1600,ratio=Math.min(1,max/Math.max(img.width,img.height));
-        const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(img.width*ratio)); c.height=Math.max(1,Math.round(img.height*ratio));
-        const ctx=c.getContext('2d'); ctx.drawImage(img,0,0,c.width,c.height);
-        resolve(c.toDataURL('image/jpeg',0.82));
-      }; img.onerror=reject; img.src=fr.result}; fr.onerror=reject; fr.readAsDataURL(file);
-    });
+  async function fileToBlob(file,rotation=0){
+    const url=URL.createObjectURL(file);
+    try{
+      const img=await new Promise((resolve,reject)=>{const x=new Image();x.onload=()=>resolve(x);x.onerror=reject;x.src=url});
+      const max=1800,ratio=Math.min(1,max/Math.max(img.width,img.height));
+      const w=Math.max(1,Math.round(img.width*ratio)),h=Math.max(1,Math.round(img.height*ratio));
+      const rot=((rotation%360)+360)%360,swap=rot===90||rot===270;
+      const c=document.createElement('canvas');c.width=swap?h:w;c.height=swap?w:h;const ctx=c.getContext('2d');
+      ctx.translate(c.width/2,c.height/2);ctx.rotate(rot*Math.PI/180);ctx.drawImage(img,-w/2,-h/2,w,h);
+      return await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',.86));
+    } finally {URL.revokeObjectURL(url)}
   }
-
   async function savePhotoToLibrary(meta,files){
-    const rows=listPhotos();
-    const pages=[];
-    for(const f of [...files]) pages.push(await readDataURL(f));
+    const rows=listPhotos(),refs=[];
+    for(const f of [...files]){
+      const blob=await fileToBlob(f.file||f,f.rotation||0);
+      const ref=await PhotoStore.put(blob,{name:(f.file||f).name||'camera.jpg'});refs.push(ref);
+    }
     const title=(meta.title||'未命名拍照樂譜').trim();
-    const item={
-      id:uniqueId('photo_'+title,rows),
-      title, composer:(meta.author||'').trim(), author:(meta.author||'').trim(),
-      category:'我的拍照樂譜', level:'照片教材', key:'Unknown',
-      bpm:88, timeSig:[4,4], measures:0, photoScore:true, syncReady:false,
-      pageImages:pages, pageCount:pages.length, visibleMeasures:`${pages.length} 頁教材`,
-      practiceNotes:['手機拍照上傳。已加入曲庫，可稍後轉成同步練習版。'],
-      createdAt:Date.now(), complete:false, collection:'我的拍照曲庫'
-    };
-    rows.unshift(item); savePhotos(rows); return item;
+    const item={id:uniqueId('photo_'+title,rows),title,composer:(meta.author||'').trim(),author:(meta.author||'').trim(),category:'我的拍照樂譜',level:'照片教材',key:'Unknown',bpm:88,timeSig:[4,4],measures:0,photoScore:true,syncReady:false,pageImages:refs.map(id=>'idb:'+id),pageCount:refs.length,visibleMeasures:`${refs.length} 頁教材`,practiceNotes:['手機拍照上傳，原始頁面存於 IndexedDB。已加入曲庫，可稍後轉同步練習版。'],createdAt:Date.now(),complete:false,collection:'我的拍照曲庫'};
+    rows.unshift(item);savePhotos(rows);return item;
   }
-  function removePhoto(id){savePhotos(listPhotos().filter(x=>x.id!==id))}
-
+  async function removePhoto(id){
+    const rows=listPhotos(),row=rows.find(x=>x.id===id);
+    if(row){const ids=(row.pageImages||[]).filter(x=>String(x).startsWith('idb:')).map(x=>String(x).slice(4));await PhotoStore.removeMany(ids)}
+    savePhotos(rows.filter(x=>x.id!==id));
+  }
   function note(name,oct){return name+oct}
   function buildByTemplate(template, measures, timeSig){
     const [beats,unit]=timeSig||[4,4];

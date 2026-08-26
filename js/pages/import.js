@@ -20,6 +20,7 @@ const syncCancel=document.getElementById('syncCancel');
 const syncBuilderStatus=document.getElementById('syncBuilderStatus');
 let activePhotoId='';
 let pendingPhotos=[];
+async function refreshStorage(){try{const x=await PhotoStore.estimate();const mb=n=>n?Math.round(n/1024/1024):0;storageBadge.textContent=x.quota?`儲存空間：${mb(x.usage)} / ${mb(x.quota)} MB`:`儲存空間：可用`; }catch(e){storageBadge.textContent=`儲存空間：可用`}}
 
 function updatePhotoStatus(){
   photoCountBadge.textContent=`${pendingPhotos.length} 頁`;
@@ -30,8 +31,9 @@ function updatePhotoStatus(){
 function addFiles(files,replaceFirst=false){
   const rows=[...files].filter(f=>f.type.startsWith('image/'));
   if(!rows.length)return;
-  if(replaceFirst&&pendingPhotos.length)pendingPhotos[0]=rows[0];
-  else pendingPhotos.push(...rows);
+  const wrapped=rows.map(file=>({file,rotation:0}));
+  if(replaceFirst&&pendingPhotos.length)pendingPhotos[0]=wrapped[0];
+  else pendingPhotos.push(...wrapped);
   renderPendingPhotos();
 }
 function movePhoto(index,delta){
@@ -42,12 +44,13 @@ function movePhoto(index,delta){
 function removePending(index){pendingPhotos.splice(index,1);renderPendingPhotos()}
 function renderPendingPhotos(){
   preview.innerHTML='';
-  pendingPhotos.forEach((f,i)=>{
-    const d=document.createElement('div');d.className='preview-card';
-    const img=document.createElement('img'),url=URL.createObjectURL(f);img.src=url;img.onload=()=>URL.revokeObjectURL(url);d.append(img);
-    d.insertAdjacentHTML('beforeend',`<div class="preview-meta">第 ${i+1} 頁 · ${f.name||'相機照片'}</div><div class="preview-actions"><button class="up">← 前移</button><button class="down">後移 →</button><button class="bad remove">刪除</button></div>`);
+  pendingPhotos.forEach((row,i)=>{
+    const f=row.file,d=document.createElement('div');d.className='preview-card';
+    const img=document.createElement('img'),url=URL.createObjectURL(f);img.src=url;img.style.transform=`rotate(${row.rotation||0}deg)`;img.onload=()=>URL.revokeObjectURL(url);d.append(img);
+    d.insertAdjacentHTML('beforeend',`<div class="preview-meta">第 ${i+1} 頁 · ${f.name||'相機照片'} · ${row.rotation||0}°</div><div class="preview-actions"><button class="up">← 前移</button><button class="down">後移 →</button><button class="rotate">↻ 旋轉</button><button class="bad remove">刪除</button></div>`);
     d.querySelector('.up').onclick=()=>movePhoto(i,-1);
     d.querySelector('.down').onclick=()=>movePhoto(i,1);
+    d.querySelector('.rotate').onclick=()=>{pendingPhotos[i].rotation=((pendingPhotos[i].rotation||0)+90)%360;renderPendingPhotos()};
     d.querySelector('.remove').onclick=()=>removePending(i);
     preview.append(d);
   });
@@ -72,7 +75,7 @@ savePhoto.onclick=async()=>{
   }catch(e){
     alert('照片加入曲庫失敗：'+e.message);
     ErrorClient.report('PhotoImport',e,{title:'照片加入曲庫失敗'});
-  }finally{updatePhotoStatus()}
+  }finally{updatePhotoStatus();refreshStorage()}
 };
 
 function renderPhotos(){
@@ -88,7 +91,7 @@ function renderPhotos(){
       <button class="btn bad del">刪除</button>
     </div>`;
     d.querySelector('.build').onclick=()=>openBuilder(x);
-    d.querySelector('.del').onclick=()=>{if(confirm(`刪除「${x.title}」？`)){ScoreImporter.removePhoto(x.id);renderPhotos();if(activePhotoId===x.id)closeBuilder()}};
+    d.querySelector('.del').onclick=async()=>{if(confirm(`刪除「${x.title}」？`)){await ScoreImporter.removePhoto(x.id);renderPhotos();refreshStorage();if(activePhotoId===x.id)closeBuilder()}};
     root.append(d);
   });
 }
@@ -159,6 +162,6 @@ digitalScoreFile.onchange=async()=>{
   }
 };
 
-renderPhotos();renderDigital();
+renderPhotos();renderDigital();refreshStorage();
 
 updatePhotoStatus();

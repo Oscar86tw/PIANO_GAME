@@ -1,6 +1,6 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>匯入樂譜 · V6.3</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/import.css"></head><body data-page="import">
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>匯入樂譜 · V6.4</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/import.css"></head><body data-page="import">
 <header class="topbar">
-<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V6.3</span></div>
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V6.4</span></div>
 <nav class="nav">
 <a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
 <a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
@@ -18,7 +18,7 @@
 <button id="galleryBtn" class="btn">🖼️ 從相簿選多頁</button>
 <button id="clearPhotosBtn" class="btn bad">清除本次照片</button>
 </div>
-<div class="camera-status"><span id="photoCountBadge">0 頁</span><span id="cameraHint">尚未加入照片</span></div>
+<div class="camera-status"><span id="photoCountBadge">0 頁</span><span id="cameraHint">尚未加入照片</span><span id="storageBadge">儲存空間：檢查中</span></div>
 <div id="preview" class="preview-grid camera-preview-grid"></div>
 <div class="camera-save-row"><button id="savePhoto" class="btn primary" disabled>加入曲庫</button><span>加入後可立即按「轉同步版」</span></div></section>
 <section class="card" style="margin-top:12px">
@@ -42,6 +42,7 @@
 <div id="syncBuilderStatus" class="status" style="margin-top:10px">尚未開始轉換。</div>
 </section></main>
 <script src="../js/core/storage.js"></script>
+<script src="../js/core/photo-store.js"></script>
 <script src="../js/core/events.js"></script>
 <script src="../js/core/router.js"></script>
 <script src="../js/core/error-client.js"></script>
