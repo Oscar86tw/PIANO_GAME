@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V1.9</title>
-  <link rel="stylesheet" href="style.css?v=1.9">
+  <title>PIANO LEARNING V2.0</title>
+  <link rel="stylesheet" href="style.css?v=2.0">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V1.9</div>
+        <div class="version-badge">VERSION V2.0</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -71,11 +71,25 @@
           <div><small>PLAY</small><h2>樂譜庫</h2></div>
           <span>200+ 樂譜</span>
         </div>
+        <div class="collection-row" aria-label="整首樂譜分類">
+          <button class="collection-filter active" data-collection="all">全部</button>
+          <button class="collection-filter" data-collection="classic">經典</button>
+          <button class="collection-filter" data-collection="exam">考試</button>
+          <button class="collection-filter" data-collection="fashion">時尚</button>
+          <button class="collection-filter" data-collection="disney">迪士尼</button>
+          <button class="collection-filter" data-collection="practice">短練習</button>
+        </div>
         <div class="filter-row">
-          <button class="filter active" data-level="all">全部</button>
-          <button class="filter" data-level="beginner">Beginner</button>
-          <button class="filter" data-level="easy">Easy</button>
-          <button class="filter" data-level="normal">Normal</button>
+          <button class="filter active" data-level="all">全部程度</button>
+          <button class="filter" data-level="prep">預備級</button>
+          <button class="filter" data-level="1">Level 1</button>
+          <button class="filter" data-level="2">Level 2</button>
+          <button class="filter" data-level="3">Level 3</button>
+          <button class="filter" data-level="4">Level 4</button>
+          <button class="filter" data-level="5">Level 5</button>
+          <button class="filter" data-level="6">Level 6</button>
+          <button class="filter" data-level="7">Level 7</button>
+          <button class="filter" data-level="8">Level 8</button>
         </div>
         <div id="songList" class="song-list"></div>
       </section>
@@ -250,6 +264,6 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=1.9"></script>
+  <script src="app.js?v=2.0"></script>
 </body>
 </html>

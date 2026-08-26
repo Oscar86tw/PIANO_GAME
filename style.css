@@ -305,3 +305,47 @@ button{cursor:pointer}
   .song-row{grid-template-columns:1fr auto}
   .song-row .duration{grid-column:2;grid-row:2}
 }
+
+
+/* V1.9.1 — 彩色律動音符 */
+.music-note{
+  --n1:#43507a;
+  --n2:#2f3446;
+  --gl:rgba(67,80,122,0);
+  --pulse:0;
+  transition:opacity .18s linear, filter .18s linear;
+}
+.music-note.approaching{
+  filter:saturate(calc(1 + var(--pulse) * .28)) brightness(calc(1 + var(--pulse) * .03));
+}
+.note-head{
+  background:linear-gradient(135deg,var(--n1),var(--n2));
+  box-shadow:0 0 calc(2px + var(--pulse) * 5px) var(--gl);
+}
+.note-stem{
+  background:linear-gradient(180deg,var(--n1),var(--n2));
+  box-shadow:0 0 calc(1px + var(--pulse) * 3px) var(--gl);
+}
+.note-flag{border-top-color:var(--n2);filter:drop-shadow(0 0 calc(1px + var(--pulse) * 3px) var(--gl));}
+.music-note.current{
+  transform:translate(-50%,-50%);
+}
+
+.music-note.half .note-head,.music-note.whole .note-head{
+  background:linear-gradient(135deg,#ffffff,#f6fbff);
+  border:3px solid var(--n2);
+  box-shadow:0 0 calc(2px + var(--pulse) * 5px) var(--gl);
+}
+.music-note.matched{--n1:#81ebb2;--n2:#42be7b;--gl:rgba(94,222,152,.45);}
+.music-note.pitch-error{--n1:#ffc47e;--n2:#ef8d42;--gl:rgba(255,181,92,.42);}
+.music-note.timing-error{--n1:#ffacc1;--n2:#d77aa1;--gl:rgba(233,137,181,.42);}
+.music-note.passed{opacity:.28;filter:saturate(.65)}
+
+
+
+/* V2.0 — full repertoire collections */
+.collection-row{display:flex;gap:8px;overflow-x:auto;margin-bottom:9px;padding-bottom:2px}
+.collection-filter{border:1px solid #dddff0;background:white;color:#68738d;border-radius:999px;padding:10px 15px;font-weight:900;white-space:nowrap}
+.collection-filter.active{background:#7569dc;color:white;border-color:#7569dc}
+.licensed-slot{border-style:dashed;background:#fbfaff}
+.licensed-slot strong{color:#655cc3}

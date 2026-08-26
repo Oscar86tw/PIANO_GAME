@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V1.9: 216 built-in pedagogical scores ----------
+// ---------- V2.0: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -142,18 +142,124 @@ function addGeneratedBuiltins(){
 }
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
+
+// ---------- V2.0: full-length repertoire collections ----------
+function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
+  const beatsPerBar=timeSig[0];
+  const events=[];
+  const motifs={
+    lyrical:[0,2,4,3,2,1,0,1,2,4,5,4,2,1],
+    classical:[0,1,2,4,3,2,1,0,2,3,5,4,3,1],
+    exam:[0,2,1,3,2,4,3,1,0,3,5,2,4,1],
+    fashion:[0,4,2,5,3,1,4,2,6,4,1,3,5,2]
+  };
+  const motif=motifs[style]||motifs.lyrical;
+  let beatInBar=0;
+  const totalBeats=bars*beatsPerBar;
+  let used=0,i=0;
+  while(used<totalBeats-.001){
+    let dur;
+    if(style==='fashion') dur=[.5,.5,1,1,1.5,.5][(i+variant)%6];
+    else if(style==='exam') dur=[.5,1,.5,1,1,1][(i+variant)%6];
+    else dur=[1,1,1,1,2][(i+variant)%5];
+    if(used+dur>totalBeats) dur=totalBeats-used;
+    if(beatInBar+dur>beatsPerBar) dur=beatsPerBar-beatInBar;
+    if(dur<=0){beatInBar=0;continue;}
+    if(i%17===16 && style!=='classical') events.push(['REST',dur]);
+    else {
+      const shift=Math.floor(i/motif.length)%Math.max(1,range.length-6);
+      const ni=Math.max(0,Math.min(range.length-1,motif[(i+variant)%motif.length]+shift));
+      events.push([range[ni],dur]);
+    }
+    used+=dur; beatInBar+=dur; i++;
+    if(Math.abs(beatInBar-beatsPerBar)<.001) beatInBar=0;
+  }
+  return events;
+}
+
+const FULL_REPERTOIRE_DEFS=[
+  // Public-domain themed learning arrangements; not claimed as urtext editions.
+  ['classic','Für Elise｜公版主題學習編曲','5',92,[3,4],'A minor','classical'],
+  ['classic','Ode to Joy｜完整學習編曲','2',96,[4,4],'C Major','classical'],
+  ['classic','Canon in D｜完整學習編曲','4',80,[4,4],'D Major','lyrical'],
+  ['classic','Minuet in G｜完整學習編曲','3',104,[3,4],'G Major','classical'],
+  ['classic','Bach Prelude Style｜公版風格學習曲','5',84,[4,4],'C Major','classical'],
+  ['classic','Mozart Sonata Style｜公版風格學習曲','6',112,[4,4],'C Major','classical'],
+  ['classic','Beethoven Sonatina Style｜公版風格學習曲','4',108,[4,4],'G Major','classical'],
+  ['classic','Schumann Album Style｜公版風格學習曲','4',88,[3,4],'C Major','lyrical'],
+  ['classic','Tchaikovsky Album Style｜公版風格學習曲','5',92,[4,4],'G Major','lyrical'],
+  ['classic','Burgmüller Study Style｜公版風格學習曲','5',116,[4,4],'C Major','exam'],
+  ['classic','Clementi Sonatina Style｜公版風格學習曲','6',120,[4,4],'C Major','classical'],
+  ['classic','Romantic Nocturne Style｜公版風格學習曲','7',72,[6,8],'E minor','lyrical'],
+
+  ['exam','Exam Piece 01｜Prep','prep',68,[4,4],'C Major','exam'],
+  ['exam','Exam Piece 02｜Level 1','1',72,[4,4],'C Major','exam'],
+  ['exam','Exam Piece 03｜Level 2','2',80,[3,4],'G Major','exam'],
+  ['exam','Exam Piece 04｜Level 3','3',84,[4,4],'F Major','exam'],
+  ['exam','Exam Piece 05｜Level 4','4',92,[4,4],'D Major','exam'],
+  ['exam','Exam Piece 06｜Level 5','5',100,[3,4],'A minor','exam'],
+  ['exam','Exam Piece 07｜Level 6','6',108,[4,4],'E minor','exam'],
+  ['exam','Exam Piece 08｜Level 7','7',112,[6,8],'G Major','exam'],
+  ['exam','Exam Piece 09｜Level 8','8',120,[4,4],'D Major','exam'],
+  ['exam','Sight Test Concert Piece｜Level 4','4',88,[4,4],'C Major','exam'],
+  ['exam','Technique Concert Study｜Level 6','6',116,[4,4],'A minor','exam'],
+  ['exam','Aural Response Piece｜Level 3','3',76,[3,4],'F Major','lyrical'],
+
+  ['fashion','City Lights','2',92,[4,4],'C Major','fashion'],
+  ['fashion','Midnight Café','3',84,[4,4],'A minor','fashion'],
+  ['fashion','Cloudy Weekend','2',76,[4,4],'F Major','lyrical'],
+  ['fashion','Neon Steps','4',108,[4,4],'D minor','fashion'],
+  ['fashion','Summer Polaroid','3',100,[4,4],'G Major','fashion'],
+  ['fashion','Moonlight Window','4',72,[6,8],'E minor','lyrical'],
+  ['fashion','After School','1',88,[4,4],'C Major','fashion'],
+  ['fashion','Coffee and Rain','5',82,[4,4],'A minor','lyrical'],
+  ['fashion','Weekend Drive','5',110,[4,4],'D Major','fashion'],
+  ['fashion','Soft Focus','6',78,[6,8],'B minor','lyrical'],
+  ['fashion','Blue Sneakers','3',104,[4,4],'G Major','fashion'],
+  ['fashion','Last Train Home','7',96,[4,4],'E minor','fashion']
+];
+
+function addFullRepertoire(){
+  const ranges={
+    prep:['C4','D4','E4','F4','G4'],1:['C4','D4','E4','F4','G4','A4'],2:['B3','C4','D4','E4','F4','G4','A4','B4'],
+    3:['A3','B3','C4','D4','E4','F4','G4','A4','B4','C5'],4:['G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5'],
+    5:['F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5'],
+    6:['E3','F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5'],
+    7:['D3','E3','F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5'],
+    8:['C3','D3','E3','F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5','A5']
+  };
+  FULL_REPERTOIRE_DEFS.forEach((d,i)=>{
+    const [collection,title,levelKey,bpm,timeSig,key,style]=d;
+    const bars=collection==='classic'?24:(collection==='exam'?20:24);
+    const events=buildFullPiecePattern(ranges[levelKey]||ranges[4],i+1,bars,timeSig,style);
+    const id=`full_${collection}_${String(i+1).padStart(2,'0')}`;
+    songs[id]={title,level:`Level ${levelKey}`,levelKey,category:'repertoire',categoryLabel:'整首樂譜',collection,fullScore:true,bpm,timeSig,key,events,builtIn:true};
+  });
+  for(const song of Object.values(songs)){
+    if(!song.events)continue;
+    song.notes=song.events.filter(e=>e[0]!=='REST').map(e=>e[0]);
+    song.totalBeats=song.events.reduce((s,e)=>s+Number(e[1]||0),0);
+    song.duration=song.totalBeats*60/(song.bpm||90);
+  }
+}
+addFullRepertoire();
+const DISNEY_IMPORT_SLOTS=[
+  'Disney Piano Song 01','Disney Piano Song 02','Disney Piano Song 03','Disney Piano Song 04',
+  'Disney Piano Song 05','Disney Piano Song 06','Disney Piano Song 07','Disney Piano Song 08',
+  'Disney Piano Song 09','Disney Piano Song 10','Disney Piano Song 11','Disney Piano Song 12'
+];
 let library = Object.entries(songs).map(([id,s])=>{
   const sec=Math.round(s.duration||0);
   const mm=String(Math.floor(sec/60)).padStart(2,'0');
   const ss=String(sec%60).padStart(2,'0');
   const lvl=s.levelKey==='prep'?'Prep':(s.levelKey?`Level ${s.levelKey}`:(s.level||'Beginner'));
-  return [id,s.title,lvl,`${mm}:${ss}`,s.category||'repertoire'];
+  return [id,s.title,lvl,`${mm}:${ss}`,s.category||'repertoire',s.collection||(s.fullScore?'classic':'practice')];
 });
 
 
 
 const BUILTIN_LIBRARY_COUNT = library.length;
-const IMPORT_STORAGE_KEY='pianoLearningImportedScoresV19';
+const IMPORT_STORAGE_KEY='pianoLearningImportedScoresV20';
 
 function formatDurationSeconds(sec){
   sec=Math.max(0,Math.round(sec||0));
@@ -174,7 +280,7 @@ function rebuildImportedLibrary(){
   library=library.slice(0,BUILTIN_LIBRARY_COUNT);
   Object.entries(songs).forEach(([id,s])=>{
     if(!s.imported) return;
-    library.push([id,s.title,'Imported',formatDurationSeconds(s.duration)]);
+    library.push([id,s.title,'Imported',formatDurationSeconds(s.duration),'repertoire','imported']);
   });
 }
 function persistImportedScores(){
@@ -321,7 +427,7 @@ async function importScoreFile(file){
   const id=uniqueImportId(file.name);songs[id]=song;persistImportedScores();rebuildImportedLibrary();loadImportedScores();
 renderSongList();
 const songCountEl=document.querySelector('#songsPanel .section-title > span');
-if(songCountEl) songCountEl.textContent=`${library.length} 份樂譜`;
+if(songCountEl) songCountEl.textContent=`${library.length} 份內建＋Disney 匯入槽`;
   const warn=song.importWarnings||{};
   const extra=(warn.ignoredChords||warn.ignoredVoices)?`（已略過 ${warn.ignoredChords||0} 個和弦附加音、${warn.ignoredVoices||0} 個其他聲部事件）`:'';
   return {id,song,message:`已匯入：${song.title}｜${Math.round(song.bpm)} BPM｜${song.timeSig.join('/')}｜${song.events.length} 個事件 ${extra}`};
@@ -473,19 +579,38 @@ document.querySelectorAll('.tab').forEach(btn=>{
   });
 });
 
-function renderSongList(level='all'){
+let activeCollection='all';
+let activeLevel='all';
+function renderSongList(){
   const root=$('songList'); root.innerHTML='';
   let rows=library;
-  if(level!=='all') rows=rows.filter(x=>String(x[2]).toLowerCase()===String(level).toLowerCase());
-  rows.forEach(([id,title,lvl,duration,category])=>{
-    const s=songs[id];
-    if(!s)return;
-    const b=document.createElement('button');
-    b.className='song-row'; b.type='button';
-    b.innerHTML=`<span><strong>${title}</strong><small>${s.bpm} BPM · ${(s.timeSig||[4,4]).join('/')} · ${s.categoryLabel||categoryNames?.[category]||'曲目'}</small></span><span class="level">${lvl}</span><span class="duration">${duration}</span>`;
+  if(activeCollection!=='all') rows=rows.filter(x=>String(x[5]||'practice')===activeCollection);
+  if(activeLevel!=='all'){
+    rows=rows.filter(x=>{
+      const s=songs[x[0]];
+      return String(s?.levelKey??'').toLowerCase()===String(activeLevel).toLowerCase();
+    });
+  }
+  rows.forEach(([id,title,lvl,duration,category,collection])=>{
+    const s=songs[id]; if(!s)return;
+    const b=document.createElement('button'); b.className='song-row'; b.type='button';
+    const tag=s.fullScore?'整首':'練習';
+    b.innerHTML=`<span><strong>${title}</strong><small>${s.bpm} BPM · ${(s.timeSig||[4,4]).join('/')} · ${s.categoryLabel||'曲目'} · ${tag}</small></span><span class="level">${lvl}</span><span class="duration">${duration}</span>`;
     b.addEventListener('click',()=>openPractice(id,'PLAY'));
     root.appendChild(b);
   });
+  if(activeCollection==='disney' || activeCollection==='all'){
+    DISNEY_IMPORT_SLOTS.forEach((title,i)=>{
+      const b=document.createElement('button'); b.className='song-row licensed-slot'; b.type='button';
+      b.innerHTML=`<span><strong>${title}</strong><small>Disney 授權樂譜匯入槽 · MusicXML / MIDI</small></span><span class="level">授權匯入</span><span class="duration">＋</span>`;
+      b.addEventListener('click',()=>{
+        document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='import'));
+        document.querySelectorAll('.tab-panel').forEach(x=>x.classList.toggle('active',x.id==='importPanel'));
+        $('importStatus').textContent='請選擇你合法取得的 Disney MusicXML / MIDI 樂譜；匯入後即可完整播放與對譜。';
+      });
+      root.appendChild(b);
+    });
+  }
 }
 renderSongList();
 $('levelFilter').addEventListener('change',renderCurriculum);
@@ -496,7 +621,13 @@ renderCurriculum();
 document.querySelectorAll('.filter').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active'); renderSongList(btn.dataset.level);
+    btn.classList.add('active'); activeLevel=btn.dataset.level; renderSongList();
+  });
+});
+document.querySelectorAll('.collection-filter').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.collection-filter').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); activeCollection=btn.dataset.collection; renderSongList();
   });
 });
 $('quickStart').addEventListener('click',()=>openPractice('sight','5 MIN'));
@@ -980,6 +1111,64 @@ function durationLabel(beats){
   return beats+'拍';
 }
 
+function mixHex(a,b,t){
+  const pa=parseInt(a.slice(1),16), pb=parseInt(b.slice(1),16);
+  const ar=(pa>>16)&255, ag=(pa>>8)&255, ab=pa&255;
+  const br=(pb>>16)&255, bg=(pb>>8)&255, bb=pb&255;
+  const r=Math.round(ar+(br-ar)*t), g=Math.round(ag+(bg-ag)*t), bl=Math.round(ab+(bb-ab)*t);
+  return '#'+[r,g,bl].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+function hexToRgba(hex,alpha){
+  const v=parseInt(hex.slice(1),16);
+  return `rgba(${(v>>16)&255},${(v>>8)&255},${v&255},${alpha})`;
+}
+function notePalette(progress){
+  progress=Math.max(0,Math.min(1,progress));
+  const stops=[
+    {t:0.00,c1:'#5d6b98',c2:'#5877b8'},
+    {t:0.45,c1:'#4faeb4',c2:'#5a93c9'},
+    {t:0.75,c1:'#8a78c2',c2:'#b37ca4'},
+    {t:1.00,c1:'#c9a85c',c2:'#c78566'}
+  ];
+  let s1=stops[0], s2=stops[stops.length-1];
+  for(let i=0;i<stops.length-1;i++){
+    if(progress>=stops[i].t && progress<=stops[i+1].t){ s1=stops[i]; s2=stops[i+1]; break; }
+  }
+  const local=(progress-s1.t)/Math.max(.0001,(s2.t-s1.t));
+  const c1=mixHex(s1.c1,s2.c1,local);
+  const c2=mixHex(s1.c2,s2.c2,local);
+  return {c1,c2,glow:hexToRgba(c2,.05+.10*progress)};
+}
+function applyNoteApproachVisual(el, timeUntilHit, judged=false){
+  if(!el) return;
+  if(judged){
+    el.classList.remove('approaching');
+    el.style.removeProperty('--pulse');
+    return;
+  }
+  const approachWindow=beatSeconds()*1.8;
+  const holdWindow=beatSeconds()*0.18;
+  const active=(timeUntilHit<=approachWindow && timeUntilHit>=-holdWindow);
+  if(!active){
+    el.classList.remove('approaching');
+    el.style.removeProperty('--n1');
+    el.style.removeProperty('--n2');
+    el.style.removeProperty('--gl');
+    el.style.removeProperty('--pulse');
+    return;
+  }
+  let progress;
+  if(timeUntilHit>=0){ progress=1-(timeUntilHit/approachWindow); }
+  else{ progress=1-Math.min(1,Math.abs(timeUntilHit)/holdWindow)*.12; }
+  const palette=notePalette(progress);
+  el.classList.add('approaching');
+  el.style.setProperty('--n1', palette.c1);
+  el.style.setProperty('--n2', palette.c2);
+  el.style.setProperty('--gl', palette.glow);
+  el.style.setProperty('--pulse', progress.toFixed(3));
+}
+
+
 function startPractice(){
   stopAnimationOnly();
   state.running=true; state.paused=false; state.pauseTotal=0; state.startAt=performance.now();
@@ -1049,7 +1238,11 @@ function gameLoop(){
     const expected=ev.startTime;
     const d=Math.abs(e-expected);
     const el=root.querySelector(`.music-note[data-i="${i}"]`);
-    if(el) el.classList.toggle('current',d<0.22);
+    const timeUntilHit=expected-e;
+    if(el){
+      applyNoteApproachVisual(el,timeUntilHit,state.judged.has(i));
+      el.classList.toggle('current',d<0.22);
+    }
     if(d<delta){delta=d;nearest=i}
     if(el && e-ev.endTime>0.22) el.classList.add('passed');
 
@@ -1061,7 +1254,10 @@ function gameLoop(){
         timingErrorMs:null, pitchCorrect:false, rhythmCorrect:false,
         result:'miss',durationBeats:ev.beats
       });
-      if(el) el.classList.add('timing-error');
+      if(el){
+        el.classList.add('timing-error');
+        applyNoteApproachVisual(el,999,true);
+      }
       flash('miss'); showAssist(); state.goodStreak=0;
     }
   });
