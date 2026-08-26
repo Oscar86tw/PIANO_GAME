@@ -1,1 +1,8 @@
 .feature-card{min-height:150px;display:flex;flex-direction:column;justify-content:space-between}.feature-card strong{font-size:1rem}.feature-card span{font-size:.74rem;color:#8a93a5;line-height:1.5}
+
+/* V6.4.1 camera entry */
+.camera-feature{position:relative;border:2px solid #dcd7ff!important;background:linear-gradient(135deg,#fff,#f7f5ff)!important}
+.camera-feature em{display:inline-block;margin-top:10px;color:#6658c9;font-style:normal;font-weight:900}
+.camera-fab{position:fixed;right:18px;bottom:18px;z-index:120;display:flex;align-items:center;gap:7px;padding:12px 15px;border-radius:999px;background:#7569dc;color:#fff;text-decoration:none;font-weight:900;box-shadow:0 12px 30px rgba(74,62,160,.28)}
+.camera-fab span{font-size:.78rem}
+@media(min-width:900px){.camera-fab{display:none}}

@@ -16,3 +16,9 @@ h1,h2,h3{margin:0;color:#48546e}h1{font-size:1.7rem}h2{font-size:1.15rem}h3{font
 footer{padding:20px;text-align:center;color:#98a0b0;font-size:.67rem}
 @media(max-width:900px){.hero,.grid-3,.grid-4{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.hero,.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.nav{width:100%;overflow:auto;flex-wrap:nowrap}}
+
+/* V6.4.1 visible camera nav */
+.nav a[data-nav="import"]{background:#f2efff;color:#6257c5;border-radius:999px;padding-left:10px;padding-right:10px;font-weight:900}
+.nav a[data-nav="import"].active{background:#7569dc;color:#fff}
+
+.camera-nav-link{background:#f2efff!important;color:#6257c5!important;border-radius:999px!important;font-weight:900!important}
