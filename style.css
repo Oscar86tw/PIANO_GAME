@@ -129,3 +129,40 @@ body{color:#2b3a55}
 .staff-note .ledger{position:absolute;left:0;width:28px;height:1.5px;background:#94a7cc}
 .staff-note.current .accidental{color:#b2831d}
 @media(max-width:760px){.sheet-head{align-items:flex-start;flex-direction:column}.staff-wrap{grid-template-columns:46px 1fr}.staff-clef{font-size:2.6rem}.staff-area{min-height:160px;padding:8px 10px}.staff-note{width:24px}.staff-note .note-head{left:4px;width:16px;height:11px}.staff-note .stem{left:18px;height:40px}.staff-note .label{font-size:.62rem}}
+
+
+/* V0.6 course-based learning layout */
+.lesson-app{max-width:1420px}
+.app-header{margin-bottom:10px}
+.brand-block{min-width:0}.header-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:flex-end}.daily-goal{padding:10px 14px;border:1px solid #dbe5f7;border-radius:14px;background:#fff;min-width:135px}.daily-goal b,.daily-goal strong{display:block}.daily-goal b{font-size:.7rem;color:#7d8fb0}.daily-goal strong{margin-top:3px;color:#38547e}
+.top-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0 0 12px}.top-tab{min-height:46px;border:1px solid #dbe5f7;border-radius:13px;background:#fff;color:#62779d;font-weight:900;cursor:pointer}.top-tab.active{background:#5f89df;color:#fff;border-color:#5f89df;box-shadow:0 6px 16px rgba(76,113,184,.18)}
+.course-strip{display:grid;grid-template-columns:repeat(6,minmax(150px,1fr));gap:10px;overflow-x:auto;padding:2px 0 12px}.course-card{min-width:150px;border:1px solid #dce5f4;border-radius:16px;background:#fff;padding:13px;cursor:pointer;box-shadow:0 6px 18px rgba(76,104,158,.06)}.course-card span{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#edf3ff;color:#6280b9;font-weight:900;font-size:.75rem}.course-card strong,.course-card small{display:block}.course-card strong{margin-top:9px;color:#355079}.course-card small{margin-top:3px;color:#8797b3;font-size:.72rem}.course-card.active{border-color:#95b4f5;background:linear-gradient(180deg,#f9fbff,#eef4ff)}
+.lesson-toolbar{display:grid;grid-template-columns:minmax(180px,1.5fr) repeat(3,minmax(120px,.7fr)) auto;gap:10px;align-items:end;padding:12px 14px;margin-bottom:12px}.lesson-title small,.lesson-title strong{display:block}.lesson-title small{color:#8495b5;font-size:.68rem}.lesson-title strong{margin-top:4px;color:#314b74;font-size:1.05rem}.lesson-toolbar label{font-size:.7rem;color:#7285aa;font-weight:900}.lesson-toolbar select{width:100%;margin-top:5px;min-height:40px;border:1px solid #d8e2f4;border-radius:10px;background:#fff;color:#405a83;padding:0 9px}.toolbar-btn{min-height:42px;border:1px solid #d7e1f3;border-radius:11px;background:#eef4ff;color:#4f6fa9;font-weight:900;cursor:pointer}
+.teacher-tip{display:grid;grid-template-columns:48px 1fr;gap:12px;align-items:start;margin:0 0 12px;padding:12px 14px;border-radius:14px;background:#f4f8ff;border:1px solid #dfe8f7}.teacher-icon{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#dfeaff;color:#5274b2;font-size:1.45rem;font-weight:900}.teacher-tip small,.teacher-tip strong{display:block}.teacher-tip small{color:#7c8fb1;font-size:.68rem}.teacher-tip strong{color:#36517a;margin-top:2px}.teacher-tip p{margin:4px 0 0;color:#6a7e9f;font-size:.82rem;line-height:1.45}
+.sheet-head h3 small{font-size:.68rem;font-weight:700;color:#8293b1;margin-left:8px}.side-panel .rank-orb{font-style:normal}
+@media(max-width:1100px){.lesson-toolbar{grid-template-columns:1fr 1fr 1fr}.lesson-title{grid-column:1/-1}.toolbar-btn{grid-column:1/-1}.course-strip{grid-template-columns:repeat(6,170px)}}
+@media(max-width:760px){.top-tabs{grid-template-columns:repeat(2,1fr)}.lesson-toolbar{grid-template-columns:1fr 1fr}.lesson-title,.toolbar-btn{grid-column:1/-1}.header-actions{justify-content:flex-start}.course-strip{grid-template-columns:repeat(6,155px)}}
+
+
+/* V0.7 colorful notes + metronome */
+.metro-control{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-left:4px}
+.metro-control label{font-size:.72rem;color:#687da3;font-weight:800}
+.metro-control select{margin-left:5px;border:1px solid #d5e1f4;border-radius:9px;background:#fff;color:#3e577f;padding:7px 8px}
+.metro-btn.active,.toolbar-btn.active{background:#dff3ea!important;color:#2e7f61!important;border-color:#b9dfcf!important}
+.beat-lights{display:flex;gap:6px;align-items:center;padding:6px 8px;border:1px solid #dce6f5;border-radius:999px;background:#f7faff}
+.beat-light{width:10px;height:10px;border-radius:50%;background:#d3dceb;transition:transform .08s,background .08s}
+.beat-light.active{background:#5e8ee8;transform:scale(1.45)}
+.beat-light:first-child.active{background:#ef8b67}
+.note-color-legend{display:flex;gap:7px;flex-wrap:wrap;margin:-2px 0 10px 68px}
+.nc{min-width:28px;text-align:center;padding:4px 8px;border-radius:999px;font-size:.7rem;font-weight:900;color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}
+.nc.c{background:#ef6f78}.nc.d{background:#f29b52}.nc.e{background:#e2b93b}.nc.f{background:#57b985}.nc.g{background:#4db9c8}.nc.a{background:#658ee8}.nc.b{background:#9a72d4}
+.learning-theme .staff-note .note-head{background:var(--note-color)!important}
+.learning-theme .staff-note .stem{background:var(--note-color)!important}
+.learning-theme .staff-note .label{color:var(--note-color)!important;font-weight:1000}
+.learning-theme .staff-note .accidental{color:var(--note-color)!important}
+.learning-theme .staff-note.current .note-head{box-shadow:0 0 0 5px rgba(255,202,70,.28),0 0 0 8px rgba(255,255,255,.9)}
+.learning-theme .staff-note.current{filter:saturate(1.12)}
+.learning-theme .fall-note{background:var(--note-color)!important;color:#fff!important;box-shadow:0 5px 12px color-mix(in srgb,var(--note-color) 32%,transparent)!important}
+.learning-theme .fall-note.hit{opacity:.34}
+@supports not (background:color-mix(in srgb, red 50%, transparent)){.learning-theme .fall-note{box-shadow:0 5px 12px rgba(70,90,130,.2)!important}}
+@media(max-width:900px){.lesson-toolbar{align-items:flex-start}.metro-control{width:100%;padding-left:0}.note-color-legend{margin-left:0}}

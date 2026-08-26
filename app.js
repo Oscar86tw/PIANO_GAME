@@ -6,6 +6,9 @@ const midiToNote=m=>NOTE_INDEX[(m%12+12)%12]+(Math.floor(m/12)-1);
 const midiToHz=m=>440*Math.pow(2,(m-69)/12);
 const hzToMidi=h=>Math.round(69+12*Math.log2(h/440));
 const fmt=t=>{t=Math.max(0,Math.ceil(t));return `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`};
+const NOTE_COLORS={C:'#ef6f78',D:'#f29b52',E:'#e2b93b',F:'#57b985',G:'#4db9c8',A:'#658ee8',B:'#9a72d4'};
+function noteLetter(note){const m=String(note).match(/[A-G]/);return m?m[0]:'C'}
+function noteColor(note){return NOTE_COLORS[noteLetter(note)]||NOTE_COLORS.C}
 
 function noteStepIndex(note){
   const m=note.match(/^([A-G])(#?)(-?\d)$/); if(!m) return 0;
@@ -26,7 +29,8 @@ function renderStaff(){
   view.forEach((note,localIdx)=>{
     const idx=start+localIdx;
     const wrap=document.createElement('div');
-    wrap.className='staff-note'+(idx===state.index?' current':idx>state.index?' upcoming':'');
+    wrap.className='staff-note note-'+noteLetter(note).toLowerCase()+(idx===state.index?' current':idx>state.index?' upcoming':'');
+    wrap.style.setProperty('--note-color',noteColor(note));
     const x=((localIdx+0.8)/(windowSize+0.6))*100;
     const step=noteStepIndex(note.replace('#',''));
     const y=(baseStep-step)*(lineGap/2)+78; // center mapping
@@ -110,13 +114,74 @@ groups.forEach(([level,arr])=>arr.forEach(([title,pat,bpm,duration],idx)=>{
 const state={
   song:'s21',level:'NORMAL',index:0,score:0,combo:0,maxCombo:0,attempts:0,hits:0,
   running:false,paused:false,startAt:0,pauseAt:0,totalPause:0,lastAccepted:0,
-  stream:null,audio:null,raf:null,gameRaf:null,judged:new Set(),hitNotes:new Set()
+  stream:null,audio:null,raf:null,gameRaf:null,judged:new Set(),hitNotes:new Set(),speed:1,hand:'right',lessonMode:'learn',loop:false,metroOn:false,metroTimer:null,metroBeat:0,metroAudio:null,metroVolume:0.16
 };
 const modeSelect=$('modeSelect'), inputSelect=$('inputSelect');
 
 function currentSong(){return SONGS[state.song]}
 function songsForLevel(){return Object.values(SONGS).filter(s=>s.level===state.level)}
 
+
+const COURSE_INFO={
+  notes:['認識音符','先看譜，再彈琴','請看黃色標記的音符，找到對應琴鍵後再彈奏。'],
+  rhythm:['節奏基礎','跟著拍子走','注意每個音符出現的時間，穩定比速度更重要。'],
+  right:['右手練習','右手五指定位','先確認手的位置，再用右手完成這段練習。'],
+  left:['左手練習','左手慢慢來','左手請放鬆，先求正確，再慢慢增加速度。'],
+  both:['雙手合奏','左右手一起看','先分手練，再切換到雙手模式。'],
+  sight:['視譜練習','眼睛走在手前面','盡量不要一直看琴鍵，先讀下一個音符。']
+};
+function setCourse(key){
+  const info=COURSE_INFO[key]||COURSE_INFO.notes;
+  $('lessonTitle').textContent=info[0]; $('tipTitle').textContent=info[1]; $('tipText').textContent=info[2];
+  document.querySelectorAll('.course-card').forEach(c=>c.classList.toggle('active',c.dataset.course===key));
+}
+function updateStaffModeLabel(){
+  const hand=state.hand==='right'?'右手・高音譜表':state.hand==='left'?'左手・低音譜表':'雙手・大譜表';
+  const el=$('staffModeLabel'); if(el) el.textContent=hand;
+}
+function effectiveBpm(){ return Math.max(30, Math.round(currentSong().bpm * state.speed)); }
+function ensureMetroAudio(){
+  if(!state.metroAudio){ const AC=window.AudioContext||window.webkitAudioContext; state.metroAudio=new AC(); }
+  if(state.metroAudio.state==='suspended') state.metroAudio.resume();
+  return state.metroAudio;
+}
+function lightBeat(beat){
+  const lights=document.querySelectorAll('#beatLights .beat-light');
+  lights.forEach((el,i)=>el.classList.toggle('active',i===beat));
+  const bpm=$('bpmInfo'); if(bpm) bpm.textContent=`BPM ${effectiveBpm()}${state.speed!==1?'（練習速度）':''}`;
+}
+function metroClick(){
+  if(!state.metroOn) return;
+  const ctx=ensureMetroAudio(), beat=state.metroBeat%4;
+  const osc=ctx.createOscillator(), gain=ctx.createGain();
+  osc.type='sine'; osc.frequency.value=beat===0?1200:850;
+  const now=ctx.currentTime; gain.gain.setValueAtTime(0.0001,now); gain.gain.exponentialRampToValueAtTime(Math.max(.001,state.metroVolume*(beat===0?1.25:1)),now+.005); gain.gain.exponentialRampToValueAtTime(0.0001,now+.055);
+  osc.connect(gain); gain.connect(ctx.destination); osc.start(now); osc.stop(now+.065);
+  lightBeat(beat); state.metroBeat=(beat+1)%4;
+  clearTimeout(state.metroTimer); state.metroTimer=setTimeout(metroClick,60000/effectiveBpm());
+}
+function startMetronome(reset=true){
+  if(!state.metroOn) return;
+  clearTimeout(state.metroTimer); if(reset) state.metroBeat=0; metroClick();
+}
+function stopMetronome(clearLights=true){
+  clearTimeout(state.metroTimer); state.metroTimer=null;
+  if(clearLights) document.querySelectorAll('#beatLights .beat-light').forEach(el=>el.classList.remove('active'));
+}
+function syncMetronome(){ if(state.metroOn){ stopMetronome(false); startMetronome(true); } }
+
+function bindLearningControls(){
+  document.querySelectorAll('.course-card').forEach(c=>c.addEventListener('click',()=>setCourse(c.dataset.course)));
+  document.querySelectorAll('.top-tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.top-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');}));
+  const hs=$('handSelect'),ss=$('speedSelect'),lm=$('lessonMode'),lb=$('loopBtn'),mb=$('metroBtn'),mv=$('metroVolume');
+  if(hs) hs.addEventListener('change',()=>{state.hand=hs.value;updateStaffModeLabel();});
+  if(ss) ss.addEventListener('change',()=>{state.speed=parseFloat(ss.value)||1; renderSong(); syncMetronome();});
+  if(lm) lm.addEventListener('change',()=>{state.lessonMode=lm.value;$('hint').textContent=lm.value==='learn'?'學習模式：彈對目前音符後才會繼續。':'演奏模式：時間會持續前進。';});
+  if(lb) lb.addEventListener('click',()=>{state.loop=!state.loop;lb.textContent=`小節 Loop：${state.loop?'ON':'OFF'}`;lb.classList.toggle('active',state.loop);});
+  if(mb) mb.addEventListener('click',()=>{state.metroOn=!state.metroOn;mb.textContent=`節拍器：${state.metroOn?'ON':'OFF'}`;mb.classList.toggle('active',state.metroOn);if(state.metroOn){ensureMetroAudio();startMetronome(true);}else stopMetronome(true);});
+  if(mv) mv.addEventListener('change',()=>{state.metroVolume=parseFloat(mv.value)||0.16;});
+  updateStaffModeLabel();
+}
 function buildDifficultyTabs(){
   document.querySelectorAll('#difficultyTabs button').forEach(btn=>{
     btn.classList.toggle('active',btn.dataset.level===state.level);
@@ -138,7 +203,7 @@ function rankFor(acc){return acc>=95?'S':acc>=88?'A':acc>=78?'B':acc>=65?'C':'D'
 function elapsed(){
   if(!state.running&&!state.paused) return 0;
   const now=state.paused?state.pauseAt:performance.now();
-  return Math.max(0,(now-state.startAt-state.totalPause)/1000);
+  return Math.max(0,(now-state.startAt-state.totalPause)/1000)*state.speed;
 }
 function updateClock(){
   const s=currentSong(), e=elapsed(), left=Math.max(0,s.duration-e);
@@ -154,7 +219,7 @@ function renderSong(){
   const s=currentSong();
   $('songTitle').textContent=s.title;
   $('difficulty').textContent=`${'★'.repeat(s.stars)} ${s.level}`;
-  $('bpmInfo').textContent=`BPM ${s.bpm}`;
+  $('bpmInfo').textContent=`BPM ${effectiveBpm()}${state.speed!==1?'（練習速度）':''}`;
   $('durationInfo').textContent=fmt(s.duration);
   $('noteTotal').textContent=s.notes.length;
   $('noteIndex').textContent=Math.min(state.index+1,s.notes.length);
@@ -174,7 +239,8 @@ function renderHighway(){
     const t=noteTiming(i), dt=t-e;
     if(dt<-0.45||dt>travel) continue;
     const d=document.createElement('div');
-    d.className='fall-note timed'+(state.hitNotes.has(i)?' hit':'')+(state.judged.has(i)&&!state.hitNotes.has(i)?' miss':'');
+    d.className='fall-note timed note-'+noteLetter(s.notes[i]).toLowerCase()+(state.hitNotes.has(i)?' hit':'')+(state.judged.has(i)&&!state.hitNotes.has(i)?' miss':'');
+    d.style.setProperty('--note-color',noteColor(s.notes[i]));
     d.textContent=s.notes[i];
     const p=1-(dt/travel); d.style.top=`${Math.max(-30,Math.min(H,p*H))}px`;
     root.appendChild(d);
@@ -193,11 +259,12 @@ function setJudge(text,type=''){
 }
 async function startGame(){
   if(state.running)return;
+  if(state.metroOn){ ensureMetroAudio(); stopMetronome(false); }
   await countdown();
   Object.assign(state,{index:0,score:0,combo:0,maxCombo:0,attempts:0,hits:0,running:true,paused:false,totalPause:0,lastAccepted:0});
-  state.startAt=performance.now(); state.judged=new Set(); state.hitNotes=new Set();
+  state.startAt=performance.now(); state.judged=new Set(); state.hitNotes=new Set(); if(state.metroOn) startMetronome(true);
   $('resultCard').hidden=true; $('pauseBtn').textContent='暫停'; setJudge('開始'); updateStats(); renderSong();
-  $('hint').textContent='課堂練習進行中：音符會依時間前進，請跟著節奏完成。';
+  $('hint').textContent=state.lessonMode==='learn'?'學習模式：彈對目前音符後才會繼續。':'演奏模式：音符會依時間前進，請跟著節奏完成。';
   gameLoop();
 }
 function countdown(){return new Promise(resolve=>{const el=$('countdown');el.hidden=false;let n=3;el.textContent=n;const t=setInterval(()=>{n--;if(n===0)el.textContent='開始';else if(n<0){clearInterval(t);el.hidden=true;resolve()}else el.textContent=n},650)})}
@@ -205,24 +272,26 @@ function resetGame(){
   state.running=false;state.paused=false; if(state.gameRaf) cancelAnimationFrame(state.gameRaf);
   Object.assign(state,{index:0,score:0,combo:0,maxCombo:0,attempts:0,hits:0,totalPause:0});
   state.judged=new Set();state.hitNotes=new Set();updateStats();renderSong();setJudge('準備好了嗎？');
-  $('heardNote').textContent='—';$('heardHz').textContent='0 Hz';$('pauseBtn').textContent='暫停';
+  $('heardNote').textContent='—';$('heardHz').textContent='0 Hz';$('pauseBtn').textContent='暫停'; if(state.metroOn){stopMetronome(false);startMetronome(true);}
 }
 function gameLoop(){
   if(!state.running||state.paused)return;
   const s=currentSong(), e=elapsed();
   // mark notes that passed the late window
-  while(state.index<s.notes.length && e-noteTiming(state.index)>0.28){
-    if(!state.judged.has(state.index)){
-      state.judged.add(state.index); state.attempts++; state.combo=0; setJudge('MISS!','bad');
+  if(state.lessonMode==='perform'){
+    while(state.index<s.notes.length && e-noteTiming(state.index)>0.28){
+      if(!state.judged.has(state.index)){
+        state.judged.add(state.index); state.attempts++; state.combo=0; setJudge('MISS!','bad');
+      }
+      state.index++;
     }
-    state.index++;
   }
   updateStats(); renderSong();
-  if(e>=s.duration){finish();return}
+  if((state.lessonMode==='perform' && e>=s.duration) || (state.lessonMode==='learn' && state.index>=s.notes.length)){finish();return}
   state.gameRaf=requestAnimationFrame(gameLoop);
 }
 function finish(){
-  state.running=false;state.paused=false;if(state.gameRaf)cancelAnimationFrame(state.gameRaf);
+  state.running=false;state.paused=false;if(state.gameRaf)cancelAnimationFrame(state.gameRaf); if(state.metroOn) stopMetronome(true);
   const acc=state.attempts?Math.round(state.hits/state.attempts*100):0, stars=acc>=90?3:acc>=75?2:acc>=55?1:0, rank=rankFor(acc);
   $('resultRank').textContent=`等級 ${rank}`;$('resultStars').textContent='★'.repeat(stars)+'☆'.repeat(3-stars);
   $('resultText').textContent=`分數 ${state.score} ｜ 正確率 ${acc}% ｜ 最長連擊 ${state.maxCombo}`;
@@ -231,10 +300,10 @@ function finish(){
 function togglePause(){
   if(!state.running && !state.paused)return;
   if(!state.paused){
-    state.paused=true; state.pauseAt=performance.now(); $('pauseBtn').textContent='繼續'; setJudge('暫停');
+    state.paused=true; state.pauseAt=performance.now(); $('pauseBtn').textContent='繼續'; setJudge('暫停'); if(state.metroOn) stopMetronome(false);
     if(state.gameRaf)cancelAnimationFrame(state.gameRaf);
   }else{
-    state.totalPause+=performance.now()-state.pauseAt; state.paused=false; $('pauseBtn').textContent='暫停'; setJudge('繼續');
+    state.totalPause+=performance.now()-state.pauseAt; state.paused=false; $('pauseBtn').textContent='暫停'; setJudge('繼續'); if(state.metroOn) startMetronome(true);
     gameLoop();
   }
 }
@@ -247,7 +316,10 @@ function acceptNote(note,hz=0){
   if(!state.running||state.paused||modeSelect.value==='free')return;
   const now=performance.now(); if(now-state.lastAccepted<110)return;
   const s=currentSong(), e=elapsed(); let best=-1,bestDelta=999;
-  for(let i=Math.max(0,state.index-1);i<Math.min(s.notes.length,state.index+4);i++){
+  if(state.lessonMode==='learn'){
+    best=state.index; bestDelta=0;
+  }
+  for(let i=Math.max(0,state.index-1);state.lessonMode!=='learn' && i<Math.min(s.notes.length,state.index+4);i++){
     if(state.judged.has(i))continue;
     const delta=Math.abs(e-noteTiming(i));
     if(delta<bestDelta){bestDelta=delta;best=i}
@@ -312,4 +384,4 @@ function autoCorrelate(buffer,sampleRate){
   let d=0;while(d+1<n&&c[d]>c[d+1])d++;let max=-1,pos=-1;for(let i=d;i<n;i++){if(c[i]>max){max=c[i];pos=i}}
   if(pos<=0)return-1;let T0=pos;const x1=c[T0-1]||c[T0],x2=c[T0],x3=c[T0+1]||c[T0],a=(x1+x3-2*x2)/2,bv=(x3-x1)/2;if(a)T0-=bv/(2*a);return sampleRate/T0;
 }
-buildDifficultyTabs();buildSongCards();buildKeyboard();renderSong();updateStats();
+buildDifficultyTabs();buildSongCards();buildKeyboard();bindLearningControls();setCourse('notes');renderSong();updateStats();

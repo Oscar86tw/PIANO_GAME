@@ -4,28 +4,58 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#080510" />
-  <title>PIANO LEARNING STUDIO V0.5</title>
+  <title>PIANO LEARNING STUDIO V0.7</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="scanlines"></div>
-  <main class="arcade-shell learning-theme">
-    <header class="marquee">
-      <div class="marquee-light l1"></div><div class="marquee-light l2"></div><div class="marquee-light l3"></div>
-      <div>
-        <p class="eyebrow">REAL PIANO LEARNING SYSTEM</p>
+  <main class="arcade-shell learning-theme lesson-app">
+    <header class="marquee app-header">
+      <div class="brand-block">
+        <p class="eyebrow">INTERACTIVE PIANO LEARNING</p>
         <h1>PIANO <span>STUDIO</span></h1>
-        <p class="subtitle">真鋼琴 × 即時判定 × 課堂式互動練習</p>
+        <p class="subtitle">課程式鋼琴學習・真琴收音・即時回饋</p>
       </div>
-      <div class="coin-panel">
-        <span id="audioStatus">🎤 MIC OFF</span>
-        <strong>LESSON MODE</strong>
+      <div class="header-actions">
+        <span id="audioStatus">🎤 麥克風未連線</span>
+        <div class="daily-goal"><b>今日目標</b><strong>0 / 15 min</strong></div>
       </div>
     </header>
 
+    <nav class="top-tabs" aria-label="主功能">
+      <button type="button" class="top-tab active" data-page="learn">學習</button>
+      <button type="button" class="top-tab" data-page="songs">歌曲</button>
+      <button type="button" class="top-tab" data-page="workout">5 分鐘練習</button>
+      <button type="button" class="top-tab" data-page="progress">進度</button>
+    </nav>
+
+    <section class="course-strip" id="courseStrip">
+      <div class="course-card active" data-course="notes"><span>01</span><strong>認識音符</strong><small>Treble Clef Basics</small></div>
+      <div class="course-card" data-course="rhythm"><span>02</span><strong>節奏基礎</strong><small>Quarter & Half Notes</small></div>
+      <div class="course-card" data-course="right"><span>03</span><strong>右手練習</strong><small>Right Hand</small></div>
+      <div class="course-card" data-course="left"><span>04</span><strong>左手練習</strong><small>Left Hand</small></div>
+      <div class="course-card" data-course="both"><span>05</span><strong>雙手合奏</strong><small>Both Hands</small></div>
+      <div class="course-card" data-course="sight"><span>06</span><strong>視譜練習</strong><small>Sight Reading</small></div>
+    </section>
+
+    <section class="lesson-toolbar panel">
+      <div class="lesson-title"><small>目前課程</small><strong id="lessonTitle">認識音符</strong></div>
+      <label>手部<select id="handSelect"><option value="right">右手</option><option value="left">左手</option><option value="both">雙手</option></select></label>
+      <label>速度<select id="speedSelect"><option value="0.5">50%</option><option value="0.75">75%</option><option value="1" selected>100%</option></select></label>
+      <label>模式<select id="lessonMode"><option value="learn">學習模式</option><option value="perform">演奏模式</option></select></label>
+      <button id="loopBtn" type="button" class="toolbar-btn">小節 Loop：OFF</button>
+      <div class="metro-control" aria-label="節拍器控制">
+        <button id="metroBtn" type="button" class="toolbar-btn metro-btn">節拍器：OFF</button>
+        <div class="beat-lights" id="beatLights" aria-label="四拍節拍指示">
+          <span class="beat-light"></span><span class="beat-light"></span><span class="beat-light"></span><span class="beat-light"></span>
+        </div>
+        <label>音量<select id="metroVolume"><option value="0.08">小</option><option value="0.16" selected>中</option><option value="0.28">大</option></select></label>
+      </div>
+    </section>
+
     <section class="machine-panel">
       <aside class="song-select panel">
-        <div class="panel-title">樂譜選擇</div>
+        <div class="panel-title">歌曲與教材</div>
         <div class="difficulty-tabs" id="difficultyTabs">
           <button type="button" data-level="BEGINNER">BEGINNER</button>
           <button type="button" data-level="EASY">EASY</button>
@@ -61,16 +91,24 @@
             </div>
           </div>
 
+          <div class="teacher-tip" id="teacherTip">
+            <div class="teacher-icon">♪</div>
+            <div><small>學習提示</small><strong id="tipTitle">先看譜，再彈琴</strong><p id="tipText">請看黃色標記的音符，找到對應琴鍵後再彈奏。</p></div>
+          </div>
+
           <section class="sheet-panel">
             <div class="sheet-head">
               <div>
                 <span>五線譜</span>
-                <h3>目前樂譜</h3>
+                <h3>目前樂譜 <small id="staffModeLabel">右手・高音譜表</small></h3>
               </div>
               <div class="sheet-legend">
                 <span class="chip current">目前音</span>
                 <span class="chip upcoming">接下來</span>
               </div>
+            </div>
+            <div class="note-color-legend" aria-label="音名顏色">
+              <span class="nc c">C</span><span class="nc d">D</span><span class="nc e">E</span><span class="nc f">F</span><span class="nc g">G</span><span class="nc a">A</span><span class="nc b">B</span>
             </div>
             <div class="staff-wrap">
               <div class="staff-clef">𝄞</div>
@@ -110,7 +148,7 @@
       </section>
 
       <aside class="side-panel panel">
-        <div class="panel-title">學習資訊</div>
+        <div class="panel-title">本次學習</div>
         <div class="rank-orb" id="rankOrb">S</div>
         <div class="stars" id="stars">☆☆☆</div>
         <div class="mission-box"><span>本次目標</span><strong>90%+</strong><small>獲得 3 顆星</small></div>
