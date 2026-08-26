@@ -1,4 +1,4 @@
-# PIANO LEARNING V5.2 Clean Rebuild
+# PIANO LEARNING V5.3 Clean Rebuild
 
 全新主程式，不再引用 V3.x `app-core.js`。
 
@@ -38,7 +38,7 @@
 - 完整音色包管理
 
 
-## V5.2 — MusicXML / MIDI Import Engine
+## V5.3 — MusicXML / MIDI Import Engine
 
 新增真正數位譜 parser：
 - MusicXML / XML
@@ -57,11 +57,11 @@
 4. 自動合併到 V4 Library
 5. 可直接從 Import 或 Library 進 Practice
 
-目前 V5.2 為安全移植第一階段：
+目前 V5.3 為安全移植第一階段：
 MusicXML 多聲部與 MIDI 同時和弦先取主要旋律，會明確顯示略過數量，不會假裝已完整保留。
 
 
-## V5.2 — MIDI Polyphony + Grand Staff
+## V5.3 — MIDI Polyphony + Grand Staff
 
 新增：
 - MIDI 同時間多音完整保留
@@ -72,13 +72,13 @@ MusicXML 多聲部與 MIDI 同時和弦先取主要旋律，會明確顯示略�
 - 同拍和弦音頭同時顯示
 - Practice 顯示實際音符數
 
-V5.2 之後：
+V5.3 之後：
 MIDI 不再為了簡化而只取最高音。
 
 目前 MusicXML 仍以主要 voice 為主；下一版可繼續處理 MusicXML 多聲部 / chord / staff 1/2。
 
 
-## V5.2 — Kids Training Suite
+## V5.3 — Kids Training Suite
 
 新增：
 - 音階練習（含 C / G 與雙手示範）
@@ -94,7 +94,7 @@ MIDI 不再為了簡化而只取最高音。
 這版優先提供手機也能操作的訓練流程。
 
 
-## V5.2 — Input & Scoring Engine
+## V5.3 — Input & Scoring Engine
 
 這版把 V4.3 的示意功能改成真正判定引擎。
 
@@ -133,7 +133,7 @@ MIDI 不再為了簡化而只取最高音。
 麥克風功能需要瀏覽器允許麥克風權限；部署到 GitHub Pages HTTPS 時最適合使用。
 
 
-## V5.2 — Course Progression 10級 → 1級
+## V5.3 — Course Progression 10級 → 1級
 
 新增真正兒童課程路線：
 
@@ -172,9 +172,9 @@ Practice 真實評分結束後，若是從 Course 進入，會把實際 1～5 �
 Training 的視奏 / 聽奏 / 音階也會寫入同一套 Course Progression。
 
 
-## V5.2 — Formal Pedagogy Curriculum
+## V5.3 — Formal Pedagogy Curriculum
 
-V5.2 把 10級→1級改成「正規教學邏輯」，不是只靠遊戲星星升級。
+V5.3 把 10級→1級改成「正規教學邏輯」，不是只靠遊戲星星升級。
 
 ### 四個核心能力
 1. 技巧・音階・指法
@@ -186,7 +186,7 @@ V5.2 把 10級→1級改成「正規教學邏輯」，不是只靠遊戲星星�
 - 每一類至少 3 顆星
 - 同時達成本級總星星門檻
 - 任一核心能力未達 3 顆，不可用其他高分補掉
-- V4.5 舊進度可遷移星星，但解鎖會依 V5.2 新規則重新計算
+- V4.5 舊進度可遷移星星，但解鎖會依 V5.3 新規則重新計算
 
 ### 教學順序
 坐姿/手型 → 指號 → 五指位置 → 基本節奏 → 地標音 →
@@ -195,7 +195,7 @@ V5.2 把 10級→1級改成「正規教學邏輯」，不是只靠遊戲星星�
 快速視奏/聽力 → 完整演奏能力
 
 ### 每級內容真正不同
-V5.2 的 curriculum.json 現在每級都有：
+V5.3 的 curriculum.json 現在每級都有：
 - keys
 - technique
 - rhythm
@@ -210,9 +210,9 @@ V5.2 的 curriculum.json 現在每級都有：
 這套 10→1 是本 App 的自訂教學分級，不宣稱等同任何單一官方檢定級別。
 
 
-## V5.2 — Lesson Content Bank
+## V5.3 — Lesson Content Bank
 
-V4.6 是正規課綱；V5.2 開始把「教材內容」真正填進去。
+V4.6 是正規課綱；V5.3 開始把「教材內容」真正填進去。
 
 新增 `data/lesson-bank.json`，每級都有：
 - 技巧實際練習題
@@ -232,12 +232,12 @@ V4.6 是正規課綱；V5.2 開始把「教材內容」真正填進去。
 - 可取得該級技巧練習 / 曲目任務
 - Course 頁可展開查看每級真正教材
 
-V5.2 的目標是讓「10級、9級、8級……」不只是標題，而是真的出不同內容。
+V5.3 的目標是讓「10級、9級、8級……」不只是標題，而是真的出不同內容。
 
 
-## V5.2 — Formal Lesson Flow
+## V5.3 — Formal Lesson Flow
 
-V5.2 把「教材」變成真正的一堂課。
+V5.3 把「教材」變成真正的一堂課。
 
 固定課堂順序：
 1. 老師示範
@@ -262,12 +262,12 @@ V5.2 把「教材」變成真正的一堂課。
 - `js/pages/lesson.js`
 - `css/lesson.css`
 
-V5.2 的目標：更接近真正鋼琴老師的上課流程，而不是選題後直接考試。
+V5.3 的目標：更接近真正鋼琴老師的上課流程，而不是選題後直接考試。
 
 
-# V5.2 COMPLETE PIANO ACADEMY
+# V5.3 COMPLETE PIANO ACADEMY
 
-V5.2 不再用小版本逐項補功能，而是整合成完整學院。
+V5.3 不再用小版本逐項補功能，而是整合成完整學院。
 
 ## 核心能力
 1. 技巧・音階・指法
@@ -312,10 +312,10 @@ V5.2 不再用小版本逐項補功能，而是整合成完整學院。
 - 授權 / 自有 MusicXML、MIDI 匯入槽
 
 ## 分級聲明
-V5.2 的 10級→1級是本 App 的自訂課程進程，吸收正式鋼琴教學常見能力結構，但不是 ABRSM、Trinity、RCM 或任何單一官方檢定的等值表。
+V5.3 的 10級→1級是本 App 的自訂課程進程，吸收正式鋼琴教學常見能力結構，但不是 ABRSM、Trinity、RCM 或任何單一官方檢定的等值表。
 
 
-# V5.2 — 1000 Complete Score Library
+# V5.3 — 1000 Complete Score Library
 
 新增 1000 首「完整原創教學樂譜」；不是 1000 個空白曲名。
 
@@ -356,9 +356,9 @@ V5.2 的 10級→1級是本 App 的自訂課程進程，吸收正式鋼琴教學
 這些分類使用原創風格曲與授權 / 自有 MusicXML、MIDI 匯入。
 
 
-# V5.2 — Score Engraving & Library UX
+# V5.3 — Score Engraving & Library UX
 
-V5.2 將 V5.1 的 1000 首 events 進一步變成「可閱讀、可挑小節」的樂譜體驗。
+V5.3 將 V5.1 的 1000 首 events 進一步變成「可閱讀、可挑小節」的樂譜體驗。
 
 新增：
 - Grand Staff 樂譜預覽
@@ -383,3 +383,41 @@ V5.2 將 V5.1 的 1000 首 events 進一步變成「可閱讀、可挑小節」�
 - css/score-renderer.css
 - pages/score-detail.html
 - js/pages/score-detail.js
+
+
+# V5.3 — MASTER CLOCK SYNC + STAFF GEOMETRY FIX
+
+這版優先修正三個核心問題：
+
+## 1. 唯一 Master Clock
+五線譜移動、譜面鋼琴聲、節拍器、即時節拍判定全部以：
+`AudioContext.currentTime → TransportMaster → currentBeat`
+為唯一時間來源。
+
+BPM 改變時：
+- 保留目前 beat
+- 重建 tempo anchor
+- 五線譜立即跟新速度
+- Demo Score 重新排程
+- Metronome 重新排程
+- Scoring 直接用 master beat 判斷
+因此不再有每個模組自己累積誤差。
+
+## 2. 五線譜尺寸統一
+Practice 與完整樂譜 Viewer 共用 `StaffGeometry`：
+- 高音譜表：5 條
+- 低音譜表：5 條
+- 每條線固定 12px
+- 音高每半線距 6px
+- 高低音譜表列高一致
+- Grand Staff 中央間距固定
+
+## 3. 節拍器改為 Audio Clock 排程
+不再用 setInterval 的觸發時間當真正拍點。
+setTimeout 只負責「提前喚醒 scheduler」；
+實際 click 時間由 AudioContext timestamp 決定。
+
+新增：
+- js/core/staff-geometry.js
+- js/modules/transport/index.js
+- js/modules/demo-scheduler/index.js

@@ -1,10 +1,10 @@
 <!doctype html><html lang="zh-Hant"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>鋼琴練習 · V5.2</title>
+<title>鋼琴練習 · V5.3</title>
 <link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/practice.css">
 </head><body data-page="practice">
 <header class="topbar">
-<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.2</span></div>
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.3</span></div>
 <nav class="nav">
 <a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
 <a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
@@ -44,7 +44,7 @@
     <div><small>正確音</small><b id="expectedNoteValue">—</b></div>
     <div><small>節拍誤差</small><b id="timingValue">—</b></div>
   </div>
-  <div id="inputFeedback" class="status">尚未收到鋼琴輸入。</div>
+  <div id="inputFeedback" class="status">尚未收到鋼琴輸入。</div><div class="sync-strip"><span class="sync-pill">Master Clock：AudioContext</span><span class="sync-pill">Beat <b id="masterBeat">0.00</b></span><span class="sync-pill">BPM <b id="masterBpm">0</b></span></div>
   <div id="practiceStars" class="star-score">☆☆☆☆☆ <span>尚未評分</span></div>
 </section>
 
@@ -91,6 +91,9 @@ document.querySelectorAll('[data-nav]').forEach(function(a){
 <script src="../js/core/audio-engine.js"></script>
 <script src="../js/modules/library/index.js"></script>
 <script src="../js/modules/score-renderer/index.js"></script>
+<script src="../js/core/staff-geometry.js"></script>
+<script src="../js/modules/transport/index.js"></script>
+<script src="../js/modules/demo-scheduler/index.js"></script>
 <script src="../js/modules/practice/index.js"></script>
 <script src="../js/modules/input/index.js"></script>
 <script src="../js/modules/metronome/index.js"></script>

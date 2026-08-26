@@ -1,29 +1,30 @@
 
-.practice-shell{display:grid;gap:12px}.transport{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.practice-settings{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:8px}.staff-card{padding:0;overflow:hidden}.staff-header{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid #e5e8ef;background:#fbfbfd}.staff-window{position:relative;height:330px;background:#fff;overflow:hidden}.staff-lines{position:absolute;left:0;right:0;top:74px;height:112px;pointer-events:none}.staff-lines .line{position:absolute;left:0;right:0;height:1px;background:#6f7684}.staff-lines .line:nth-child(1){top:0}.staff-lines .line:nth-child(2){top:28px}.staff-lines .line:nth-child(3){top:56px}.staff-lines .line:nth-child(4){top:84px}.staff-lines .line:nth-child(5){top:112px}.staff-lines.bass{top:174px}.score-layer{position:absolute;inset:0;pointer-events:none}.note{position:absolute;width:17px;height:12px;border-radius:50%;background:#3f485d;transform:rotate(-15deg)}.note::after{content:"";position:absolute;width:2px;height:36px;background:#3f485d;right:1px;bottom:7px}.note.left{background:#6658c9}.note.left::after{background:#6658c9}.playhead{position:absolute;top:0;bottom:0;left:22%;width:3px;background:#47c4d5;z-index:20}.score-meta{display:flex;gap:8px;flex-wrap:wrap}.result-panel{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.result-panel div{padding:10px;border:1px solid #e3e6ee;border-radius:10px;text-align:center}.result-panel small{display:block;color:#8e97aa;font-size:.62rem}.result-panel b{display:block;margin-top:4px}@media(max-width:850px){.practice-settings{grid-template-columns:1fr 1fr}.result-panel{grid-template-columns:1fr 1fr}}
-
-/* V4.2 Grand Staff / Polyphony */
-.note.right{background:#3f485d;z-index:8}
-.note.right::after{background:#3f485d}
-.note.left{background:#6d60d0;z-index:8}
-.note.left::after{background:#6d60d0}
-.staff-header .hand-legend{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
-.hand-legend span{font-size:.62rem;padding:4px 7px;border-radius:999px;background:#f1f2f6}
-.hand-legend .r{color:#4d566b}.hand-legend .l{color:#6658c9}
-
+.practice-shell{display:grid;gap:12px}
+.transport{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.practice-settings{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:8px}
+.staff-card{padding:0;overflow:hidden}
+.staff-header{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid #e5e8ef;background:#fbfbfd}
+.staff-window{position:relative;height:246px;background:#fff;overflow:hidden}
+.staff-lines{position:absolute;left:0;right:0;top:54px;height:48px;pointer-events:none}
+.staff-lines .line{position:absolute;left:0;right:0;height:1px;background:#606875}
+.staff-lines .line:nth-child(1){top:0}.staff-lines .line:nth-child(2){top:12px}.staff-lines .line:nth-child(3){top:24px}.staff-lines .line:nth-child(4){top:36px}.staff-lines .line:nth-child(5){top:48px}
+.staff-lines.bass{top:150px}
+.score-layer{position:absolute;inset:0;pointer-events:none;will-change:transform}
+.note{position:absolute;width:17px;height:10px;border-radius:50%;background:#3f485d;transform:rotate(-15deg)}
+.note::after{content:"";position:absolute;width:2px;height:31px;background:#3f485d;right:1px;bottom:6px}
+.note.left{background:#6658c9}.note.left::after{background:#6658c9}
+.playhead{position:absolute;top:0;bottom:0;left:22%;width:3px;background:#47c4d5;z-index:20}
+.score-meta{display:flex;gap:8px;flex-wrap:wrap}
+.result-panel{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.result-panel div{padding:10px;border:1px solid #e3e6ee;border-radius:10px;text-align:center}
+.result-panel small{display:block;color:#8e97aa;font-size:.62rem}.result-panel b{display:block;margin-top:4px}
+.hand-legend{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}.hand-legend span{font-size:.62rem;padding:4px 7px;border-radius:999px;background:#f1f2f6}.hand-legend .r{color:#4d566b}.hand-legend .l{color:#6658c9}
 .finger-mark{position:absolute;font-size:.66rem;font-weight:900;color:#9a7b33}
-/* V4.4 Input & Scoring */
 .input-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
-.input-monitor-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:11px}
-.input-monitor-grid>div{border:1px solid #e1e5ec;background:#fafbfc;border-radius:10px;padding:8px;text-align:center}
-.input-monitor-grid small{display:block;color:#8d96a8;font-size:.6rem}
-.input-monitor-grid b{display:block;margin-top:3px;color:#4c5872}
-.star-score{margin-top:9px;font-size:1.15rem;color:#efbb32;font-weight:900}
-.star-score span{margin-left:7px;font-size:.72rem;color:#748096;font-weight:700}
-.judge-correct{background:#55a774!important}
-.judge-correct::after{background:#55a774!important}
-.judge-wrong{outline:3px solid rgba(184,77,87,.22);background:#b84d57!important}
-.judge-wrong::after{background:#b84d57!important}
+.input-monitor-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:11px}.input-monitor-grid>div{border:1px solid #e1e5ec;background:#fafbfc;border-radius:10px;padding:8px;text-align:center}
+.input-monitor-grid small{display:block;color:#8d96a8;font-size:.6rem}.input-monitor-grid b{display:block;margin-top:3px;color:#4c5872}
+.star-score{margin-top:9px;font-size:1.15rem;color:#efbb32;font-weight:900}.star-score span{margin-left:7px;font-size:.72rem;color:#748096;font-weight:700}
+.judge-correct{background:#55a774!important}.judge-correct::after{background:#55a774!important}.judge-wrong{outline:3px solid rgba(184,77,87,.22);background:#b84d57!important}.judge-wrong::after{background:#b84d57!important}
+.virtual-input-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:9px}.virtual-input-row small{color:#818b9d}.virtual-input-row .btn{padding:7px 9px}
+.sync-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.sync-pill{font-size:.65rem;border-radius:999px;padding:5px 8px;background:#eef7f8;color:#47747c}
+@media(max-width:850px){.practice-settings{grid-template-columns:1fr 1fr}.result-panel{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.input-monitor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.virtual-input-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:9px}
-.virtual-input-row small{color:#818b9d}
-.virtual-input-row .btn{padding:7px 9px}

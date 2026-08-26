@@ -1,25 +1,30 @@
-PIANO LEARNING V3.2
-主題：AI Practice Coach
+PIANO LEARNING V5.3
+主題：MASTER CLOCK SYNC + STAFF GEOMETRY FIX
+
+核心修正：
+1. 五線譜、示範琴聲、節拍器、節拍判定共用 AudioContext Master Clock
+2. BPM 改變時四者同步變速
+3. BPM 變化保留當前 beat，不跳拍
+4. Metronome 不再靠 setInterval 決定真正拍點
+5. Demo Piano 使用 AudioContext timestamp 排程
+6. Scoring 改用 Master Beat 判斷 timing
+
+五線譜修正：
+- 高音 5 條
+- 低音 5 條
+- 線距統一 12px
+- 音符步距 6px
+- Practice 與完整樂譜 Viewer 共用 StaffGeometry
+- 高低音譜表列高一致
+- Grand Staff 中央間距固定
 
 新增：
-- 練習後 AI 教練分析
-- 音高 / 節拍 / 左右手 / 和弦 / 弱小節判斷
-- 自動產生下一步練習建議
-- 建議 BPM
-- 建議單手練習
-- 建議弱小節循環
-- 朗讀建議
-- 一鍵套用 AI 建議回 READY
+- js/core/staff-geometry.js
+- js/modules/transport/index.js
+- js/modules/demo-scheduler/index.js
 
-說明：
-本版為本機智慧分析，不依賴雲端 AI API。
-未來可再接真正 AI API，使用相同介面擴充。
-
-修改檔案：
-index.html
-style.css
-app.js
-README.md
-
-新增檔案：無
-刪除檔案：無
+檢查：
+- 所有 JS 通過 node --check
+- Practice 音樂時間不再使用 performance.now
+- Scoring 音樂時間不再使用 performance.now
+- Metronome 不再使用 setInterval
