@@ -29,7 +29,7 @@
     const p=StaffGeometry.parse(note);if(!p)return;
     const y=StaffGeometry.y(note,hand),el=document.createElement('span');
     el.className=`engrave-note ${hand} ${durationClass(dur)}`;el.dataset.eventIndex=eventIndex;el.dataset.note=note;el.style.left=x+'px';el.style.top=y+'px';root.appendChild(el);
-    if(p.sharp){const acc=document.createElement('span');acc.className='engrave-accidental';acc.textContent='♯';acc.style.left=(x-12)+'px';acc.style.top=(y-7)+'px';root.appendChild(acc)}
+    if(p.sharp||p.flat){const acc=document.createElement('span');acc.className='engrave-accidental';acc.textContent=p.flat?'♭':'♯';acc.style.left=(x-12)+'px';acc.style.top=(y-7)+'px';root.appendChild(acc)}
     if(finger){const f=document.createElement('span');f.className='engrave-finger';f.textContent=finger;f.style.left=(x-1)+'px';f.style.top=(y-21)+'px';root.appendChild(f)}
     if(StaffGeometry.needsLedger(note,hand)){const led=document.createElement('span');led.className='engrave-ledger';led.style.left=(x-5)+'px';led.style.top=(y+StaffGeometry.noteHeadHeight/2)+'px';root.appendChild(led)}
   }

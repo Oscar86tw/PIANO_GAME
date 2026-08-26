@@ -18,9 +18,9 @@
   G.staffGap=G.bassTop-G.trebleBottom;
 
   function parse(note){
-    const m=String(note).match(/^([A-G])(#?)(-?\d)$/);
+    const m=String(note).match(/^([A-G])([#b]?)(-?\d)$/);
     if(!m)return null;
-    return {letter:m[1],sharp:!!m[2],octave:Number(m[3])};
+    return {letter:m[1],sharp:m[2]==='#',flat:m[2]==='b',octave:Number(m[3])};
   }
   function diatonic(note){
     const p=parse(note);if(!p)return 0;
