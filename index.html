@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V2.8</title>
-  <link rel="stylesheet" href="style.css?v=2.8">
+  <title>PIANO LEARNING V2.9</title>
+  <link rel="stylesheet" href="style.css?v=2.9">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V2.8</div>
+        <div class="version-badge">VERSION V2.9</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -78,6 +78,7 @@
           <button class="collection-filter" data-collection="fashion">時尚</button>
           <button class="collection-filter" data-collection="movie">電影</button>
           <button class="collection-filter" data-collection="school">學校教材</button>
+          <button class="collection-filter" data-collection="photo">📷 拍照樂譜</button>
           <button class="collection-filter" data-collection="disney">迪士尼</button>
           <button class="collection-filter" data-collection="practice">短練習</button>
         </div>
@@ -131,8 +132,102 @@
       <section id="importPanel" class="tab-panel">
         <div class="section-title">
           <div><small>IMPORT</small><h2>匯入自己的樂譜</h2></div>
-          <span>MusicXML / MIDI</span>
+          <span>Photo / MusicXML / MIDI</span>
         </div>
+        
+        <section class="photo-import-card" id="photoImportCard">
+          <div class="photo-import-head">
+            <div>
+              <small>PHOTO SCORE IMPORT</small>
+              <h3>📷 拍照加入樂譜</h3>
+              <p>可直接開相機拍攝，也可從相簿一次選多頁。照片會先保存在這台裝置，等 OMR 辨識後再轉成可播放的數位譜。</p>
+            </div>
+            <div class="omr-state" id="omrState">
+              <span>OMR</span>
+              <b>待連接</b>
+            </div>
+          </div>
+
+          <div class="photo-source-actions">
+            <input id="cameraScoreInput" class="visually-hidden" type="file" accept="image/*" capture="environment">
+            <input id="galleryScoreInput" class="visually-hidden" type="file" accept="image/*" multiple>
+            <input id="photoPdfInput" class="visually-hidden" type="file" accept="application/pdf,.pdf">
+            <button id="takeScorePhotoBtn" class="primary" type="button">📷 拍一頁樂譜</button>
+            <button id="chooseScorePhotosBtn" class="soft-btn" type="button">🖼️ 從相簿選多頁</button>
+            <button id="chooseScorePdfBtn" class="soft-btn" type="button">📄 加入掃描 PDF</button>
+          </div>
+
+          <div class="photo-score-form">
+            <label>曲名
+              <input id="photoScoreTitle" type="text" placeholder="例如：老師今天指定的曲子">
+            </label>
+            <label>作者／來源
+              <input id="photoScoreAuthor" type="text" placeholder="作者、學校、老師或課本">
+            </label>
+            <label>程度
+              <select id="photoScoreLevel">
+                <option value="prep">預備級</option>
+                <option value="1">Level 1</option>
+                <option value="2">Level 2</option>
+                <option value="3">Level 3</option>
+                <option value="4">Level 4</option>
+                <option value="5">Level 5</option>
+                <option value="6">Level 6</option>
+                <option value="7">Level 7</option>
+                <option value="8">Level 8</option>
+                <option value="unknown" selected>未分級</option>
+              </select>
+            </label>
+            <label>分類
+              <select id="photoScoreCategory">
+                <option value="school">學校教材</option>
+                <option value="exam">考試</option>
+                <option value="classic">經典</option>
+                <option value="movie">電影</option>
+                <option value="fashion">時尚</option>
+                <option value="disney">迪士尼</option>
+                <option value="other" selected>其他</option>
+              </select>
+            </label>
+            <label class="photo-checkbox">
+              <input id="photoScoreFull" type="checkbox" checked>
+              <span>這是完整曲</span>
+            </label>
+          </div>
+
+          <div class="photo-page-toolbar">
+            <div>
+              <b id="photoDraftCount">0 頁</b>
+              <span id="photoDraftStorage">尚未加入照片</span>
+            </div>
+            <button id="clearPhotoDraftBtn" class="soft-btn" type="button">清空本次</button>
+          </div>
+
+          <div id="photoPageList" class="photo-page-list">
+            <div class="photo-empty">拍照或選取圖片後，頁面會顯示在這裡。</div>
+          </div>
+
+          <div class="photo-save-actions">
+            <button id="savePhotoScoreBtn" class="primary" type="button">加入我的樂譜庫</button>
+            <span id="photoImportStatus" class="import-status" aria-live="polite">照片只會先儲存在本機；尚未進行 OMR 辨識。</span>
+          </div>
+
+          <div class="import-notes">
+            <b>V2.9 辨識規則</b>
+            <span>本版完成拍照、多頁、排序、旋轉、裁白邊、PDF 保存、曲目資料與本機樂譜庫。OMR 接口已預留，但未連接辨識服務時會標示「待辨識」，不會把照片猜成錯誤音符。</span>
+          </div>
+        </section>
+
+        <section id="photoLibraryManager" class="photo-library-manager">
+          <div class="section-title compact-title">
+            <div><small>MY PHOTO SCORES</small><h3>我的拍照樂譜</h3></div>
+            <span id="photoLibraryCount">0 首</span>
+          </div>
+          <div id="photoLibraryList" class="photo-library-list">
+            <div class="photo-empty">目前還沒有拍照樂譜。</div>
+          </div>
+        </section>
+
         <div class="import-card">
           <div class="import-copy">
             <span class="import-icon">𝄞</span>
@@ -410,6 +505,6 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=2.8"></script>
+  <script src="app.js?v=2.9"></script>
 </body>
 </html>

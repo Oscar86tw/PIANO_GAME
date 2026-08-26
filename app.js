@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V2.8: 216 built-in pedagogical scores ----------
+// ---------- V2.9: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V2.8: full-length repertoire collections ----------
+// ---------- V2.9: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -353,7 +353,7 @@ const SCHOOL_IMPORT_SLOTS=[
   '老師指定曲 01','老師指定曲 02','老師指定曲 03','老師指定曲 04'
 ];
 
-// ---------- V2.8: generated left-hand accompaniment ----------
+// ---------- V2.9: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -592,6 +592,337 @@ if(songCountEl) songCountEl.textContent=`${library.length} 份內建＋Disney �
   return {id,song,message:`已匯入：${song.title}｜${Math.round(song.bpm)} BPM｜${song.timeSig.join('/')}｜${song.events.length} 個事件 ${extra}`};
 }
 
+
+
+/* ==========================================================
+   V2.9 Photo Score Import
+   Photos/PDFs are persisted in IndexedDB because localStorage
+   is too small for image blobs.
+   ========================================================== */
+const PHOTO_DB_NAME='PianoLearningPhotoScoresV29';
+const PHOTO_DB_VERSION=1;
+const PHOTO_STORE='photoScores';
+let photoScoreRecords=[];
+let photoDraftPages=[];
+
+function openPhotoDB(){
+  return new Promise((resolve,reject)=>{
+    if(!('indexedDB' in window)) return reject(new Error('這個瀏覽器不支援 IndexedDB'));
+    const req=indexedDB.open(PHOTO_DB_NAME,PHOTO_DB_VERSION);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains(PHOTO_STORE)){
+        const store=db.createObjectStore(PHOTO_STORE,{keyPath:'id'});
+        store.createIndex('updatedAt','updatedAt');
+      }
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error||new Error('無法開啟照片資料庫'));
+  });
+}
+async function photoDbPut(record){
+  const db=await openPhotoDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readwrite');
+    tx.objectStore(PHOTO_STORE).put(record);
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+async function photoDbDelete(id){
+  const db=await openPhotoDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readwrite');
+    tx.objectStore(PHOTO_STORE).delete(id);
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+async function photoDbGetAll(){
+  const db=await openPhotoDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(PHOTO_STORE,'readonly');
+    const req=tx.objectStore(PHOTO_STORE).getAll();
+    req.onsuccess=()=>{const out=req.result||[];db.close();resolve(out)};
+    req.onerror=()=>{db.close();reject(req.error)};
+  });
+}
+function photoId(){
+  return 'photo_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
+}
+function humanBytes(bytes){
+  bytes=Number(bytes)||0;
+  if(bytes<1024) return bytes+' B';
+  if(bytes<1024*1024) return (bytes/1024).toFixed(1)+' KB';
+  return (bytes/1024/1024).toFixed(1)+' MB';
+}
+function photoLevelLabel(level){
+  if(level==='prep') return 'Prep';
+  if(/^[1-8]$/.test(String(level))) return 'Level '+level;
+  return '未分級';
+}
+function photoCategoryLabel(cat){
+  return ({school:'學校教材',exam:'考試',classic:'經典',movie:'電影',fashion:'時尚',disney:'迪士尼',other:'其他'})[cat]||'其他';
+}
+function revokePhotoDraftUrls(){
+  photoDraftPages.forEach(p=>{if(p.url)URL.revokeObjectURL(p.url)});
+}
+function resetPhotoDraft(){
+  revokePhotoDraftUrls();
+  photoDraftPages=[];
+  if($('photoScoreTitle')) $('photoScoreTitle').value='';
+  if($('photoScoreAuthor')) $('photoScoreAuthor').value='';
+  if($('photoScoreLevel')) $('photoScoreLevel').value='unknown';
+  if($('photoScoreCategory')) $('photoScoreCategory').value='other';
+  if($('photoScoreFull')) $('photoScoreFull').checked=true;
+  renderPhotoDraft();
+}
+function pageBlobSize(page){return page?.blob?.size||0}
+function renderPhotoDraft(){
+  if(!$('photoPageList'))return;
+  const root=$('photoPageList');root.innerHTML='';
+  const bytes=photoDraftPages.reduce((s,p)=>s+pageBlobSize(p),0);
+  $('photoDraftCount').textContent=photoDraftPages.length+' 頁';
+  $('photoDraftStorage').textContent=photoDraftPages.length?humanBytes(bytes):'尚未加入照片';
+
+  if(!photoDraftPages.length){
+    root.innerHTML='<div class="photo-empty">拍照或選取圖片後，頁面會顯示在這裡。</div>';
+    return;
+  }
+  photoDraftPages.forEach((page,index)=>{
+    const card=document.createElement('div');card.className='photo-page-card';
+    const preview=document.createElement('div');preview.className='photo-page-preview';
+    if(page.type==='pdf'){
+      preview.innerHTML='<div class="pdf-page">📄<br>掃描 PDF<br><small>保存原檔</small></div>';
+    }else{
+      const img=document.createElement('img');
+      if(!page.url) page.url=URL.createObjectURL(page.blob);
+      img.src=page.url;
+      img.alt=`樂譜第 ${index+1} 頁`;
+      img.style.transform=`rotate(${page.rotation||0}deg)`;
+      preview.appendChild(img);
+    }
+    const meta=document.createElement('div');meta.className='photo-page-meta';
+    meta.innerHTML=`<strong>第 ${index+1} 頁</strong><small>${page.name||'樂譜照片'} · ${humanBytes(pageBlobSize(page))}</small>`;
+    const actions=document.createElement('div');actions.className='photo-page-actions';
+    const specs=[
+      ['←','前移',()=>movePhotoPage(index,-1)],
+      ['→','後移',()=>movePhotoPage(index,1)],
+      ['↻','旋轉',()=>rotatePhotoPage(index)],
+      ['✂','裁白邊',()=>trimPhotoPage(index)],
+      ['×','刪除',()=>removePhotoPage(index)]
+    ];
+    specs.forEach(([txt,label,fn])=>{
+      const b=document.createElement('button');b.type='button';b.textContent=txt;b.title=label;b.addEventListener('click',fn);actions.appendChild(b);
+    });
+    if(page.type==='pdf') actions.querySelectorAll('button')[2].disabled=actions.querySelectorAll('button')[3].disabled=true;
+    meta.appendChild(actions);
+    card.append(preview,meta);root.appendChild(card);
+  });
+}
+function movePhotoPage(index,delta){
+  const next=index+delta;if(next<0||next>=photoDraftPages.length)return;
+  [photoDraftPages[index],photoDraftPages[next]]=[photoDraftPages[next],photoDraftPages[index]];
+  renderPhotoDraft();
+}
+function rotatePhotoPage(index){
+  const p=photoDraftPages[index];if(!p||p.type==='pdf')return;
+  p.rotation=((p.rotation||0)+90)%360;renderPhotoDraft();
+}
+function removePhotoPage(index){
+  const [p]=photoDraftPages.splice(index,1);if(p?.url)URL.revokeObjectURL(p.url);renderPhotoDraft();
+}
+async function blobToImage(blob){
+  const url=URL.createObjectURL(blob);
+  try{
+    const img=new Image();
+    await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url});
+    return img;
+  }finally{
+    // caller gets decoded Image data; URL can be revoked after load.
+    URL.revokeObjectURL(url);
+  }
+}
+async function trimWhiteBorderBlob(blob){
+  const img=await blobToImage(blob);
+  const maxDim=1800;
+  const scale=Math.min(1,maxDim/Math.max(img.naturalWidth,img.naturalHeight));
+  const w=Math.max(1,Math.round(img.naturalWidth*scale));
+  const h=Math.max(1,Math.round(img.naturalHeight*scale));
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const ctx=c.getContext('2d',{willReadFrequently:true});
+  ctx.drawImage(img,0,0,w,h);
+  const data=ctx.getImageData(0,0,w,h).data;
+  let minX=w,minY=h,maxX=-1,maxY=-1;
+  const step=Math.max(1,Math.floor(Math.max(w,h)/900));
+  for(let y=0;y<h;y+=step){
+    for(let x=0;x<w;x+=step){
+      const i=(y*w+x)*4;
+      const lum=(data[i]+data[i+1]+data[i+2])/3;
+      if(lum<238){
+        if(x<minX)minX=x;if(x>maxX)maxX=x;if(y<minY)minY=y;if(y>maxY)maxY=y;
+      }
+    }
+  }
+  if(maxX<0||maxY<0) return blob;
+  const pad=Math.round(Math.min(w,h)*.025);
+  minX=Math.max(0,minX-pad);minY=Math.max(0,minY-pad);
+  maxX=Math.min(w-1,maxX+pad);maxY=Math.min(h-1,maxY+pad);
+  const cw=maxX-minX+1,ch=maxY-minY+1;
+  if(cw>w*.97&&ch>h*.97)return blob;
+  const out=document.createElement('canvas');out.width=cw;out.height=ch;
+  out.getContext('2d').drawImage(c,minX,minY,cw,ch,0,0,cw,ch);
+  return await new Promise(res=>out.toBlob(b=>res(b||blob),'image/jpeg',.9));
+}
+async function trimPhotoPage(index){
+  const p=photoDraftPages[index];if(!p||p.type==='pdf')return;
+  $('photoImportStatus').textContent=`正在裁切第 ${index+1} 頁白邊…`;
+  try{
+    const newBlob=await trimWhiteBorderBlob(p.blob);
+    if(p.url)URL.revokeObjectURL(p.url);
+    p.blob=newBlob;p.url=null;p.name=p.name||`page-${index+1}.jpg`;
+    $('photoImportStatus').textContent=`第 ${index+1} 頁已完成裁白邊。`;
+  }catch(e){
+    $('photoImportStatus').textContent='裁切失敗，已保留原始照片。';
+  }
+  renderPhotoDraft();
+}
+async function addPhotoFiles(fileList,type='image'){
+  const files=[...(fileList||[])];if(!files.length)return;
+  for(const f of files){
+    if(type==='pdf'||f.type==='application/pdf'||/\.pdf$/i.test(f.name)){
+      photoDraftPages.push({id:photoId(),type:'pdf',name:f.name,blob:f,rotation:0});
+    }else if(f.type.startsWith('image/')){
+      photoDraftPages.push({id:photoId(),type:'image',name:f.name||'score-photo.jpg',blob:f,rotation:0,url:null});
+    }
+  }
+  if(!$('photoScoreTitle').value.trim() && files[0]?.name){
+    $('photoScoreTitle').value=files[0].name.replace(/\.[^.]+$/,'');
+  }
+  $('photoImportStatus').textContent=`已加入 ${files.length} 個檔案；請確認頁序後存入樂譜庫。`;
+  renderPhotoDraft();
+}
+function makePhotoPlaceholderSong(rec){
+  const beats=Math.max(16,(rec.pages?.length||1)*16);
+  return normalizeImportedSong({
+    title:rec.title||'未命名拍照樂譜',
+    bpm:90,timeSig:[4,4],key:'待 OMR',
+    events:[['REST',beats]],
+    imported:false,photoScore:true,photoRecordId:rec.id,
+    photoPending:true,fullScore:!!rec.fullScore,
+    collection:'photo',category:'repertoire',
+    categoryLabel:photoCategoryLabel(rec.category),
+    levelKey:rec.level==='unknown'?null:rec.level,
+    sourceType:'Photo'
+  });
+}
+function rebuildPhotoLibraryEntries(){
+  // Remove old runtime photo placeholders
+  Object.keys(songs).forEach(id=>{if(songs[id]?.photoScore)delete songs[id]});
+  library=library.filter(row=>!String(row[0]).startsWith('photo_'));
+  photoScoreRecords.forEach(rec=>{
+    const id=rec.id;
+    songs[id]=makePhotoPlaceholderSong(rec);
+    library.push([
+      id,rec.title||'未命名拍照樂譜',photoLevelLabel(rec.level),
+      `${rec.pages?.length||0} 頁`,'repertoire','photo'
+    ]);
+  });
+}
+async function loadPhotoScores(){
+  try{
+    photoScoreRecords=(await photoDbGetAll()).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+  }catch(e){
+    photoScoreRecords=[];
+    if($('photoImportStatus'))$('photoImportStatus').textContent='無法讀取本機拍照樂譜：'+e.message;
+  }
+  rebuildPhotoLibraryEntries();
+  renderPhotoLibraryManager();
+  if(typeof renderSongList==='function')renderSongList();
+}
+function photoThumbUrl(rec){
+  const p=rec.pages?.find(x=>x.type==='image');
+  return p?URL.createObjectURL(p.blob):null;
+}
+function renderPhotoLibraryManager(){
+  if(!$('photoLibraryList'))return;
+  $('photoLibraryCount').textContent=photoScoreRecords.length+' 首';
+  const root=$('photoLibraryList');root.innerHTML='';
+  if(!photoScoreRecords.length){
+    root.innerHTML='<div class="photo-empty">目前還沒有拍照樂譜。</div>';return;
+  }
+  photoScoreRecords.forEach(rec=>{
+    const row=document.createElement('div');row.className='photo-library-item';
+    const first=rec.pages?.find(x=>x.type==='image');
+    let thumb;
+    if(first){
+      thumb=document.createElement('img');thumb.className='photo-library-thumb';
+      const u=URL.createObjectURL(first.blob);thumb.src=u;thumb.onload=()=>URL.revokeObjectURL(u);
+    }else{
+      thumb=document.createElement('div');thumb.className='photo-library-thumb pdf';thumb.textContent='PDF';
+    }
+    const info=document.createElement('div');info.className='photo-library-info';
+    info.innerHTML=`<strong>${rec.title||'未命名拍照樂譜'}</strong>
+      <span>${rec.author||'未填作者'} · ${rec.pages?.length||0} 頁 · ${photoLevelLabel(rec.level)}</span>
+      <div class="photo-status-tags"><em>${photoCategoryLabel(rec.category)}</em><em class="pending">待 OMR 辨識</em>${rec.fullScore?'<em>完整曲</em>':''}</div>`;
+    const actions=document.createElement('div');actions.className='photo-library-actions';
+    const view=document.createElement('button');view.type='button';view.textContent='查看／編輯';
+    view.addEventListener('click',()=>openPhotoEditor(rec.id));
+    const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='刪除';
+    del.addEventListener('click',async()=>{
+      if(!confirm(`刪除「${rec.title||'這份拍照樂譜'}」？`))return;
+      await photoDbDelete(rec.id);await loadPhotoScores();
+    });
+    actions.append(view,del);row.append(thumb,info,actions);root.appendChild(row);
+  });
+}
+async function savePhotoDraft(){
+  if(!photoDraftPages.length){
+    $('photoImportStatus').textContent='請先拍照或加入樂譜圖片／PDF。';return;
+  }
+  const title=$('photoScoreTitle').value.trim()||`拍照樂譜 ${new Date().toLocaleDateString()}`;
+  const rec={
+    id:photoId(),title,
+    author:$('photoScoreAuthor').value.trim(),
+    level:$('photoScoreLevel').value,
+    category:$('photoScoreCategory').value,
+    fullScore:$('photoScoreFull').checked,
+    omrStatus:'pending',
+    createdAt:Date.now(),updatedAt:Date.now(),
+    pages:photoDraftPages.map(p=>({
+      id:p.id,type:p.type,name:p.name,blob:p.blob,rotation:p.rotation||0
+    }))
+  };
+  $('photoImportStatus').textContent='正在保存到本機樂譜庫…';
+  try{
+    await photoDbPut(rec);
+    $('photoImportStatus').textContent=`已加入「${title}」：${rec.pages.length} 頁。目前狀態：待 OMR 辨識。`;
+    resetPhotoDraft();
+    await loadPhotoScores();
+  }catch(e){
+    $('photoImportStatus').textContent='保存失敗：'+e.message;
+  }
+}
+async function openPhotoEditor(id){
+  const rec=photoScoreRecords.find(x=>x.id===id);
+  if(!rec)return;
+  // Move to Import tab and load a copy into draft editor.
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='import'));
+  document.querySelectorAll('.tab-panel').forEach(x=>x.classList.toggle('active',x.id==='importPanel'));
+  revokePhotoDraftUrls();
+  photoDraftPages=(rec.pages||[]).map(p=>({...p,url:null}));
+  $('photoScoreTitle').value=rec.title||'';
+  $('photoScoreAuthor').value=rec.author||'';
+  $('photoScoreLevel').value=rec.level||'unknown';
+  $('photoScoreCategory').value=rec.category||'other';
+  $('photoScoreFull').checked=!!rec.fullScore;
+  $('photoImportStatus').textContent=`正在查看「${rec.title}」。目前仍是待 OMR 辨識；若修改後按「加入我的樂譜庫」會另存一份。`;
+  renderPhotoDraft();
+  $('photoImportCard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function openPhotoFromLibrary(id){
+  openPhotoEditor(id);
+}
 
 const PROGRESS_KEY='pianoLearningProgressV26';
 const DAILY_GOAL_MINUTES=15;
@@ -918,7 +1249,7 @@ function rowSearchText(row){
   return [
     title,lvl,duration,category,collection,
     s.categoryLabel,s.key,s.bpm,
-    s.fullScore?'完整曲':'練習'
+    s.photoScore?'拍照樂譜 待 OMR':(s.fullScore?'完整曲':'練習')
   ].filter(Boolean).join(' ').toLowerCase();
 }
 function levelRank(row){
@@ -966,10 +1297,14 @@ function renderSongList(){
     const row=document.createElement('div'); row.className='song-row';
     const main=document.createElement('button');
     main.type='button'; main.className='song-main';
-    const tag=s.fullScore?'整首':'練習';
+    const tag=s.photoScore?'拍照樂譜':(s.fullScore?'整首':'練習');
     const isRecent=recentIds.includes(id);
-    main.innerHTML=`<span><strong>${title}</strong><small>${s.bpm} BPM · ${(s.timeSig||[4,4]).join('/')} · ${s.categoryLabel||'曲目'}</small><span class="song-tags"><em class="${s.fullScore?'full':''}">${tag}</em>${isRecent?'<em class="recent">最近練習</em>':''}${collection?`<em>${collection}</em>`:''}</span></span><span class="level">${lvl}</span><span class="duration">${duration}</span>`;
-    main.addEventListener('click',()=>openPractice(id,'PLAY'));
+    const pending=s.photoScore&&s.photoPending?'<em class="pending">待 OMR</em>':'';
+    main.innerHTML=`<span><strong>${title}</strong><small>${s.photoScore?'照片／掃描譜':`${s.bpm} BPM · ${(s.timeSig||[4,4]).join('/')} · ${s.categoryLabel||'曲目'}`}</small><span class="song-tags"><em class="${s.fullScore?'full':''}">${tag}</em>${pending}${isRecent?'<em class="recent">最近練習</em>':''}${collection?`<em>${collection}</em>`:''}</span></span><span class="level">${lvl}</span><span class="duration">${duration}</span>`;
+    main.addEventListener('click',()=>{
+      if(s.photoScore && s.photoPending){openPhotoFromLibrary(id);return}
+      openPractice(id,'PLAY');
+    });
 
     const fav=document.createElement('button');
     fav.type='button'; fav.className='song-favorite'+(favoriteIds.has(id)?' active':'');
@@ -1079,6 +1414,24 @@ $('startNextLessonBtn').addEventListener('click',()=>{
   if(id) openPractice(id,'LEARN');
 });
 renderProgressPath();
+
+
+$('takeScorePhotoBtn').addEventListener('click',()=>$('cameraScoreInput').click());
+$('chooseScorePhotosBtn').addEventListener('click',()=>$('galleryScoreInput').click());
+$('chooseScorePdfBtn').addEventListener('click',()=>$('photoPdfInput').click());
+$('cameraScoreInput').addEventListener('change',async e=>{
+  await addPhotoFiles(e.target.files,'image');e.target.value='';
+});
+$('galleryScoreInput').addEventListener('change',async e=>{
+  await addPhotoFiles(e.target.files,'image');e.target.value='';
+});
+$('photoPdfInput').addEventListener('change',async e=>{
+  await addPhotoFiles(e.target.files,'pdf');e.target.value='';
+});
+$('clearPhotoDraftBtn').addEventListener('click',resetPhotoDraft);
+$('savePhotoScoreBtn').addEventListener('click',savePhotoDraft);
+renderPhotoDraft();
+loadPhotoScores();
 
 $('chooseScoreBtn').addEventListener('click',()=>$('scoreFileInput').click());
 $('scoreFileInput').addEventListener('change',async()=>{
@@ -2129,7 +2482,7 @@ function gameLoop(){
 }
 
 function flash(kind){
-  // V2.8: intentionally disabled. No screen flash at beat/hit time.
+  // V2.9: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   if(state.sessionMode==='exam' || state.sessionMode==='performance') return;
