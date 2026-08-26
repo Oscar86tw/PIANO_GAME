@@ -1,0 +1,39 @@
+[
+  {
+    "id": "user_wampus_cats_page1",
+    "title": "The Wampus Cats｜貓人隊",
+    "subtitle": "Dueling High School Bands",
+    "composer": "教材譜面",
+    "sourceType": "UserUploadedScoreImage",
+    "copyright": "User-provided study material",
+    "category": "學校教材",
+    "collection": "個人教材匯入",
+    "level": "未指定",
+    "bpm": 104,
+    "tempoText": "Allegro moderato",
+    "timeSig": [
+      4,
+      4
+    ],
+    "key": "C Major",
+    "complete": false,
+    "photoScore": true,
+    "pageImages": [
+      "assets/user-scores/wampus-cats/page-01.png"
+    ],
+    "visibleMeasures": "1–16（依上傳頁面）",
+    "practiceNotes": [
+      "教材技巧：落下與順勢帶領",
+      "火花音型",
+      "可見力度：f / mp",
+      "可見三連音與連奏/重音記號"
+    ],
+    "tags": [
+      "學校教材",
+      "個人教材",
+      "照片樂譜",
+      "Dueling High School Bands",
+      "The Wampus Cats"
+    ]
+  }
+]

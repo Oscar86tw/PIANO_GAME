@@ -32,7 +32,7 @@
     rows.slice((page-1)*perPage,page*perPage).forEach(s=>{
       const d=document.createElement('div');d.className='song-row';
       const fav=Store.get('piano-favorites-v52',[]).includes(s.id);
-      d.innerHTML=`<div><strong>${fav?'★ ':''}${s.title}</strong><small>${s.category||''} · ${s.level||''} · ${s.bpm||''} BPM · ${s.measures||''} 小節${s.complete?' · 完整譜':''}</small></div>
+      d.innerHTML=`<div><strong>${fav?'★ ':''}${s.title}</strong><small>${s.category||''} · ${s.level||''} · ${s.bpm||''} BPM · ${s.photoScore?(s.visibleMeasures||'照片譜'):(s.measures||'')+' 小節'}${s.complete?' · 完整譜':''}${s.photoScore?' · 上傳教材':''}</small></div>
       <a class="btn" href="score-detail.html?song=${encodeURIComponent(s.id)}">看完整譜</a>
       <a class="btn primary" href="practice.html?song=${encodeURIComponent(s.id)}">練習</a>`;
       $('songList').appendChild(d);

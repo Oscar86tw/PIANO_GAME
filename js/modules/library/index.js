@@ -3,12 +3,13 @@ window.Library={
   songs:[],
   async load(){
     if(!this.songs.length){
-      const [builtins,academy] = await Promise.all([
+      const [builtins,academy,personal] = await Promise.all([
         fetch(AppBase+'data/songs.json').then(r=>r.json()).catch(()=>[]),
-        fetch(AppBase+'data/scores-1000.json').then(r=>r.json()).catch(()=>[])
+        fetch(AppBase+'data/scores-1000.json').then(r=>r.json()).catch(()=>[]),
+        fetch(AppBase+'data/personal-scores.json').then(r=>r.json()).catch(()=>[])
       ]);
       const imported=Store.get('imported-scores-v41',[]);
-      this.songs=[...builtins,...academy,...imported];
+      this.songs=[...personal,...builtins,...academy,...imported];
     }
     return this.songs;
   },

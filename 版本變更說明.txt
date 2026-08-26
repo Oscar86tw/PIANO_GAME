@@ -1,17 +1,11 @@
-PIANO LEARNING V5.7
-主題：FOCUS PRACTICE + SETTINGS DRAWER
+PIANO LEARNING V5.8
+主題：新增個人學校教材樂譜
 
 新增：
-- 設定抽屜
-- 按開始後自動收起
-- 練習中精簡控制列
-- 五線譜自動放大為主畫面
-- 右手 / 左手 / 雙手視覺專注模式
-- 可隨時重新展開設定
+- Dueling High School Bands – 1. The Wampus Cats（貓人隊）
+- 分類：學校教材 / 個人教材匯入
+- 保存使用者上傳原始第1頁
+- 可在 Library 搜尋並開啟完整照片譜面
+- 未上傳的後續頁不自行補入
 
-保留：
-- 7秒 READY
-- Master Clock
-- Audio Mixer
-- MIDI / 麥克風
-- Scoring / Stars
+目前此項為照片譜模式；若要示範琴聲、碰線同步與 Scoring，需另外建立該頁的音符 EventTimeline。
