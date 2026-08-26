@@ -604,3 +604,202 @@ button{cursor:pointer}
   .library-tools{grid-template-columns:1fr}
   .library-search{grid-column:auto}
 }
+
+
+/* V2.6 — 學習路徑與進度 */
+.progress-overview{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.progress-overview>div{
+  background:#fff;
+  border:1px solid #e2e6ef;
+  border-radius:15px;
+  padding:14px;
+}
+.progress-overview small{display:block;color:#8993a9;font-size:.68rem}
+.progress-overview b{display:block;margin-top:5px;font-size:1.35rem;color:#4d5975}
+
+.next-lesson-card{
+  margin-top:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  background:linear-gradient(135deg,#7469dc,#8d84eb);
+  color:white;
+  border-radius:20px;
+  padding:18px 20px;
+}
+.next-lesson-card small{font-size:.64rem;letter-spacing:.14em;opacity:.75;font-weight:900}
+.next-lesson-card h3{margin:4px 0 2px}
+.next-lesson-card p{margin:0;opacity:.86;font-size:.83rem}
+.next-lesson-card .primary{white-space:nowrap}
+
+.daily-goal{
+  margin-top:12px;
+  background:#fff;
+  border:1px solid #e2e6ef;
+  border-radius:15px;
+  padding:14px;
+}
+.daily-goal>div:first-child{display:flex;justify-content:space-between;gap:10px}
+.daily-goal small{color:#8993a9}
+.daily-goal strong{color:#4d5975}
+.daily-goal-bar{
+  height:9px;
+  border-radius:999px;
+  background:#eceef4;
+  overflow:hidden;
+  margin-top:9px;
+}
+.daily-goal-bar span{
+  display:block;
+  height:100%;
+  width:0;
+  background:#7b70dc;
+  border-radius:999px;
+  transition:width .2s ease;
+}
+
+.level-path{
+  display:grid;
+  gap:10px;
+  margin-top:14px;
+}
+.level-node{
+  display:grid;
+  grid-template-columns:78px 1fr auto;
+  align-items:center;
+  gap:12px;
+  background:#fff;
+  border:1px solid #e3e6ef;
+  border-radius:16px;
+  padding:13px 14px;
+}
+.level-node.locked{opacity:.52}
+.level-node.current{border-color:#c9c3ee;background:#faf9ff}
+.level-badge{
+  min-height:54px;
+  display:grid;
+  place-items:center;
+  border-radius:13px;
+  background:#f0eeff;
+  color:#6a60c2;
+  font-weight:900;
+}
+.level-node.locked .level-badge{background:#f1f2f5;color:#929aaa}
+.level-info strong{display:block;color:#46536f}
+.level-info small{display:block;color:#8a93a7;margin-top:3px}
+.level-progress{
+  height:7px;
+  background:#eceef4;
+  border-radius:999px;
+  margin-top:8px;
+  overflow:hidden;
+}
+.level-progress span{display:block;height:100%;background:#7b70dc;border-radius:999px}
+.level-state{
+  text-align:right;
+  min-width:72px;
+}
+.level-state b{display:block;color:#5c6680}
+.level-state small{display:block;color:#929aae;font-size:.65rem;margin-top:2px}
+
+@media(max-width:760px){
+  .progress-overview{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .next-lesson-card{align-items:flex-start;flex-direction:column}
+  .next-lesson-card .primary{width:100%}
+}
+@media(max-width:540px){
+  .level-node{grid-template-columns:60px 1fr}
+  .level-state{grid-column:2;text-align:left}
+}
+
+
+/* V2.7 — Exam / performance session modes */
+.session-mode-notice{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.22);
+  color:#fff;
+}
+.session-mode-notice small{display:block;font-size:.62rem;letter-spacing:.14em;opacity:.72}
+.session-mode-notice strong{display:block;margin-top:2px}
+.session-mode-notice span{display:block;margin-top:2px;font-size:.75rem;opacity:.82}
+.session-mode-notice>b{
+  min-width:92px;
+  text-align:center;
+  border-radius:999px;
+  padding:8px 10px;
+  background:#ffffff20;
+  font-size:.68rem;
+  letter-spacing:.08em;
+}
+.session-mode-notice.exam{background:rgba(72,61,125,.28)}
+.session-mode-notice.performance{background:rgba(40,52,82,.28)}
+
+.exam-locked{
+  opacity:.52 !important;
+  pointer-events:none !important;
+}
+.transport-btn:disabled,
+.soft-btn:disabled,
+.compact-controls select:disabled,
+.tempo-control button:disabled,
+.tempo-control input:disabled{
+  cursor:not-allowed;
+  opacity:.46;
+}
+.exam-result-card{
+  margin-top:10px;
+  border:1px solid #dedff0;
+  border-radius:13px;
+  padding:12px;
+  background:#f8f7ff;
+}
+.exam-result-card[hidden]{display:none}
+.exam-result-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.exam-result-head small{display:block;color:#7b70c8;font-size:.62rem;letter-spacing:.14em;font-weight:900}
+.exam-result-head strong{display:block;color:#4b5672}
+.exam-result-head>b{
+  min-width:56px;
+  text-align:center;
+  padding:8px;
+  border-radius:10px;
+  background:#fff;
+  color:#5f56b0;
+  font-size:1.1rem;
+}
+.exam-result-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.exam-result-grid>div{
+  padding:8px;
+  border-radius:10px;
+  background:#fff;
+  text-align:center;
+}
+.exam-result-grid small{display:block;color:#8b94a8;font-size:.62rem}
+.exam-result-grid b{display:block;margin-top:3px;color:#4b5772}
+.exam-result-card p{margin:10px 0 0;color:#6f7990;font-size:.76rem}
+@media(max-width:620px){
+  .session-mode-notice{align-items:flex-start;flex-direction:column}
+  .exam-result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+
+/* V2.8 — 學校教材分類 */
+.collection-filter[data-collection="school"]{
+  font-weight:900;
+}

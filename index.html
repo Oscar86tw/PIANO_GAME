@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V2.5</title>
-  <link rel="stylesheet" href="style.css?v=2.5">
+  <title>PIANO LEARNING V2.8</title>
+  <link rel="stylesheet" href="style.css?v=2.8">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V2.5</div>
+        <div class="version-badge">VERSION V2.8</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -77,6 +77,7 @@
           <button class="collection-filter" data-collection="exam">考試</button>
           <button class="collection-filter" data-collection="fashion">時尚</button>
           <button class="collection-filter" data-collection="movie">電影</button>
+          <button class="collection-filter" data-collection="school">學校教材</button>
           <button class="collection-filter" data-collection="disney">迪士尼</button>
           <button class="collection-filter" data-collection="practice">短練習</button>
         </div>
@@ -166,11 +167,48 @@
       </section>
 
       <section id="progressPanel" class="tab-panel">
-        <div class="progress-cards">
-          <div><small>本週練習</small><b>3 天</b></div>
-          <div><small>完成歌曲</small><b>4</b></div>
-          <div><small>平均正確率</small><b>88%</b></div>
+        <div class="section-title">
+          <div><small>PROGRESS</small><h2>學習路徑</h2></div>
+          <span id="progressLevelLabel">預備級</span>
         </div>
+
+        <div class="progress-overview">
+          <div>
+            <small>目前星星</small>
+            <b id="totalStarsValue">0 ★</b>
+          </div>
+          <div>
+            <small>完成課程</small>
+            <b id="completedLessonsValue">0</b>
+          </div>
+          <div>
+            <small>完成完整曲</small>
+            <b id="completedSongsValue">0</b>
+          </div>
+          <div>
+            <small>本週練習</small>
+            <b id="weeklyPracticeValue">0 天</b>
+          </div>
+        </div>
+
+        <section class="next-lesson-card">
+          <div>
+            <small>NEXT LESSON</small>
+            <h3 id="nextLessonTitle">準備開始第一課</h3>
+            <p id="nextLessonDesc">從識譜與中央 C 開始。</p>
+          </div>
+          <button id="startNextLessonBtn" class="primary" type="button">開始下一課</button>
+        </section>
+
+        <div class="daily-goal">
+          <div>
+            <small>今日練習</small>
+            <strong id="dailyGoalText">0 / 15 分鐘</strong>
+          </div>
+          <div class="daily-goal-bar"><span id="dailyGoalBar"></span></div>
+        </div>
+
+        <div class="level-path" id="levelPath"></div>
       </section>
     </section>
 
@@ -236,6 +274,19 @@
             <button id="closeRecordBtn" type="button">關閉</button>
           </div>
           <div id="recordSummary" class="record-summary">尚未開始練習。</div>
+          <section id="examResultCard" class="exam-result-card" hidden>
+            <div class="exam-result-head">
+              <div><small>EXAM RESULT</small><strong>考試模擬結果</strong></div>
+              <b id="examGrade">—</b>
+            </div>
+            <div class="exam-result-grid">
+              <div><small>總分</small><b id="examScore">—</b></div>
+              <div><small>音高</small><b id="examPitchScore">—</b></div>
+              <div><small>節奏</small><b id="examRhythmScore">—</b></div>
+              <div><small>完整度</small><b id="examCompletionScore">—</b></div>
+            </div>
+            <p id="examResultText">完整演奏後才會產生成績。</p>
+          </section>
           <section id="practiceAnalytics" class="practice-analytics">
             <div class="analytics-grid">
               <div><small>音高正確率</small><b id="pitchAccuracyValue">—</b></div>
@@ -264,6 +315,15 @@
           <div id="recordList" class="record-list"></div>
         </div>
 
+        <div id="sessionModeNotice" class="session-mode-notice">
+          <div>
+            <small>練習模式</small>
+            <strong id="sessionModeTitle">可以倒回、循環與使用示範聲</strong>
+            <span id="sessionModeDesc">適合分段練習與修正錯誤。</span>
+          </div>
+          <b id="sessionModeBadge">PRACTICE</b>
+        </div>
+
         <div class="practice-footer">
           <div class="compact-controls">
             <label>練習速度
@@ -280,7 +340,14 @@
                 <option value="both">雙手</option>
               </select>
             </label>
-            <label>模式
+            <label>練習類型
+              <select id="sessionModeSelect">
+                <option value="practice" selected>練習模式</option>
+                <option value="exam">考試模擬</option>
+                <option value="performance">正式演奏</option>
+              </select>
+            </label>
+            <label>學習模式
               <select id="practiceMode">
                 <option value="play">演奏</option>
                 <option value="learn">學習</option>
@@ -343,6 +410,6 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=2.5"></script>
+  <script src="app.js?v=2.8"></script>
 </body>
 </html>

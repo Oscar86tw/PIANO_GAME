@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V2.5: 216 built-in pedagogical scores ----------
+// ---------- V2.8: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V2.5: full-length repertoire collections ----------
+// ---------- V2.8: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -152,7 +152,8 @@ function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrica
     classical:[0,1,2,4,3,2,1,0,2,3,5,4,3,1],
     exam:[0,2,1,3,2,4,3,1,0,3,5,2,4,1],
     fashion:[0,4,2,5,3,1,4,2,6,4,1,3,5,2],
-    cinematic:[0,2,5,4,2,6,5,3,1,4,7,5,2,0,3,6]
+    cinematic:[0,2,5,4,2,6,5,3,1,4,7,5,2,0,3,6],
+    school:[0,1,2,1,0,2,3,2,1,3,4,2,0,1]
   };
   const motif=motifs[style]||motifs.lyrical;
   let beatInBar=0;
@@ -163,6 +164,7 @@ function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrica
     if(style==='fashion') dur=[.5,.5,1,1,1.5,.5][(i+variant)%6];
     else if(style==='exam') dur=[.5,1,.5,1,1,1][(i+variant)%6];
     else if(style==='cinematic') dur=[.5,1,.5,1.5,1,2,.5,.5][(i+variant)%8];
+    else if(style==='school') dur=[1,1,.5,.5,1,2][(i+variant)%6];
     else dur=[1,1,1,1,2][(i+variant)%5];
     if(used+dur>totalBeats) dur=totalBeats-used;
     if(beatInBar+dur>beatsPerBar) dur=beatsPerBar-beatInBar;
@@ -244,7 +246,65 @@ const FULL_REPERTOIRE_DEFS=[
   ['movie','City of Glass｜玻璃之城','7',110,[4,4],'F# minor','cinematic'],
   ['movie','Into the Blue Planet｜進入藍色星球','6',86,[6,8],'E Major','cinematic'],
   ['movie','The Forgotten Crown｜被遺忘的王冠','7',100,[4,4],'D minor','cinematic'],
-  ['movie','End Credits: Home｜片尾：回家','5',78,[4,4],'G Major','lyrical']
+  ['movie','End Credits: Home｜片尾：回家','5',78,[4,4],'G Major','lyrical'],
+
+  // School curriculum library — public-domain/traditional + original school studies.
+  ['school','Twinkle, Twinkle, Little Star｜小星星','prep',80,[4,4],'C Major','school'],
+  ['school','Mary Had a Little Lamb｜瑪莉有隻小綿羊','prep',84,[4,4],'C Major','school'],
+  ['school','Frère Jacques｜兩隻老虎／雅克兄弟','prep',88,[4,4],'C Major','school'],
+  ['school','Hot Cross Buns｜熱十字麵包','prep',76,[4,4],'C Major','school'],
+  ['school','Lightly Row｜輕輕划','1',84,[4,4],'C Major','school'],
+  ['school','London Bridge｜倫敦鐵橋','1',88,[4,4],'C Major','school'],
+  ['school','Ode to Joy｜歡樂頌','1',92,[4,4],'C Major','school'],
+  ['school','Jingle Bells｜鈴兒響叮噹','1',96,[4,4],'C Major','school'],
+  ['school','When the Saints Go Marching In｜聖者進行曲','2',96,[4,4],'C Major','school'],
+  ['school','Amazing Grace｜奇異恩典','2',72,[3,4],'G Major','school'],
+  ['school','Aura Lee｜奧拉麗','2',76,[4,4],'C Major','school'],
+  ['school','Old MacDonald Had a Farm｜老麥克唐納','2',92,[4,4],'C Major','school'],
+  ['school','School Bells｜上課鐘聲練習曲','2',88,[4,4],'F Major','school'],
+  ['school','Morning Assembly｜晨會進行曲','2',100,[4,4],'C Major','school'],
+  ['school','Skipping Rhythm｜跳繩節奏曲','2',104,[4,4],'G Major','school'],
+  ['school','Classroom Waltz｜教室圓舞曲','3',84,[3,4],'F Major','school'],
+  ['school','The Music Box｜音樂盒','3',88,[3,4],'C Major','school'],
+  ['school','Rainy Recess｜下雨的下課時間','3',92,[4,4],'A minor','school'],
+  ['school','March of the Pencils｜鉛筆進行曲','3',104,[4,4],'G Major','school'],
+  ['school','Scale Steps in C｜C大調音階小品','3',92,[4,4],'C Major','school'],
+  ['school','Scale Steps in G｜G大調音階小品','3',96,[4,4],'G Major','school'],
+  ['school','First Left-Hand Waltz｜第一首左手圓舞曲','3',82,[3,4],'C Major','school'],
+  ['school','Two-Hand Conversation｜雙手對話','4',92,[4,4],'G Major','school'],
+  ['school','Dotted Rhythm Study｜附點節奏練習曲','4',88,[4,4],'F Major','school'],
+  ['school','Eighth-Note Train｜八分音符列車','4',108,[4,4],'C Major','school'],
+  ['school','Minor Mood｜小調心情','4',80,[4,4],'A minor','school'],
+  ['school','Broken-Chord River｜分解和弦小河','4',90,[4,4],'C Major','school'],
+  ['school','Syncopation Steps｜切分節奏腳步','4',100,[4,4],'G Major','school'],
+  ['school','School Festival Waltz｜校慶圓舞曲','4',86,[3,4],'F Major','school'],
+  ['school','Graduation Morning｜畢業晨光','5',78,[4,4],'C Major','lyrical'],
+  ['school','Chromatic Footsteps｜半音腳步','5',92,[4,4],'A minor','school'],
+  ['school','Arpeggio Garden｜琶音花園','5',96,[4,4],'G Major','school'],
+  ['school','Cadence Practice in C｜C大調終止式','5',84,[4,4],'C Major','school'],
+  ['school','Cadence Practice in G｜G大調終止式','5',88,[4,4],'G Major','school'],
+  ['school','Simple Sonata Form｜簡易奏鳴曲式','5',104,[4,4],'C Major','school'],
+  ['school','School Concert Etude｜校內音樂會練習曲','5',110,[4,4],'D Major','school'],
+  ['school','Sight-Reading No. 1｜視奏一','5',92,[4,4],'C Major','exam'],
+  ['school','Sight-Reading No. 2｜視奏二','5',96,[3,4],'G Major','exam'],
+  ['school','Sight-Reading No. 3｜視奏三','6',100,[4,4],'F Major','exam'],
+  ['school','Primary Chord Study｜I IV V 和弦練習','6',92,[4,4],'C Major','school'],
+  ['school','Alberti Bass Study｜阿爾貝提低音練習','6',104,[4,4],'C Major','school'],
+  ['school','Hand Independence Study｜雙手獨立練習','6',108,[4,4],'G Major','school'],
+  ['school','Three-Four Accompaniment｜3/4伴奏型','6',88,[3,4],'D Major','school'],
+  ['school','Six-Eight Flow｜6/8流動節奏','6',96,[6,8],'G Major','school'],
+  ['school','Minor Cadence Study｜小調終止式','6',84,[4,4],'E minor','school'],
+  ['school','School Recital Piece｜學校獨奏會曲','6',100,[4,4],'F Major','school'],
+  ['school','Intermediate Sight-Reading A｜中階視奏A','7',104,[4,4],'D Major','exam'],
+  ['school','Intermediate Sight-Reading B｜中階視奏B','7',108,[6,8],'A minor','exam'],
+  ['school','Harmony Voices｜和聲聲部練習','7',92,[4,4],'G Major','school'],
+  ['school','Two-Voice Invention Study｜二聲部創意練習','7',100,[4,4],'C Major','school'],
+  ['school','Accompaniment Patterns｜伴奏型總整理','7',106,[4,4],'F Major','school'],
+  ['school','Modulation Introduction｜轉調入門','7',96,[4,4],'G Major','school'],
+  ['school','Performance Study No. 1｜演奏練習一','8',112,[4,4],'D Major','school'],
+  ['school','Performance Study No. 2｜演奏練習二','8',116,[6,8],'E minor','school'],
+  ['school','Advanced School Sight-Reading｜學校進階視奏','8',108,[4,4],'A Major','exam'],
+  ['school','Full-Course Review Piece｜學校課程總複習曲','8',102,[4,4],'C Major','school']
 ];
 
 function addFullRepertoire(){
@@ -261,6 +321,7 @@ function addFullRepertoire(){
     const bars=collection==='classic'?24:
       collection==='exam'?20:
       collection==='movie'?(Number(levelKey)>=6?36:32):
+      collection==='school'?(levelKey==='prep'?16:(Number(levelKey)<=2?20:Number(levelKey)<=4?24:Number(levelKey)<=6?28:32)):
       24;
     const events=buildFullPiecePattern(ranges[levelKey]||ranges[4],i+1,bars,timeSig,style);
     const id=`full_${collection}_${String(i+1).padStart(2,'0')}`;
@@ -285,8 +346,14 @@ const MOVIE_IMPORT_SLOTS=[
   'Movie Licensed Score 09','Movie Licensed Score 10','Movie Licensed Score 11','Movie Licensed Score 12',
   'Movie Licensed Score 13','Movie Licensed Score 14','Movie Licensed Score 15','Movie Licensed Score 16'
 ];
+const SCHOOL_IMPORT_SLOTS=[
+  '學校課本樂譜 01','學校課本樂譜 02','學校課本樂譜 03','學校課本樂譜 04',
+  '學校課本樂譜 05','學校課本樂譜 06','學校課本樂譜 07','學校課本樂譜 08',
+  '學校課本樂譜 09','學校課本樂譜 10','學校課本樂譜 11','學校課本樂譜 12',
+  '老師指定曲 01','老師指定曲 02','老師指定曲 03','老師指定曲 04'
+];
 
-// ---------- V2.5: generated left-hand accompaniment ----------
+// ---------- V2.8: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -525,6 +592,149 @@ if(songCountEl) songCountEl.textContent=`${library.length} 份內建＋Disney �
   return {id,song,message:`已匯入：${song.title}｜${Math.round(song.bpm)} BPM｜${song.timeSig.join('/')}｜${song.events.length} 個事件 ${extra}`};
 }
 
+
+const PROGRESS_KEY='pianoLearningProgressV26';
+const DAILY_GOAL_MINUTES=15;
+
+function loadLearningProgress(){
+  try{
+    return JSON.parse(localStorage.getItem(PROGRESS_KEY)||'{}');
+  }catch(e){ return {}; }
+}
+let learningProgress=Object.assign({
+  stars:0,
+  completedLessons:[],
+  completedSongs:[],
+  practiceSessions:[],
+  unlockedLevel:'prep'
+},loadLearningProgress());
+
+function saveLearningProgress(){
+  try{localStorage.setItem(PROGRESS_KEY,JSON.stringify(learningProgress))}catch(e){}
+}
+function levelOrder(){ return ['prep','1','2','3','4','5','6','7','8']; }
+function levelName(k){ return k==='prep'?'預備級':`Level ${k}`; }
+function todayKey(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function practiceMinutesForDay(day=todayKey()){
+  return learningProgress.practiceSessions
+    .filter(x=>x.day===day)
+    .reduce((s,x)=>s+(Number(x.minutes)||0),0);
+}
+function recentPracticeDays(days=7){
+  const now=new Date(), set=new Set();
+  for(let i=0;i<days;i++){
+    const d=new Date(now); d.setDate(now.getDate()-i);
+    set.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
+  }
+  return new Set(learningProgress.practiceSessions.map(x=>x.day).filter(x=>set.has(x))).size;
+}
+function lessonIdFor(level,category,index=1){ return `${level}_${category}_${index}`; }
+function completedForLevel(level){
+  return learningProgress.completedLessons.filter(x=>String(x).startsWith(level+'_')).length;
+}
+function totalForLevel(){ return 8*3; } // 8 categories x 3 lessons
+function refreshUnlocks(){
+  const order=levelOrder();
+  let highest=0;
+  for(let i=0;i<order.length;i++){
+    const k=order[i];
+    const pct=completedForLevel(k)/totalForLevel();
+    if(pct>=.6 && i<order.length-1) highest=Math.max(highest,i+1);
+  }
+  learningProgress.unlockedLevel=order[highest];
+  saveLearningProgress();
+}
+function isLevelUnlocked(k){
+  const order=levelOrder();
+  return order.indexOf(k)<=order.indexOf(learningProgress.unlockedLevel||'prep');
+}
+function awardPracticeResult(songId,summary){
+  const stars = summary.exactAccuracy>=90?3:summary.exactAccuracy>=75?2:summary.exactAccuracy>=55?1:0;
+  learningProgress.stars += stars;
+
+  const s=songs[songId];
+  if(s?.fullScore && summary.exactAccuracy>=70 && !learningProgress.completedSongs.includes(songId)){
+    learningProgress.completedSongs.push(songId);
+  }
+  if(s?.levelKey && s?.category && summary.exactAccuracy>=70){
+    const variant = Number(String(songId).split('_').pop()) || 1;
+    const lid=lessonIdFor(s.levelKey,s.category,variant);
+    if(!learningProgress.completedLessons.includes(lid)) learningProgress.completedLessons.push(lid);
+  }
+
+  const min=Math.max(1,Math.round((Number(summary.durationSeconds)||60)/60));
+  learningProgress.practiceSessions.push({day:todayKey(),minutes:min,songId,stars,exact:summary.exactAccuracy});
+  learningProgress.practiceSessions=learningProgress.practiceSessions.slice(-300);
+  refreshUnlocks();
+  saveLearningProgress();
+  renderProgressPath();
+}
+function findNextLesson(){
+  for(const level of levelOrder()){
+    if(!isLevelUnlocked(level)) break;
+    for(const [category] of SCORE_CATEGORIES){
+      for(let v=1;v<=3;v++){
+        const lid=lessonIdFor(level,category,v);
+        if(!learningProgress.completedLessons.includes(lid)){
+          const id=`lesson_${level}_${category}_${v}`;
+          if(songs[id]) return {id,level,category,v};
+        }
+      }
+    }
+  }
+  return null;
+}
+function renderProgressPath(){
+  if(!$('levelPath')) return;
+  refreshUnlocks();
+
+  $('totalStarsValue').textContent=`${learningProgress.stars||0} ★`;
+  $('completedLessonsValue').textContent=String(learningProgress.completedLessons.length);
+  $('completedSongsValue').textContent=String(learningProgress.completedSongs.length);
+  $('weeklyPracticeValue').textContent=`${recentPracticeDays(7)} 天`;
+
+  const mins=practiceMinutesForDay();
+  $('dailyGoalText').textContent=`${mins} / ${DAILY_GOAL_MINUTES} 分鐘`;
+  $('dailyGoalBar').style.width=Math.min(100,mins/DAILY_GOAL_MINUTES*100)+'%';
+
+  const next=findNextLesson();
+  if(next){
+    const s=songs[next.id];
+    $('nextLessonTitle').textContent=s?.title||'下一課';
+    $('nextLessonDesc').textContent=`${levelName(next.level)} · ${s?.categoryLabel||categoryNames[next.category]||'課程'} · ${s?.bpm||90} BPM`;
+    $('progressLevelLabel').textContent=levelName(next.level);
+    $('startNextLessonBtn').disabled=false;
+    $('startNextLessonBtn').dataset.song=next.id;
+  }else{
+    $('nextLessonTitle').textContent='目前可學課程已完成';
+    $('nextLessonDesc').textContent='可以到完整曲庫挑一首新作品繼續練習。';
+    $('startNextLessonBtn').disabled=true;
+    $('startNextLessonBtn').dataset.song='';
+  }
+
+  const root=$('levelPath'); root.innerHTML='';
+  levelOrder().forEach(level=>{
+    const done=completedForLevel(level);
+    const total=totalForLevel();
+    const pct=Math.min(100,Math.round(done/total*100));
+    const unlocked=isLevelUnlocked(level);
+    const node=document.createElement('div');
+    node.className='level-node'+(!unlocked?' locked':'')+(next?.level===level?' current':'');
+    node.innerHTML=`
+      <div class="level-badge">${level==='prep'?'PREP':'L'+level}</div>
+      <div class="level-info">
+        <strong>${levelName(level)}</strong>
+        <small>${unlocked?'可學習':'完成前一級至少 60% 解鎖'}</small>
+        <div class="level-progress"><span style="width:${pct}%"></span></div>
+      </div>
+      <div class="level-state"><b>${done} / ${total}</b><small>${pct}%</small></div>`;
+    root.appendChild(node);
+  });
+}
+
 const curriculum = {
   prep:{
     name:'預備級',
@@ -651,7 +861,7 @@ function renderCurriculum(){
 
 let state = {
   song:'twinkle',running:false,paused:false,startAt:0,pauseStart:0,pauseTotal:0,audioStartTime:0,pausedElapsed:0,
-  speed:1,mode:'play',hand:'right',micStream:null,audioCtx:null,analyser:null,
+  speed:1,mode:'play',sessionMode:'practice',examLocked:false,lastExamResult:null,hand:'right',micStream:null,audioCtx:null,analyser:null,
   audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,metroScheduler:null,nextMetroBeat:0,assistTimer:null,assistBeat:0,
   judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,lastMasterBeat:-1,
   performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,eventTimeline:[],rightTimeline:[],leftTimeline:[],countInBeats:0,loopMeasure:false,demoSoundOn:false,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoScheduled:new Set(),demoVolume:0.45,pianoVoices:new Set(),inputMode:null,midiAccess:null,midiInputs:[],midiChordNotes:new Set(),midiChordStart:null,midiChordTimer:null,judgedMidiGroups:new Set()
@@ -668,6 +878,7 @@ document.querySelectorAll('.tab').forEach(btn=>{
     btn.classList.add('active');
     document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
     $(btn.dataset.tab+'Panel').classList.add('active');
+    if(btn.dataset.tab==='progress') renderProgressPath();
   });
 });
 
@@ -801,6 +1012,19 @@ function renderSongList(){
       root.appendChild(b); slotCount++;
     });
   }
+  if(activeCollection==='school'){
+    SCHOOL_IMPORT_SLOTS.forEach((title,i)=>{
+      if(libraryView!=='all' || librarySearch.trim()) return;
+      const b=document.createElement('button'); b.className='song-row licensed-slot'; b.type='button';
+      b.innerHTML=`<span><strong>${title}</strong><small>學校課本／老師指定完整樂譜匯入槽 · MusicXML / MIDI</small></span><span class="level">學校匯入</span><span class="duration">＋</span>`;
+      b.addEventListener('click',()=>{
+        document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='import'));
+        document.querySelectorAll('.tab-panel').forEach(x=>x.classList.toggle('active',x.id==='importPanel'));
+        $('importStatus').textContent='請選擇學校或老師提供、你有權使用的 MusicXML / MIDI 完整樂譜；匯入後會納入完整練習流程。';
+      });
+      root.appendChild(b); slotCount++;
+    });
+  }
 
   if($('visibleSongCount')) $('visibleSongCount').textContent=`${rows.length} 首樂譜${slotCount?`＋${slotCount} 匯入槽`:''}`;
   if(!rows.length && !slotCount){
@@ -850,6 +1074,12 @@ $('clearLibraryFilters').addEventListener('click',()=>{
 });
 
 $('quickStart').addEventListener('click',()=>openPractice('sight','5 MIN'));
+$('startNextLessonBtn').addEventListener('click',()=>{
+  const id=$('startNextLessonBtn').dataset.song;
+  if(id) openPractice(id,'LEARN');
+});
+renderProgressPath();
+
 $('chooseScoreBtn').addEventListener('click',()=>$('scoreFileInput').click());
 $('scoreFileInput').addEventListener('change',async()=>{
   const file=$('scoreFileInput').files?.[0]; if(!file)return;
@@ -872,6 +1102,7 @@ $('clearImportedBtn').addEventListener('click',()=>{
 function openPractice(songId,label='PLAY'){
   rememberRecentScore(songId);
   state.song=songId; state.running=false; state.paused=false; state.pauseTotal=0; state.judged=new Set(); state.goodStreak=0;
+  state.lastExamResult=null; updateSessionModeUI(); setExamLock(false);
   state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set(); state.judgedMidiGroups=new Set(); state.midiChordNotes.clear(); state.midiChordStart=null; clearTimeout(state.midiChordTimer);
   state.tempoManual=false; state.tempoBpm=songs[songId].bpm; state.speed=1; state.lastMasterBeat=-1;
   $('tempoInput').value=state.tempoBpm;
@@ -893,12 +1124,118 @@ function openPractice(songId,label='PLAY'){
 }
 
 
+
+function sessionModeConfig(){
+  if(state.sessionMode==='exam'){
+    return {
+      badge:'EXAM',
+      title:'考試開始後鎖定設定與輔助',
+      desc:'不倒回、不循環、不播放示範鋼琴聲；完成後才看成績。'
+    };
+  }
+  if(state.sessionMode==='performance'){
+    return {
+      badge:'PERFORMANCE',
+      title:'正式演奏：只保留必要控制',
+      desc:'不使用示範聲與弱小節提示，適合整首不中斷演奏。'
+    };
+  }
+  return {
+    badge:'PRACTICE',
+    title:'可以倒回、循環與使用示範聲',
+    desc:'適合分段練習與修正錯誤。'
+  };
+}
+function updateSessionModeUI(){
+  if(!$('sessionModeNotice')) return;
+  const cfg=sessionModeConfig();
+  $('sessionModeNotice').classList.remove('exam','performance');
+  if(state.sessionMode!=='practice') $('sessionModeNotice').classList.add(state.sessionMode);
+  $('sessionModeNotice').querySelector('small').textContent=
+    state.sessionMode==='exam'?'考試模擬':state.sessionMode==='performance'?'正式演奏':'練習模式';
+  $('sessionModeTitle').textContent=cfg.title;
+  $('sessionModeDesc').textContent=cfg.desc;
+  $('sessionModeBadge').textContent=cfg.badge;
+}
+function setExamLock(locked){
+  state.examLocked=!!locked;
+  const ids=[
+    'rewindBtn','tempoMinus','tempoPlus','tempoInput','tempoReset',
+    'speedSelect','handSelect','practiceMode','countInSelect',
+    'measureLoopSelect','sessionModeSelect','demoSoundBtn'
+  ];
+  ids.forEach(id=>{
+    const el=$(id); if(el) el.disabled=state.examLocked;
+  });
+  // During the exam the record drawer stays closed until the run finishes.
+  if($('recordBtn')) $('recordBtn').disabled=state.examLocked;
+}
+function prepareSessionRestrictions(){
+  if(state.sessionMode==='exam' || state.sessionMode==='performance'){
+    state.loopMeasure=false;
+    $('measureLoopSelect').value='off';
+    if(state.demoSoundOn){
+      state.demoSoundOn=false;
+      $('demoSoundBtn').textContent='譜面鋼琴聲：關';
+      $('demoSoundBtn').classList.remove('is-on');
+      stopAllPianoVoices();
+      state.demoScheduled=new Set();
+      updateBothHandsStatus();
+    }
+  }
+  if(state.sessionMode==='exam'){
+    hideAssist();
+    $('recordDrawer').hidden=true;
+    $('recordBtn').classList.remove('active');
+  }
+}
+function examGrade(score){
+  if(score>=90) return 'A';
+  if(score>=80) return 'B';
+  if(score>=70) return 'C';
+  if(score>=60) return 'D';
+  return '再練習';
+}
+function buildExamResult(){
+  const log=state.performanceLog||[];
+  const total=Math.max(1,log.length);
+  const pitch=Math.round(log.filter(x=>x.pitchCorrect).length/total*100);
+  const rhythm=Math.round(log.filter(x=>x.rhythmCorrect).length/total*100);
+  const exact=Math.round(log.filter(x=>x.pitchCorrect&&x.rhythmCorrect).length/total*100);
+  const expectedCount=Math.max(1,noteEvents().length);
+  const completion=Math.min(100,Math.round(log.length/expectedCount*100));
+  const score=Math.round(pitch*.35+rhythm*.35+completion*.15+exact*.15);
+  const result={score,pitch,rhythm,completion,exact,grade:examGrade(score)};
+  state.lastExamResult=result;
+  return result;
+}
+function renderExamResult(){
+  if(!$('examResultCard')) return;
+  if(state.sessionMode!=='exam' || !state.lastExamResult){
+    $('examResultCard').hidden=true;
+    return;
+  }
+  const r=state.lastExamResult;
+  $('examResultCard').hidden=false;
+  $('examGrade').textContent=r.grade;
+  $('examScore').textContent=r.score+'/100';
+  $('examPitchScore').textContent=r.pitch+'%';
+  $('examRhythmScore').textContent=r.rhythm+'%';
+  $('examCompletionScore').textContent=r.completion+'%';
+  $('examResultText').textContent=
+    r.score>=90?'整首演奏非常穩定。':
+    r.score>=75?'整體完成良好，可針對錯誤小節再加強。':
+    r.score>=60?'已完成考試流程，建議先改善節拍與漏音。':
+    '建議回到練習模式，先分段穩定後再重考。';
+}
+
 function fmtTime(sec){
   sec=Math.max(0,Math.floor(sec||0));
   return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
 }
 function enterReadyState(){
-  state.running=false; state.paused=false; state.pauseTotal=0; state.pausedElapsed=0; state.audioStartTime=0; state.lastMasterBeat=-1; state.demoScheduled=new Set();
+  state.running=false;
+  setExamLock(false); state.paused=false; state.pauseTotal=0; state.pausedElapsed=0; state.audioStartTime=0; state.lastMasterBeat=-1; state.demoScheduled=new Set();
   $('prepareBanner').classList.remove('running');
   $('topProgressBar').style.width='0%';
   $('transportTime').textContent='00:00';
@@ -956,6 +1293,7 @@ function seekTo(sec){
   if(state.running && !state.paused) startMetronome();
 }
 function rewindMeasure(){
+  if(state.examLocked || state.sessionMode==='exam' || state.sessionMode==='performance') return;
   if(!state.running){
     enterReadyState();
     return;
@@ -1115,7 +1453,9 @@ $('playBtn').addEventListener('click',playFromCurrent);
 $('pauseTransportBtn').addEventListener('click',pausePractice);
 $('rewindBtn').addEventListener('click',rewindMeasure);
 $('recordBtn').addEventListener('click',()=>{
+  if(state.examLocked) return;
   renderRecordDrawer();
+  renderExamResult();
   $('recordDrawer').hidden=!$('recordDrawer').hidden;
   $('recordBtn').classList.toggle('active',!$('recordDrawer').hidden);
 });
@@ -1148,6 +1488,13 @@ $('speedSelect').addEventListener('change',()=>{
   $('tempoInput').value=state.tempoBpm;
   renderStaticScore();
   if(state.running) restartPractice();
+});
+$('sessionModeSelect').addEventListener('change',()=>{
+  if(state.examLocked) return;
+  state.sessionMode=$('sessionModeSelect').value||'practice';
+  prepareSessionRestrictions();
+  updateSessionModeUI();
+  renderExamResult();
 });
 $('practiceMode').addEventListener('change',()=>{state.mode=$('practiceMode').value;});
 $('handSelect').addEventListener('change',()=>{
@@ -1351,6 +1698,10 @@ function playLocalPianoAt(note,when,velocity=0.85,duration=1.1){
 function playbackRateSafe(v){ return Math.max(.25,Math.min(4,v||1)); }
 
 async function toggleDemoSound(){
+  if(state.sessionMode==='exam' || state.sessionMode==='performance'){
+    setSampleStatus('考試／正式演奏模式不使用示範鋼琴聲','');
+    return;
+  }
   const btn=$('demoSoundBtn');
 
   if(!state.demoSoundOn){
@@ -1642,6 +1993,8 @@ function applyNoteApproachVisual(el, timeUntilHit, judged=false){
 
 async function startPractice(){
   stopAnimationOnly();
+  prepareSessionRestrictions();
+  if(state.sessionMode==='exam') setExamLock(true);
   const ctx=ensureAudioContext();
   try{await ctx.resume()}catch(e){}
   state.running=true;
@@ -1676,7 +2029,7 @@ function restartPractice(){
   else enterReadyState();
 }
 function stopAnimationOnly(){ if(state.gameRaf) cancelAnimationFrame(state.gameRaf); state.gameRaf=0; }
-function stopPractice(){ state.running=false; state.paused=false; state.pausedElapsed=0; stopAnimationOnly(); stopMetronome(false); hideAssist(); $('playBtn')?.classList.remove('active'); $('pauseTransportBtn')?.classList.remove('active'); stopAllPianoVoices(); state.demoScheduled=new Set(); }
+function stopPractice(){ state.running=false; state.paused=false; state.pausedElapsed=0; stopAnimationOnly(); stopMetronome(false); hideAssist(); $('playBtn')?.classList.remove('active'); $('pauseTransportBtn')?.classList.remove('active'); stopAllPianoVoices(); state.demoScheduled=new Set(); if(!state.running)setExamLock(false); }
 
 function updateMasterBeat(e){
   const beatIndex=Math.floor(e/beatSeconds());
@@ -1758,20 +2111,28 @@ function gameLoop(){
 
   if(e>=effectiveDuration()){
     savePracticeSummary();
+    if(state.sessionMode==='exam') buildExamResult();
     stopPractice();
+    setExamLock(false);
     $('playBtn').classList.remove('active');
     $('transportTime').textContent=fmtTime(effectiveDuration());
     $('transportStatus').textContent='完成';
     $('recordBtn').classList.add('has-analysis');
+    if(state.sessionMode==='exam'){
+      $('recordDrawer').hidden=false;
+      renderRecordDrawer();
+      renderExamResult();
+    }
     return
   }
   state.gameRaf=requestAnimationFrame(gameLoop);
 }
 
 function flash(kind){
-  // V2.5: intentionally disabled. No screen flash at beat/hit time.
+  // V2.8: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
+  if(state.sessionMode==='exam' || state.sessionMode==='performance') return;
   const r=$('rhythmAssist');
   r.hidden=false;
   $('assistBpm').textContent=effectiveBpm()+' BPM';
@@ -1964,6 +2325,7 @@ function logPerformance(entry){
     speed:state.speed,
     hand:state.hand,
     mode:state.mode,
+    sessionMode:state.sessionMode,
     ...entry
   });
   $('recordCount').textContent=state.performanceLog.length;
@@ -1981,6 +2343,7 @@ function savePracticeSummary(){
     scoreBpm:songs[state.song].bpm,
     metronomeBpm:effectiveBpm(),
     speed:state.speed,
+    sessionMode:state.sessionMode,
     totalRecords:completed,
     pitchAccuracy:completed?Math.round(pitchOk/completed*100):0,
     rhythmAccuracy:completed?Math.round(rhythmOk/completed*100):0,
@@ -1993,6 +2356,8 @@ function savePracticeSummary(){
     old.push(summary);
     localStorage.setItem(key,JSON.stringify(old.slice(-100)));
   }catch(e){}
+  summary.durationSeconds=effectiveDuration();
+  awardPracticeResult(state.song,summary);
 }
 function judgeInput(note){
   if(!state.running||state.paused) return;
@@ -2138,3 +2503,5 @@ function stopMetronome(update=true){
 window.addEventListener('resize',()=>{ if($('practiceView').classList.contains('active')) renderStaticScore(); });
 
 try{updateBothHandsStatus()}catch(e){}
+
+try{updateSessionModeUI()}catch(e){}
