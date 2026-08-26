@@ -93,15 +93,8 @@ button{cursor:pointer}
 .music-note{position:absolute;width:32px;height:92px;transform:translate(-50%,-50%)}
 .note-head{position:absolute;left:4px;top:55px;width:24px;height:16px;border-radius:50%;background:#32374b;transform:rotate(-16deg)}
 .note-stem{position:absolute;left:26px;top:17px;width:3px;height:47px;background:#32374b}
-.music-note.current .note-head{background:#ec5579}
-.music-note.current .note-stem{background:#ec5579}
 .music-note.passed{opacity:.25}
-.feedback-tint{position:absolute;inset:0;z-index:18;pointer-events:none;opacity:0;transition:opacity .18s;background:transparent}
-.feedback-tint.show{opacity:1}
-.feedback-tint.ok{background:rgba(100,214,153,.16)}
-.feedback-tint.early{background:rgba(255,219,115,.17)}
-.feedback-tint.late{background:rgba(255,162,172,.16)}
-.feedback-tint.miss{background:rgba(189,165,235,.18)}
+.feedback-tint{position:absolute;inset:0;z-index:18;pointer-events:none;opacity:0!important;background:transparent!important}
 
 .rhythm-assist{position:absolute;z-index:22;top:14px;right:18px;background:#ffffffde;border-radius:999px;padding:8px 12px;display:flex;align-items:center;gap:6px;color:#4d5b7c;box-shadow:0 6px 16px rgba(49,58,88,.12)}
 .rhythm-assist[hidden]{display:none}
@@ -327,18 +320,16 @@ button{cursor:pointer}
   box-shadow:0 0 calc(1px + var(--pulse) * 3px) var(--gl);
 }
 .note-flag{border-top-color:var(--n2);filter:drop-shadow(0 0 calc(1px + var(--pulse) * 3px) var(--gl));}
-.music-note.current{
-  transform:translate(-50%,-50%);
-}
+.music-note.current{transform:translate(-50%,-50%);}
 
 .music-note.half .note-head,.music-note.whole .note-head{
   background:linear-gradient(135deg,#ffffff,#f6fbff);
   border:3px solid var(--n2);
   box-shadow:0 0 calc(2px + var(--pulse) * 5px) var(--gl);
 }
-.music-note.matched{--n1:#81ebb2;--n2:#42be7b;--gl:rgba(94,222,152,.45);}
-.music-note.pitch-error{--n1:#ffc47e;--n2:#ef8d42;--gl:rgba(255,181,92,.42);}
-.music-note.timing-error{--n1:#ffacc1;--n2:#d77aa1;--gl:rgba(233,137,181,.42);}
+.music-note.matched{--n1:#70c994;--n2:#4ca876;--gl:rgba(94,222,152,.08);}
+.music-note.pitch-error{--n1:#d7a46f;--n2:#bd8050;--gl:rgba(255,181,92,.06);}
+.music-note.timing-error{--n1:#c798aa;--n2:#aa748d;--gl:rgba(233,137,181,.06);}
 .music-note.passed{opacity:.28;filter:saturate(.65)}
 
 
