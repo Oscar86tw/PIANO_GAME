@@ -56,19 +56,104 @@ for(const song of Object.values(songs)){
   song.duration=song.totalBeats*60/song.bpm;
 }
 
-let library = [
-  ['twinkle','Twinkle Twinkle Little Star','Beginner','00:48'],
-  ['mary','Mary Had a Little Lamb','Beginner','00:46'],
-  ['scale','C Major Scale','Beginner','00:40'],
-  ['ode','Ode to Joy','Easy','00:52'],
-  ['sight','Sight Reading Practice','Easy','00:55'],
-  ['canon','Canon Theme','Normal','01:02']
+
+// ---------- V1.9: 216 built-in pedagogical scores ----------
+const LEVEL_PROFILES = {
+  prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
+  1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
+  2:{label:'Level 2',range:['B3','C4','D4','E4','F4','G4','A4','B4'],bpms:[72,78,84],durations:[.5,1,1,2]},
+  3:{label:'Level 3',range:['A3','B3','C4','D4','E4','F4','G4','A4','B4','C5'],bpms:[76,84,88],durations:[.5,.5,1,1.5,2]},
+  4:{label:'Level 4',range:['G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5'],bpms:[80,88,96],durations:[.5,1,1.5,2]},
+  5:{label:'Level 5',range:['F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5'],bpms:[84,92,100],durations:[.25,.5,1,1.5,2]},
+  6:{label:'Level 6',range:['E3','F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5'],bpms:[88,96,104],durations:[.25,.5,1,1.5,2]},
+  7:{label:'Level 7',range:['D3','E3','F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5'],bpms:[92,100,108],durations:[.25,.5,.75,1,1.5,2]},
+  8:{label:'Level 8',range:['C3','D3','E3','F3','G3','A3','B3','C4','D4','E4','F4','G4','A4','B4','C5','D5','E5','F5','G5','A5'],bpms:[96,104,112],durations:[.25,.5,.75,1,1.5,2]}
+};
+const SCORE_CATEGORIES=[
+ ['notes','識譜'],['rhythm','節奏'],['technique','技巧'],['scales','音階・琶音'],
+ ['chords','和弦・和聲'],['sight','視奏'],['ear','聽力'],['repertoire','曲目・演奏']
 ];
+function rotateArray(a,n){n=((n%a.length)+a.length)%a.length;return a.slice(n).concat(a.slice(0,n))}
+function safeIdx(i,n){return Math.max(0,Math.min(n-1,i))}
+function makeLearningPattern(profile,category,variant){
+  const r=profile.range, out=[];
+  const len=category==='repertoire'?24:category==='sight'?20:16;
+  const add=(note,beats)=>out.push([note,beats]);
+  if(category==='scales'){
+    const seq=(variant%2?[...r].reverse():r).slice(0,Math.min(8,r.length));
+    const full=seq.concat(seq.slice(1,-1).reverse());
+    for(let i=0;i<len;i++) add(full[i%full.length],profile.durations[(i+variant)%profile.durations.length]);
+  }else if(category==='chords'){
+    const pat=[0,2,4,2,1,3,5,3];
+    for(let i=0;i<len;i++) add(r[safeIdx(pat[(i+variant)%pat.length]+variant%2,r.length)],i%4===3?2:1);
+  }else if(category==='rhythm'){
+    const sets=[[1,1,1,1],[.5,.5,1,2],[1.5,.5,1,1],[.5,.5,.5,.5,1,1],[2,1,1]];
+    const rr=sets[variant%sets.length];
+    for(let i=0;i<len;i++){
+      if((i+variant)%13===0&&variant%3===0)add('REST',rr[i%rr.length]);
+      else add(r[(i*2+variant)%Math.min(r.length,7)],rr[i%rr.length]);
+    }
+  }else if(category==='technique'){
+    const pat=[0,1,2,3,4,3,2,1];
+    for(let i=0;i<len;i++) add(r[safeIdx(pat[(i+variant)%pat.length],r.length)],profile.durations[(i+variant)%Math.min(3,profile.durations.length)]);
+  }else if(category==='ear'){
+    const pat=[0,2,1,3,2,0,1,0];
+    for(let i=0;i<len;i++) add(r[safeIdx(pat[(i+variant)%pat.length],r.length)],i%4===3?2:1);
+  }else if(category==='sight'){
+    const pat=[0,2,1,4,2,5,3,1,6,4,2,0];
+    for(let i=0;i<len;i++) add(r[(pat[(i+variant)%pat.length]+variant)%r.length],profile.durations[(i*3+variant)%profile.durations.length]);
+  }else if(category==='repertoire'){
+    const pat=[0,0,2,2,3,3,2,1,1,0,0,1,1,0];
+    for(let i=0;i<len;i++) add(r[safeIdx(pat[(i+variant)%pat.length]+variant%Math.max(1,r.length-5),r.length)],i%7===6?2:profile.durations[(i+variant)%Math.min(4,profile.durations.length)]);
+  }else{
+    const seq=rotateArray(r,variant);
+    for(let i=0;i<len;i++) add(seq[i%seq.length],i%8===7?2:1);
+  }
+  return out;
+}
+function addGeneratedBuiltins(){
+  const levels=['prep','1','2','3','4','5','6','7','8'];
+  let count=0;
+  for(const levelKey of levels){
+    const profile=LEVEL_PROFILES[levelKey];
+    SCORE_CATEGORIES.forEach(([category,categoryLabel],catIndex)=>{
+      for(let variant=1;variant<=3;variant++){
+        const id=`lesson_${levelKey}_${category}_${variant}`;
+        const events=makeLearningPattern(profile,category,variant+catIndex);
+        songs[id]={
+          title:`${profile.label}｜${categoryLabel} ${String(variant).padStart(2,'0')}`,
+          level:profile.label,levelKey,category,categoryLabel,
+          bpm:profile.bpms[(variant-1)%profile.bpms.length],
+          timeSig:(category==='rhythm'&&variant===3)?[3,4]:[4,4],
+          key:(levelKey==='prep'||levelKey==='1')?'C Major':(variant%3===0?'F Major':variant%2===0?'G Major':'C Major'),
+          events,builtIn:true,pedagogical:true
+        };
+        count++;
+      }
+    });
+  }
+  for(const song of Object.values(songs)){
+    if(!song.events)continue;
+    song.notes=song.events.filter(e=>e[0]!=='REST').map(e=>e[0]);
+    song.totalBeats=song.events.reduce((sum,e)=>sum+Number(e[1]||0),0);
+    song.duration=song.totalBeats*60/(song.bpm||90);
+  }
+  return count;
+}
+const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
+
+let library = Object.entries(songs).map(([id,s])=>{
+  const sec=Math.round(s.duration||0);
+  const mm=String(Math.floor(sec/60)).padStart(2,'0');
+  const ss=String(sec%60).padStart(2,'0');
+  const lvl=s.levelKey==='prep'?'Prep':(s.levelKey?`Level ${s.levelKey}`:(s.level||'Beginner'));
+  return [id,s.title,lvl,`${mm}:${ss}`,s.category||'repertoire'];
+});
 
 
 
 const BUILTIN_LIBRARY_COUNT = library.length;
-const IMPORT_STORAGE_KEY='pianoLearningImportedScoresV18';
+const IMPORT_STORAGE_KEY='pianoLearningImportedScoresV19';
 
 function formatDurationSeconds(sec){
   sec=Math.max(0,Math.round(sec||0));
@@ -235,6 +320,8 @@ async function importScoreFile(file){
   else throw new Error('請選擇 MusicXML 或 MIDI 檔案');
   const id=uniqueImportId(file.name);songs[id]=song;persistImportedScores();rebuildImportedLibrary();loadImportedScores();
 renderSongList();
+const songCountEl=document.querySelector('#songsPanel .section-title > span');
+if(songCountEl) songCountEl.textContent=`${library.length} 份樂譜`;
   const warn=song.importWarnings||{};
   const extra=(warn.ignoredChords||warn.ignoredVoices)?`（已略過 ${warn.ignoredChords||0} 個和弦附加音、${warn.ignoredVoices||0} 個其他聲部事件）`:'';
   return {id,song,message:`已匯入：${song.title}｜${Math.round(song.bpm)} BPM｜${song.timeSig.join('/')}｜${song.events.length} 個事件 ${extra}`};
@@ -388,11 +475,14 @@ document.querySelectorAll('.tab').forEach(btn=>{
 
 function renderSongList(level='all'){
   const root=$('songList'); root.innerHTML='';
-  library.filter(x=>level==='all'||x[2].toLowerCase()===level).forEach(([id,title,lvl,duration])=>{
+  let rows=library;
+  if(level!=='all') rows=rows.filter(x=>String(x[2]).toLowerCase()===String(level).toLowerCase());
+  rows.forEach(([id,title,lvl,duration,category])=>{
+    const s=songs[id];
+    if(!s)return;
     const b=document.createElement('button');
     b.className='song-row'; b.type='button';
-    const source=songs[id]?.imported ? (songs[id].sourceType||'Imported') : '內建練習';
-    b.innerHTML=`<span><strong>${title}</strong><small>${songs[id].bpm} BPM</small><span class="source">${source}</span></span><span class="level">${lvl}</span><span class="duration">${duration}</span>`;
+    b.innerHTML=`<span><strong>${title}</strong><small>${s.bpm} BPM · ${(s.timeSig||[4,4]).join('/')} · ${s.categoryLabel||categoryNames?.[category]||'曲目'}</small></span><span class="level">${lvl}</span><span class="duration">${duration}</span>`;
     b.addEventListener('click',()=>openPractice(id,'PLAY'));
     root.appendChild(b);
   });
