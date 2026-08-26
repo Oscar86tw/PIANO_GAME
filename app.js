@@ -114,7 +114,7 @@ groups.forEach(([level,arr])=>arr.forEach(([title,pat,bpm,duration],idx)=>{
 const state={
   song:'s21',level:'NORMAL',index:0,score:0,combo:0,maxCombo:0,attempts:0,hits:0,
   running:false,paused:false,startAt:0,pauseAt:0,totalPause:0,lastAccepted:0,
-  stream:null,audio:null,raf:null,gameRaf:null,judged:new Set(),hitNotes:new Set(),speed:1,hand:'right',lessonMode:'learn',loop:false,metroOn:false,metroTimer:null,metroBeat:0,metroAudio:null,metroVolume:0.16
+  stream:null,audio:null,raf:null,gameRaf:null,judged:new Set(),hitNotes:new Set(),speed:1,hand:'right',lessonMode:'learn',loop:false,metroOn:false,metroTimer:null,metroBeat:0,metroAudio:null,metroVolume:0.16,rhythmAssist:false,rhythmGoodStreak:0,assistBeat:0,assistTimer:null
 };
 const modeSelect=$('modeSelect'), inputSelect=$('inputSelect');
 
@@ -170,12 +170,63 @@ function stopMetronome(clearLights=true){
 }
 function syncMetronome(){ if(state.metroOn){ stopMetronome(false); startMetronome(true); } }
 
+function updateAssistDots(){
+  const dots=document.querySelectorAll('#rhythmGuide .metro-dot-row span');
+  dots.forEach((d,i)=>d.classList.toggle('active',i===state.assistBeat%4));
+}
+function scheduleAssistBeat(){
+  clearTimeout(state.assistTimer);
+  if(!state.rhythmAssist) return;
+  state.assistBeat=(state.assistBeat+1)%4;
+  updateAssistDots();
+  state.assistTimer=setTimeout(scheduleAssistBeat,60000/effectiveBpm());
+}
+function showRhythmAssist(kind='miss'){
+  const guide=$('rhythmGuide'), line=$('rhythmPulseLine');
+  if(!guide||!line) return;
+  state.rhythmAssist=true;
+  state.rhythmGoodStreak=0;
+  state.assistBeat=0;
+  const beatMs=60000/effectiveBpm();
+  const beatSec=(beatMs/1000).toFixed(3)+'s';
+  guide.style.setProperty('--assist-beat',beatSec);
+  line.style.setProperty('--assist-beat',beatSec);
+  guide.className='rhythm-guide active timing-'+kind;
+  guide.hidden=false; line.hidden=false; line.classList.add('active');
+  $('assistBpm').textContent=`${effectiveBpm()} BPM`;
+  $('rhythmMessage').textContent=
+    kind==='early'?'你彈得太早，先跟著藍色節拍線。':
+    kind==='late'?'你彈得太晚，跟著節拍器重新對拍。':
+    '節拍有漏拍，先聽／看 4 拍再繼續。';
+  updateAssistDots();
+  clearTimeout(state.assistTimer);
+  state.assistTimer=setTimeout(scheduleAssistBeat,beatMs);
+}
+function hideRhythmAssist(){
+  state.rhythmAssist=false;
+  clearTimeout(state.assistTimer); state.assistTimer=null;
+  const guide=$('rhythmGuide'), line=$('rhythmPulseLine');
+  if(guide){guide.hidden=true;guide.className='rhythm-guide';}
+  if(line){line.hidden=true;line.classList.remove('active');}
+  document.querySelectorAll('#rhythmGuide .metro-dot-row span').forEach(d=>d.classList.remove('active'));
+}
+function registerGoodRhythm(delta){
+  if(!state.rhythmAssist) return;
+  if(delta<=0.18) state.rhythmGoodStreak++;
+  else state.rhythmGoodStreak=0;
+  if(state.rhythmGoodStreak>=4){
+    hideRhythmAssist();
+    $('tipTitle').textContent='節拍回來了';
+    $('tipText').textContent='很好，已經重新跟上拍子，繼續看下一個音符。';
+  }
+}
+
 function bindLearningControls(){
   document.querySelectorAll('.course-card').forEach(c=>c.addEventListener('click',()=>setCourse(c.dataset.course)));
   document.querySelectorAll('.top-tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.top-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');}));
   const hs=$('handSelect'),ss=$('speedSelect'),lm=$('lessonMode'),lb=$('loopBtn'),mb=$('metroBtn'),mv=$('metroVolume');
   if(hs) hs.addEventListener('change',()=>{state.hand=hs.value;updateStaffModeLabel();});
-  if(ss) ss.addEventListener('change',()=>{state.speed=parseFloat(ss.value)||1; renderSong(); syncMetronome();});
+  if(ss) ss.addEventListener('change',()=>{state.speed=parseFloat(ss.value)||1; renderSong(); syncMetronome(); if(state.rhythmAssist) showRhythmAssist('miss');});
   if(lm) lm.addEventListener('change',()=>{state.lessonMode=lm.value;$('hint').textContent=lm.value==='learn'?'學習模式：彈對目前音符後才會繼續。':'演奏模式：時間會持續前進。';});
   if(lb) lb.addEventListener('click',()=>{state.loop=!state.loop;lb.textContent=`小節 Loop：${state.loop?'ON':'OFF'}`;lb.classList.toggle('active',state.loop);});
   if(mb) mb.addEventListener('click',()=>{state.metroOn=!state.metroOn;mb.textContent=`節拍器：${state.metroOn?'ON':'OFF'}`;mb.classList.toggle('active',state.metroOn);if(state.metroOn){ensureMetroAudio();startMetronome(true);}else stopMetronome(true);});
@@ -260,6 +311,7 @@ function setJudge(text,type=''){
 async function startGame(){
   if(state.running)return;
   if(state.metroOn){ ensureMetroAudio(); stopMetronome(false); }
+  hideRhythmAssist();
   await countdown();
   Object.assign(state,{index:0,score:0,combo:0,maxCombo:0,attempts:0,hits:0,running:true,paused:false,totalPause:0,lastAccepted:0});
   state.startAt=performance.now(); state.judged=new Set(); state.hitNotes=new Set(); if(state.metroOn) startMetronome(true);
@@ -271,7 +323,7 @@ function countdown(){return new Promise(resolve=>{const el=$('countdown');el.hid
 function resetGame(){
   state.running=false;state.paused=false; if(state.gameRaf) cancelAnimationFrame(state.gameRaf);
   Object.assign(state,{index:0,score:0,combo:0,maxCombo:0,attempts:0,hits:0,totalPause:0});
-  state.judged=new Set();state.hitNotes=new Set();updateStats();renderSong();setJudge('準備好了嗎？');
+  state.judged=new Set();state.hitNotes=new Set();hideRhythmAssist();updateStats();renderSong();setJudge('準備好了嗎？');
   $('heardNote').textContent='—';$('heardHz').textContent='0 Hz';$('pauseBtn').textContent='暫停'; if(state.metroOn){stopMetronome(false);startMetronome(true);}
 }
 function gameLoop(){
@@ -281,7 +333,7 @@ function gameLoop(){
   if(state.lessonMode==='perform'){
     while(state.index<s.notes.length && e-noteTiming(state.index)>0.28){
       if(!state.judged.has(state.index)){
-        state.judged.add(state.index); state.attempts++; state.combo=0; setJudge('MISS!','bad');
+        state.judged.add(state.index); state.attempts++; state.combo=0; setJudge('MISS!','bad'); showRhythmAssist('miss');
       }
       state.index++;
     }
@@ -291,7 +343,7 @@ function gameLoop(){
   state.gameRaf=requestAnimationFrame(gameLoop);
 }
 function finish(){
-  state.running=false;state.paused=false;if(state.gameRaf)cancelAnimationFrame(state.gameRaf); if(state.metroOn) stopMetronome(true);
+  state.running=false;state.paused=false;if(state.gameRaf)cancelAnimationFrame(state.gameRaf); if(state.metroOn) stopMetronome(true); hideRhythmAssist();
   const acc=state.attempts?Math.round(state.hits/state.attempts*100):0, stars=acc>=90?3:acc>=75?2:acc>=55?1:0, rank=rankFor(acc);
   $('resultRank').textContent=`等級 ${rank}`;$('resultStars').textContent='★'.repeat(stars)+'☆'.repeat(3-stars);
   $('resultText').textContent=`分數 ${state.score} ｜ 正確率 ${acc}% ｜ 最長連擊 ${state.maxCombo}`;
@@ -330,11 +382,18 @@ function acceptNote(note,hz=0){
     state.judged.add(best);state.hitNotes.add(best);state.attempts++;state.hits++;state.combo++;state.maxCombo=Math.max(state.maxCombo,state.combo);
     let bonus=0,judge='GREAT!';
     if(bestDelta<=0.08){bonus=180;judge='MARVELOUS!'} else if(bestDelta<=0.16){bonus=120;judge='PERFECT!'} else bonus=70;
-    state.score+=100+bonus+Math.min(300,state.combo*8); setJudge(judge,'good');
+    state.score+=100+bonus+Math.min(300,state.combo*8); setJudge(judge,'good'); registerGoodRhythm(bestDelta);
     $('comboBurst').textContent=state.combo>=2?`${state.combo} COMBO!`:'';
     if(best===state.index) while(state.judged.has(state.index)&&state.index<s.notes.length) state.index++;
   }else{
-    state.combo=0;state.score=Math.max(0,state.score-15);setJudge(bestDelta>0.28?(e<noteTiming(best)?'TOO EARLY!':'TOO LATE!'):'WRONG NOTE!','bad');
+    state.combo=0;state.score=Math.max(0,state.score-15);
+    if(bestDelta>0.28){
+      const early=e<noteTiming(best);
+      setJudge(early?'TOO EARLY!':'TOO LATE!','bad');
+      showRhythmAssist(early?'early':'late');
+    }else{
+      setJudge('WRONG NOTE!','bad');
+    }
   }
   updateStats();renderSong();
 }

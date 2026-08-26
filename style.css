@@ -166,3 +166,225 @@ body{color:#2b3a55}
 .learning-theme .fall-note.hit{opacity:.34}
 @supports not (background:color-mix(in srgb, red 50%, transparent)){.learning-theme .fall-note{box-shadow:0 5px 12px rgba(70,90,130,.2)!important}}
 @media(max-width:900px){.lesson-toolbar{align-items:flex-start}.metro-control{width:100%;padding-left:0}.note-color-legend{margin-left:0}}
+
+
+/* V0.8 — automatic rhythm assistance when timing is unstable */
+.staff-area{isolation:isolate}
+.rhythm-guide{
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:12;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:245px;
+  padding:10px 12px;
+  border:1px solid #b9d8f4;
+  border-radius:14px;
+  background:rgba(247,252,255,.96);
+  box-shadow:0 8px 22px rgba(57,111,161,.16);
+}
+.rhythm-guide[hidden]{display:none}
+.rhythm-guide-label{min-width:0}
+.rhythm-guide-label strong{display:block;color:#3177a9;font-size:.86rem}
+.rhythm-guide-label span{display:block;color:#6e87a4;font-size:.7rem;margin-top:2px;white-space:nowrap}
+.mini-metronome{
+  position:relative;
+  width:72px;
+  min-width:72px;
+  height:78px;
+  border-radius:12px;
+  background:linear-gradient(180deg,#e8f7ff,#d9effc);
+  border:1px solid #b9d8ef;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  padding-bottom:6px;
+  overflow:hidden;
+}
+.metro-pendulum{
+  position:absolute;
+  left:35px;
+  bottom:25px;
+  width:3px;
+  height:42px;
+  border-radius:4px;
+  background:#31b9e9;
+  transform-origin:50% 100%;
+  transform:rotate(-26deg);
+  box-shadow:0 0 8px rgba(49,185,233,.3);
+}
+.rhythm-guide.active .metro-pendulum{
+  animation:assistPendulum var(--assist-beat, .56s) ease-in-out infinite alternate;
+}
+.metro-dot-row{
+  display:flex;
+  gap:4px;
+  margin-bottom:2px;
+}
+.metro-dot-row span{
+  width:6px;height:6px;border-radius:50%;background:#adcde0;
+}
+.metro-dot-row span.active{
+  background:#28bce8;
+  box-shadow:0 0 7px rgba(40,188,232,.6);
+}
+.mini-metronome b{
+  color:#397ba0;
+  font-size:.56rem;
+  line-height:1;
+}
+.rhythm-pulse-line{
+  position:absolute;
+  z-index:8;
+  top:19px;
+  bottom:19px;
+  width:8px;
+  left:15%;
+  border-radius:8px;
+  background:linear-gradient(180deg,rgba(60,215,255,.12),rgba(43,201,239,.95),rgba(60,215,255,.12));
+  box-shadow:0 0 15px rgba(39,204,243,.8),0 0 28px rgba(39,204,243,.3);
+  pointer-events:none;
+}
+.rhythm-pulse-line[hidden]{display:none}
+.rhythm-pulse-line.active{
+  animation:rhythmPulse var(--assist-beat, .56s) ease-in-out infinite;
+}
+.rhythm-guide.timing-early{border-color:#f0c37b;background:rgba(255,250,239,.97)}
+.rhythm-guide.timing-late{border-color:#e8aaa8;background:rgba(255,246,246,.97)}
+.rhythm-guide.timing-miss{border-color:#d4b8e9;background:rgba(252,247,255,.97)}
+@keyframes assistPendulum{
+  from{transform:rotate(-28deg)}
+  to{transform:rotate(28deg)}
+}
+@keyframes rhythmPulse{
+  0%{left:10%;opacity:.35}
+  48%{left:48%;opacity:1}
+  52%{left:48%;opacity:1}
+  100%{left:86%;opacity:.35}
+}
+@media(max-width:760px){
+  .rhythm-guide{min-width:0;left:8px;right:8px;top:7px;padding:8px 10px}
+  .rhythm-guide-label span{white-space:normal}
+  .mini-metronome{width:62px;min-width:62px;height:68px}
+  .metro-pendulum{left:30px;height:35px}
+}
+
+
+/* Mobile + Tablet optimization */
+@media (max-width: 1180px){
+  .arcade-shell{max-width:100%}
+  .machine-panel{grid-template-columns:230px minmax(0,1fr)}
+  .side-panel{grid-column:1/-1;display:grid;grid-template-columns:90px minmax(120px,1fr) repeat(4,minmax(110px,1fr));gap:8px;align-items:center;padding:10px}
+  .side-panel .panel-title{display:none}
+  .rank-orb{width:72px;height:72px;font-size:2.2rem;margin:0 auto}
+  .mission-box{margin:0}
+  .arcade-btn{width:100%;margin:0;padding:12px 8px}
+  .hint{grid-column:1/-1;margin:0;padding:6px 10px;text-align:left}
+}
+
+@media (max-width: 900px){
+  body{padding:10px}
+  .marquee{padding:14px 16px;border-radius:16px}
+  .marquee h1{font-size:2.25rem}
+  .subtitle{font-size:.82rem}
+  .coin-panel{font-size:.72rem}
+  .machine-panel{grid-template-columns:1fr}
+  .game-screen{order:1}
+  .song-select{order:2}
+  .side-panel{order:3;grid-template-columns:76px repeat(2,minmax(0,1fr));gap:8px}
+  .side-panel .mission-box{display:none}
+  .side-panel .arcade-btn{min-height:46px}
+  .side-panel .arcade-btn:nth-of-type(n+4){display:block}
+  .song-cards{grid-template-columns:repeat(2,minmax(0,1fr));max-height:none;overflow:visible}
+  .song-card{min-width:0}
+  .difficulty-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .difficulty-tabs button:last-child{grid-column:auto}
+  .mini-controls{grid-template-columns:1fr 1fr}
+  .hud{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .hud div{padding:9px 8px}
+  .hud strong{font-size:1.08rem}
+  .staff-wrap{grid-template-columns:44px minmax(0,1fr)}
+  .staff-clef{font-size:2.5rem}
+  .staff-area{min-height:170px}
+  .note-highway{height:250px}
+  .keyboard-panel{padding:10px}
+  .keyboard{height:148px}
+  .key{height:138px;flex-basis:44px}
+  .black{height:86px;width:27px}
+}
+
+@media (max-width: 640px){
+  body{padding:6px}
+  .marquee{display:grid;grid-template-columns:1fr auto;gap:8px;padding:12px;border-radius:14px}
+  .marquee h1{font-size:1.8rem}
+  .eyebrow{font-size:.58rem;letter-spacing:.14em}
+  .subtitle{font-size:.72rem;margin-top:4px}
+  .coin-panel{align-self:start}
+  .coin-panel strong{display:none}
+  .panel{border-radius:14px}
+  .hud{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hud div{border-bottom:1px solid #e2ebf8}
+  .stage{padding:10px}
+  .song-banner h2{font-size:1.15rem}
+  .song-info-row{gap:5px}
+  .difficulty{font-size:.64rem;padding:3px 7px}
+  .sheet-panel{padding:10px 8px 8px}
+  .sheet-head{margin-bottom:6px}
+  .sheet-head h3{font-size:.95rem}
+  .sheet-legend{display:none}
+  .staff-wrap{grid-template-columns:36px minmax(0,1fr);gap:6px}
+  .staff-clef{font-size:2.1rem;border-radius:10px}
+  .staff-area{min-height:150px;padding:6px 6px}
+  .staff-lines{padding:25px 0}
+  .staff-lines span{margin:10px 0}
+  .staff-note{width:21px;height:95px}
+  .staff-note .note-head{width:14px;height:10px}
+  .staff-note .stem{left:16px;height:34px}
+  .staff-note .label{font-size:.55rem}
+  .rhythm-guide{left:6px;right:6px;top:6px;gap:7px;padding:7px 8px;border-radius:10px}
+  .rhythm-guide-label strong{font-size:.76rem}
+  .rhythm-guide-label span{font-size:.62rem}
+  .mini-metronome{width:50px;min-width:50px;height:58px}
+  .metro-pendulum{left:24px;height:30px;bottom:22px}
+  .note-highway{height:210px}
+  .judge{font-size:2rem}
+  .live-readout{grid-template-columns:1fr 36px 1fr;gap:5px}
+  .live-readout>div:not(.vs){padding:8px 5px}
+  .live-readout strong{font-size:1.2rem}
+  .progress-text{font-size:.62rem;gap:5px}
+  .side-panel{grid-template-columns:60px 1fr 1fr;padding:8px}
+  .rank-orb{width:56px;height:56px;font-size:1.7rem}
+  .stars{display:none}
+  .side-panel .arcade-btn{font-size:.76rem;padding:10px 5px;min-height:44px}
+  .hint{font-size:.68rem}
+  .difficulty-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .difficulty-tabs button:last-child{grid-column:1/-1}
+  .song-cards{grid-template-columns:1fr}
+  .song-card{padding:11px 10px}
+  .mini-controls{grid-template-columns:1fr}
+  .keyboard-head{align-items:flex-start}
+  .keyboard-head h3{font-size:.95rem}
+  .keyboard-head b{font-size:.62rem;padding:5px 7px}
+  .keyboard{height:132px;margin-top:8px}
+  .key{height:122px;flex-basis:38px;font-size:.57rem}
+  .black{height:76px;width:24px;font-size:.52rem}
+  .countdown{font-size:7rem}
+}
+
+/* phone landscape: prioritize score + sheet music */
+@media (max-width: 900px) and (orientation: landscape){
+  .marquee{padding:8px 12px;margin-bottom:8px}
+  .marquee .subtitle,.eyebrow{display:none}
+  .marquee h1{font-size:1.6rem}
+  .machine-panel{display:block}
+  .song-select{margin-top:8px}
+  .side-panel{margin-top:8px}
+  .staff-area{min-height:135px}
+  .note-highway{height:170px}
+  .keyboard{height:108px}
+  .key{height:98px}
+  .black{height:62px}
+}

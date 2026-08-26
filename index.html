@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#080510" />
-  <title>PIANO LEARNING STUDIO V0.7</title>
+  <title>PIANO LEARNING STUDIO V0.8</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -116,6 +116,20 @@
                 <div class="staff-lines">
                   <span></span><span></span><span></span><span></span><span></span>
                 </div>
+                <div id="rhythmGuide" class="rhythm-guide" hidden aria-live="polite">
+                  <div class="rhythm-guide-label">
+                    <strong>節拍提示</strong>
+                    <span id="rhythmMessage">跟著節拍器重新抓拍</span>
+                  </div>
+                  <div class="mini-metronome" aria-hidden="true">
+                    <div class="metro-pendulum" id="assistPendulum"></div>
+                    <div class="metro-dot-row">
+                      <span></span><span></span><span></span><span></span>
+                    </div>
+                    <b id="assistBpm">108 BPM</b>
+                  </div>
+                </div>
+                <div id="rhythmPulseLine" class="rhythm-pulse-line" hidden></div>
                 <div id="staffNotes" class="staff-notes"></div>
               </div>
             </div>
