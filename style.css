@@ -349,3 +349,33 @@ button{cursor:pointer}
 .collection-filter.active{background:#7569dc;color:white;border-color:#7569dc}
 .licensed-slot{border-style:dashed;background:#fbfaff}
 .licensed-slot strong{color:#655cc3}
+
+
+/* V2.1 — Grand Staff / 雙手鋼琴譜 */
+.grand-staff{display:grid;gap:8px}
+.grand-staff .staff-shell{transition:opacity .18s linear,filter .18s linear}
+.grand-staff.hand-right .bass-staff{opacity:.32;filter:saturate(.45)}
+.grand-staff.hand-left .treble-staff{opacity:.32;filter:saturate(.45)}
+.staff-window .hand-label{position:absolute;z-index:24;left:12px;top:9px;font-size:.68rem;font-weight:900;color:#8a92a8;background:#fff;border-radius:999px;padding:3px 8px;border:1px solid #e3e6ee}
+.bass-clef{font-size:6rem}
+.bass-staff .staff-window,.bass-staff .clef{height:230px}
+.bass-staff .staff-lines{top:48px;height:130px}
+.bass-staff .measure-line{top:48px;height:130px}
+.bass-staff .beat-guide{top:48px;height:130px}
+.bass-staff .fixed-playhead{top:24px;bottom:24px}
+.bass-note .note-stem{left:3px;top:46px;height:42px}
+.bass-note .note-head{top:39px}
+.bass-note .note-flag{left:-10px;top:76px;transform:rotate(205deg)}
+.chord-note{position:absolute;width:32px;height:92px;transform:translate(-50%,-50%)}
+.chord-bracket{position:absolute;transform:translate(-50%,-50%);font-size:.72rem;font-weight:900;color:#75809a;background:#fff;border:1px solid #e4e7ef;border-radius:999px;padding:2px 6px;white-space:nowrap}
+@media(max-width:800px){
+ .bass-staff .staff-window,.bass-staff .clef{height:190px}
+ .bass-staff .staff-lines,.bass-staff .measure-line,.bass-staff .beat-guide{top:42px;height:105px}
+ .bass-clef{font-size:4.8rem}
+}
+@media(max-width:540px){
+ .grand-staff{gap:5px}
+ .bass-staff .staff-window,.bass-staff .clef{height:165px}
+ .bass-staff .staff-lines,.bass-staff .measure-line,.bass-staff .beat-guide{top:38px;height:92px}
+ .bass-clef{font-size:4rem}
+}

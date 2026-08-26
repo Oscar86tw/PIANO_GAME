@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V2.0</title>
-  <link rel="stylesheet" href="style.css?v=2.0">
+  <title>PIANO LEARNING V2.1</title>
+  <link rel="stylesheet" href="style.css?v=2.1">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V2.0</div>
+        <div class="version-badge">VERSION V2.1</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -164,18 +164,27 @@
       </section>
 
       <section class="practice-stage" id="practiceStage">
-        <div class="staff-shell">
-          <div class="clef">𝄞</div>
-          <div class="staff-window" id="staffWindow">
-            <div class="staff-lines">
-              <i></i><i></i><i></i><i></i><i></i>
+        <div class="grand-staff" id="grandStaff">
+          <div class="staff-shell treble-staff" data-hand="right">
+            <div class="clef">𝄞</div>
+            <div class="staff-window" id="staffWindow">
+              <div class="hand-label">右手</div>
+              <div class="staff-lines"><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="fixed-playhead" aria-hidden="true"></div>
+              <div id="scrollingScore" class="scrolling-score"></div>
+              <div id="feedbackTint" class="feedback-tint" aria-hidden="true"></div>
+              <div id="rhythmAssist" class="rhythm-assist" hidden>
+                <span></span><span></span><span></span><span></span><b id="assistBpm">90 BPM</b>
+              </div>
             </div>
-            <div class="fixed-playhead" aria-hidden="true"></div>
-            <div id="scrollingScore" class="scrolling-score"></div>
-            <div id="feedbackTint" class="feedback-tint" aria-hidden="true"></div>
-            <div id="rhythmAssist" class="rhythm-assist" hidden>
-              <span></span><span></span><span></span><span></span>
-              <b id="assistBpm">90 BPM</b>
+          </div>
+          <div class="staff-shell bass-staff" data-hand="left">
+            <div class="clef bass-clef">𝄢</div>
+            <div class="staff-window bass-window" id="bassStaffWindow">
+              <div class="hand-label">左手</div>
+              <div class="staff-lines"><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="fixed-playhead" aria-hidden="true"></div>
+              <div id="scrollingBassScore" class="scrolling-score"></div>
             </div>
           </div>
         </div>
@@ -264,6 +273,6 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=2.0"></script>
+  <script src="app.js?v=2.1"></script>
 </body>
 </html>

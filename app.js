@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V2.0: 216 built-in pedagogical scores ----------
+// ---------- V2.1: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V2.0: full-length repertoire collections ----------
+// ---------- V2.1: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -248,6 +248,61 @@ const DISNEY_IMPORT_SLOTS=[
   'Disney Piano Song 05','Disney Piano Song 06','Disney Piano Song 07','Disney Piano Song 08',
   'Disney Piano Song 09','Disney Piano Song 10','Disney Piano Song 11','Disney Piano Song 12'
 ];
+
+// ---------- V2.1: generated left-hand accompaniment ----------
+const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
+function midiName(m){
+  const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  return names[((m%12)+12)%12]+(Math.floor(m/12)-1);
+}
+function transposeNote(note,semitones){
+  const m=String(note).match(/^([A-G]#?)(-?\d)$/); if(!m)return note;
+  const midi=(Number(m[2])+1)*12+NOTE_TO_MIDI[m[1]]+semitones;
+  return midiName(midi);
+}
+function rootForKey(key){
+  const map={'C Major':'C3','G Major':'G2','D Major':'D3','A Major':'A2','E Major':'E2','F Major':'F2','Bb Major':'A#2','Imported':'C3'};
+  return map[key]||'C3';
+}
+function buildLeftHandEvents(song){
+  if(song.leftEvents?.length)return song.leftEvents;
+  const sig=(song.timeSig||[4,4])[0];
+  const bars=Math.max(1,Math.ceil((song.totalBeats||4)/sig));
+  const tonic=rootForKey(song.key);
+  const fifth=transposeNote(tonic,7);
+  const third=transposeNote(tonic,4);
+  const pattern=[
+    [tonic,fifth],
+    [transposeNote(tonic,5),transposeNote(tonic,12)],
+    [transposeNote(tonic,9),third],
+    [transposeNote(tonic,7),fifth]
+  ];
+  const out=[];
+  for(let b=0;b<bars;b++){
+    const pair=pattern[b%pattern.length];
+    if(sig===3){
+      out.push([[pair[0],pair[1]],1],[pair[0],1],[pair[1],1]);
+    }else{
+      out.push([[pair[0],pair[1]],1],[pair[0],1],[pair[1],1],[[pair[0],pair[1]],1]);
+    }
+  }
+  const total=out.reduce((s,e)=>s+e[1],0);
+  const target=song.totalBeats||total;
+  if(total>target){
+    let used=0,trim=[];
+    for(const ev of out){
+      if(used>=target)break;
+      let d=Math.min(ev[1],target-used); if(d>0)trim.push([ev[0],d]); used+=d;
+    }
+    return trim;
+  }
+  return out;
+}
+for(const song of Object.values(songs)){
+  if(!song.events)continue;
+  song.leftEvents=buildLeftHandEvents(song);
+}
+
 let library = Object.entries(songs).map(([id,s])=>{
   const sec=Math.round(s.duration||0);
   const mm=String(Math.floor(sec/60)).padStart(2,'0');
@@ -562,7 +617,7 @@ let state = {
   speed:1,mode:'play',hand:'right',micStream:null,audioCtx:null,analyser:null,
   audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,assistTimer:null,assistBeat:0,
   judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,lastMasterBeat:-1,
-  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,eventTimeline:[],countInBeats:0,loopMeasure:false,demoSoundOn:false,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoVolume:0.45,pianoVoices:new Set()
+  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,eventTimeline:[],rightTimeline:[],leftTimeline:[],countInBeats:0,loopMeasure:false,demoSoundOn:false,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoVolume:0.45,pianoVoices:new Set()
 };
 
 function showView(name){
@@ -777,7 +832,12 @@ $('speedSelect').addEventListener('change',()=>{
   if(state.running) restartPractice();
 });
 $('practiceMode').addEventListener('change',()=>{state.mode=$('practiceMode').value;});
-$('handSelect').addEventListener('change',()=>{state.hand=$('handSelect').value;});
+$('handSelect').addEventListener('change',()=>{state.hand=$('handSelect').value;updateHandFocus();renderStaticScore();});
+function updateHandFocus(){
+  const g=$('grandStaff'); if(!g)return;
+  g.classList.remove('hand-right','hand-left','hand-both');
+  g.classList.add('hand-'+state.hand);
+}
 $('countInSelect').addEventListener('change',()=>{
   const measures=parseInt($('countInSelect').value)||0;
   state.countInBeats=measures*songs[state.song].timeSig[0];
@@ -993,26 +1053,29 @@ function elapsed(){
   const now=state.paused?state.pauseStart:performance.now();
   return Math.max(0,(now-state.startAt-state.pauseTotal)/1000);
 }
-function buildEventTimeline(){
-  const song=songs[state.song];
+function makeTimeline(events,hand){
   let beat=0;
-  state.eventTimeline=song.events.map((ev,eventIndex)=>{
+  return (events||[]).map((ev,eventIndex)=>{
     const [note,beats]=ev;
     const item={
-      eventIndex,
-      note,
-      beats,
-      startBeat:beat,
-      endBeat:beat+beats,
+      eventIndex,note,beats,hand,
+      startBeat:beat,endBeat:beat+beats,
       startTime:(leadInBeats()+beat)*beatSeconds(),
       endTime:(leadInBeats()+beat+beats)*beatSeconds(),
       isRest:note==='REST'
     };
-    beat+=beats;
-    return item;
+    beat+=beats; return item;
   });
 }
-function noteEvents(){ return state.eventTimeline.filter(e=>!e.isRest); }
+function buildEventTimeline(){
+  const song=songs[state.song];
+  state.rightTimeline=makeTimeline(song.events,'right');
+  state.leftTimeline=makeTimeline(song.leftEvents||buildLeftHandEvents(song),'left');
+  state.eventTimeline=state.hand==='left'?state.leftTimeline:state.hand==='both'?[...state.rightTimeline,...state.leftTimeline]:state.rightTimeline;
+}
+function noteEvents(){
+  return state.eventTimeline.filter(e=>!e.isRest).flatMap(e=>Array.isArray(e.note)?e.note.map((n,k)=>({...e,note:n,chordIndex:k})):e);
+}
 function noteTime(i){
   const n=noteEvents()[i];
   return n ? n.startTime : 0;
@@ -1032,69 +1095,67 @@ function noteY(note){
   return 138 - (step-base)*(half/2);
 }
 function fingerFor(i){ return [1,2,3,4,5,4,3,2][i%8]; }
+function bassNoteY(note){
+  const m=String(note).match(/^([A-G])#?(\d)$/); if(!m)return 112;
+  const step=(+m[2])*7+degree[m[1]];
+  const base=2*7+degree.G; // G2 near bottom bass staff line
+  const half=13;
+  return 146-(step-base)*(half/2);
+}
 
-function renderStaticScore(){
-  buildEventTimeline();
-  const root=$('scrollingScore'); root.innerHTML='';
+
+function renderStaffTimeline(root,timeline,hand){
+  root.innerHTML='';
   const song=songs[state.song];
   const pxPerBeat=95;
   const lead=window.innerWidth<600?260:380;
   const totalWidth=lead+(leadInBeats()+song.totalBeats+4)*pxPerBeat;
-  root.style.width=totalWidth+'px';
-  root.dataset.lead=lead;
-  root.dataset.pxPerBeat=pxPerBeat;
-
-  // Beat guides
+  root.style.width=totalWidth+'px'; root.dataset.lead=lead; root.dataset.pxPerBeat=pxPerBeat;
   const totalBeats=leadInBeats()+song.totalBeats;
   for(let b=0;b<=totalBeats;b++){
     const line=document.createElement('div');
     line.className='beat-guide'+(b%song.timeSig[0]===0?' strong':'');
-    line.style.left=(lead+b*pxPerBeat)+'px';
-    root.appendChild(line);
+    line.style.left=(lead+b*pxPerBeat)+'px'; root.appendChild(line);
   }
-
   let noteIndex=0;
-  state.eventTimeline.forEach(ev=>{
+  timeline.forEach(ev=>{
     const x=lead+(leadInBeats()+ev.startBeat)*pxPerBeat;
     if(ev.isRest){
-      const r=document.createElement('div');
-      r.className='music-rest '+durationClass(ev.beats);
-      r.dataset.event=ev.eventIndex;
-      r.style.left=x+'px'; r.style.top='138px';
-      root.appendChild(r);
+      const r=document.createElement('div'); r.className='music-rest '+durationClass(ev.beats);
+      r.style.left=x+'px'; r.style.top=(hand==='left'?'118px':'138px'); root.appendChild(r);
     }else{
-      const n=document.createElement('div');
-      n.className='music-note '+durationClass(ev.beats);
-      n.dataset.i=noteIndex;
-      n.dataset.event=ev.eventIndex;
-      n.style.left=x+'px';
-      n.style.top=noteY(ev.note)+'px';
-      n.innerHTML='<span class="note-head"></span><span class="note-stem"></span><span class="note-flag"></span>';
-      root.appendChild(n);
-
-      const f=document.createElement('div');
-      f.className='finger'; f.style.left=x+'px'; f.textContent=fingerFor(noteIndex);
-      root.appendChild(f);
-      noteIndex++;
+      const notes=Array.isArray(ev.note)?ev.note:[ev.note];
+      notes.forEach((note,chordIndex)=>{
+        const n=document.createElement('div');
+        n.className='music-note '+durationClass(ev.beats)+(hand==='left'?' bass-note':'')+(notes.length>1?' chord-note':'');
+        n.dataset.i=noteIndex; n.dataset.event=ev.eventIndex; n.dataset.hand=hand;
+        n.style.left=x+'px'; n.style.top=(hand==='left'?bassNoteY(note):noteY(note))+'px';
+        n.innerHTML='<span class="note-head"></span><span class="note-stem"></span><span class="note-flag"></span>';
+        root.appendChild(n); noteIndex++;
+      });
+      if(notes.length>1){
+        const c=document.createElement('div'); c.className='chord-bracket';
+        c.style.left=x+'px'; c.style.top=(hand==='left'?'26px':'38px'); c.textContent='和弦'; root.appendChild(c);
+      }
+      if(hand==='right'){
+        const f=document.createElement('div'); f.className='finger'; f.style.left=x+'px'; f.textContent=fingerFor(noteIndex-1); root.appendChild(f);
+      }
     }
-
-    const mark=document.createElement('div');
-    mark.className='duration-mark';
-    mark.style.left=x+'px';
-    mark.textContent=durationLabel(ev.beats);
-    root.appendChild(mark);
   });
-
   const bars=Math.ceil((leadInBeats()+song.totalBeats)/song.timeSig[0]);
   for(let i=1;i<=bars;i++){
-    const line=document.createElement('div');
-    line.className='measure-line';
-    line.style.left=(lead+(leadInBeats()+i*song.timeSig[0])*pxPerBeat)+'px';
-    root.appendChild(line);
+    const line=document.createElement('div'); line.className='measure-line';
+    line.style.left=(lead+(leadInBeats()+i*song.timeSig[0])*pxPerBeat)+'px'; root.appendChild(line);
   }
-  // READY position: score is stationary; first note waits one beat to the right of playhead.
-  const playhead=$('staffWindow').clientWidth*.22;
+  const targetWindow=hand==='left'?$('bassStaffWindow'):$('staffWindow');
+  const playhead=targetWindow.clientWidth*.22;
   root.style.transform=`translateX(${playhead-lead}px)`;
+}
+function renderStaticScore(){
+  buildEventTimeline();
+  renderStaffTimeline($('scrollingScore'),state.rightTimeline,'right');
+  renderStaffTimeline($('scrollingBassScore'),state.leftTimeline,'left');
+  updateHandFocus();
 }
 function durationClass(beats){
   if(beats>=4) return 'whole';
@@ -1210,24 +1271,28 @@ function updateMasterBeat(e){
 function gameLoop(){
   if(!state.running){return}
   if(state.paused){state.gameRaf=requestAnimationFrame(gameLoop);return}
-  const e=elapsed(), s=songs[state.song], root=$('scrollingScore');
+  const e=elapsed(), s=songs[state.song], root=$('scrollingScore'), bassRoot=$('scrollingBassScore');
   updateMasterBeat(e);
   const pxPerBeat=+root.dataset.pxPerBeat;
   const playhead=$('staffWindow').clientWidth*.22;
   const lead=+root.dataset.lead;
   const x=playhead-lead-(e/beatSeconds())*pxPerBeat;
   root.style.transform=`translateX(${x}px)`;
+  if(bassRoot) bassRoot.style.transform=`translateX(${x}px)`;
   $('topProgressBar').style.width=Math.min(100,e/effectiveDuration()*100)+'%';
   $('transportTime').textContent=fmtTime(e);
   if(state.demoSoundOn && state.pianoReady){
-    state.eventTimeline.forEach(ev=>{
-      if(ev.isRest) return;
-      if(state.demoPlayed.has(ev.eventIndex)) return;
+    const timelines=state.hand==='right'?[state.rightTimeline]:state.hand==='left'?[state.leftTimeline]:[state.rightTimeline,state.leftTimeline];
+    timelines.forEach(timeline=>timeline.forEach(ev=>{
+      if(ev.isRest)return;
+      const key=ev.hand+'_'+ev.eventIndex;
+      if(state.demoPlayed.has(key))return;
       if(e>=ev.startTime && e<ev.startTime+0.12){
-        state.demoPlayed.add(ev.eventIndex);
-        playScoreSample(ev.note);
+        state.demoPlayed.add(key);
+        const notes=Array.isArray(ev.note)?ev.note:[ev.note];
+        notes.forEach(n=>playScoreSample(n));
       }
-    });
+    }));
   }
 
 
@@ -1237,7 +1302,8 @@ function gameLoop(){
   nEvents.forEach((ev,i)=>{
     const expected=ev.startTime;
     const d=Math.abs(e-expected);
-    const el=root.querySelector(`.music-note[data-i="${i}"]`);
+    const targetRoot=ev.hand==='left'?bassRoot:root;
+    const el=targetRoot?.querySelector(`.music-note[data-i="${i}"]`);
     const timeUntilHit=expected-e;
     if(el){
       applyNoteApproachVisual(el,timeUntilHit,state.judged.has(i));
@@ -1263,7 +1329,7 @@ function gameLoop(){
   });
 
   state.currentTargetIndex=nearest;
-  if(nearest>=0) $('scoreNote').textContent=nEvents[nearest].note;
+  if(nearest>=0) $('scoreNote').textContent=(nEvents[nearest].hand==='left'?'左 ':'右 ')+nEvents[nearest].note;
   if(state.loopMeasure && state.running){
     const sig=songs[state.song].timeSig[0];
     const beatNow=Math.max(0,e/beatSeconds()-leadInBeats());
@@ -1399,7 +1465,8 @@ function judgeInput(note){
   $('playedNote').textContent=note;
   $('timingDelta').textContent=(timingErrorMs>0?'+':'')+timingErrorMs+' ms';
 
-  const el=$('scrollingScore').querySelector(`.music-note[data-i="${best}"]`);
+  const targetRoot=targetEvent.hand==='left'?$('scrollingBassScore'):$('scrollingScore');
+  const el=targetRoot?.querySelector(`.music-note[data-i="${best}"]`);
 
   if(Math.abs(timingError)<=0.42){
     state.judged.add(best);
