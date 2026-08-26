@@ -122,3 +122,78 @@ body.hand-both .hand-legend span{opacity:1}
   .focus-actions .btn{flex:1}
   body.practice-focus-active .staff-window{height:54vh;min-height:310px}
 }
+
+
+/* V6.2 Large Staff + Beat Gradient */
+:root{
+  --practice-line-gap:20px;
+  --practice-note-step:10px;
+  --practice-treble-top:96px;
+  --practice-bass-top:342px;
+}
+.staff-window{
+  height:540px;
+  min-height:540px;
+  background:#fff;
+}
+.staff-lines{
+  top:var(--practice-treble-top);
+  height:80px;
+  left:82px;
+  right:18px;
+}
+.staff-lines .line{height:1.5px;background:#454d60}
+.staff-lines .line:nth-child(1){top:0}
+.staff-lines .line:nth-child(2){top:20px}
+.staff-lines .line:nth-child(3){top:40px}
+.staff-lines .line:nth-child(4){top:60px}
+.staff-lines .line:nth-child(5){top:80px}
+.staff-lines.bass{top:var(--practice-bass-top)}
+.staff-clef{
+  position:absolute;left:20px;z-index:8;color:#2f3850;line-height:1;pointer-events:none;
+  font-family:"Times New Roman",serif;
+}
+.treble-clef{top:88px;font-size:92px}
+.bass-clef{top:342px;font-size:78px}
+.staff-hand-label{
+  position:absolute;left:92px;z-index:9;padding:5px 9px;border-radius:999px;
+  background:#f4f5fa;color:#737e93;font-size:.68rem;font-weight:900;pointer-events:none;
+}
+.treble-label{top:56px}.bass-label{top:302px}
+.note{
+  width:24px;height:15px;
+  border-radius:50%;
+  transition:background-color .08s linear, box-shadow .08s linear, opacity .18s ease;
+  transform:rotate(-15deg);
+}
+.note::after{width:3px;height:47px;right:2px;bottom:10px}
+.finger-mark{font-size:.82rem}
+.playhead{
+  width:5px;
+  background:#36cce6;
+  box-shadow:0 0 18px rgba(54,204,230,.60),0 0 34px rgba(54,204,230,.25);
+}
+.beat-gradient-zone{
+  position:absolute;top:0;bottom:0;left:calc(22% - 126px);width:126px;z-index:6;pointer-events:none;
+  background:linear-gradient(90deg,rgba(116,105,216,0),rgba(116,105,216,.025) 30%,rgba(70,190,220,.08) 75%,rgba(54,204,230,.14));
+}
+body.practice-focus-active .staff-window{
+  height:clamp(540px,72vh,820px);
+  min-height:540px;
+}
+body.practice-focus-active .focus-staff-card{min-height:calc(100vh - 100px)}
+body.practice-focus-active .staff-header{padding:8px 14px}
+/* keep judged notes readable */
+.note.judge-correct{box-shadow:0 0 0 3px rgba(85,167,116,.16)}
+.note.judge-wrong{box-shadow:0 0 0 3px rgba(184,77,87,.18)}
+@media(max-width:900px){
+  .staff-window{height:500px;min-height:500px}
+  body.practice-focus-active .staff-window{height:68vh;min-height:480px}
+}
+@media(max-width:600px){
+  .staff-window{height:460px;min-height:460px}
+  body.practice-focus-active .staff-window{height:64vh;min-height:440px}
+  .staff-lines{left:70px;right:10px}
+  .staff-clef{left:10px}
+  .treble-clef{font-size:76px}.bass-clef{font-size:64px}
+}

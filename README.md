@@ -1,4 +1,4 @@
-# PIANO LEARNING V5.8 Clean Rebuild
+# PIANO LEARNING V6.2 Clean Rebuild
 
 全新主程式，不再引用 V3.x `app-core.js`。
 
@@ -38,7 +38,7 @@
 - 完整音色包管理
 
 
-## V5.8 — MusicXML / MIDI Import Engine
+## V6.2 — MusicXML / MIDI Import Engine
 
 新增真正數位譜 parser：
 - MusicXML / XML
@@ -57,11 +57,11 @@
 4. 自動合併到 V4 Library
 5. 可直接從 Import 或 Library 進 Practice
 
-目前 V5.8 為安全移植第一階段：
+目前 V6.2 為安全移植第一階段：
 MusicXML 多聲部與 MIDI 同時和弦先取主要旋律，會明確顯示略過數量，不會假裝已完整保留。
 
 
-## V5.8 — MIDI Polyphony + Grand Staff
+## V6.2 — MIDI Polyphony + Grand Staff
 
 新增：
 - MIDI 同時間多音完整保留
@@ -72,13 +72,13 @@ MusicXML 多聲部與 MIDI 同時和弦先取主要旋律，會明確顯示略�
 - 同拍和弦音頭同時顯示
 - Practice 顯示實際音符數
 
-V5.8 之後：
+V6.2 之後：
 MIDI 不再為了簡化而只取最高音。
 
 目前 MusicXML 仍以主要 voice 為主；下一版可繼續處理 MusicXML 多聲部 / chord / staff 1/2。
 
 
-## V5.8 — Kids Training Suite
+## V6.2 — Kids Training Suite
 
 新增：
 - 音階練習（含 C / G 與雙手示範）
@@ -94,7 +94,7 @@ MIDI 不再為了簡化而只取最高音。
 這版優先提供手機也能操作的訓練流程。
 
 
-## V5.8 — Input & Scoring Engine
+## V6.2 — Input & Scoring Engine
 
 這版把 V4.3 的示意功能改成真正判定引擎。
 
@@ -133,7 +133,7 @@ MIDI 不再為了簡化而只取最高音。
 麥克風功能需要瀏覽器允許麥克風權限；部署到 GitHub Pages HTTPS 時最適合使用。
 
 
-## V5.8 — Course Progression 10級 → 1級
+## V6.2 — Course Progression 10級 → 1級
 
 新增真正兒童課程路線：
 
@@ -172,9 +172,9 @@ Practice 真實評分結束後，若是從 Course 進入，會把實際 1～5 �
 Training 的視奏 / 聽奏 / 音階也會寫入同一套 Course Progression。
 
 
-## V5.8 — Formal Pedagogy Curriculum
+## V6.2 — Formal Pedagogy Curriculum
 
-V5.8 把 10級→1級改成「正規教學邏輯」，不是只靠遊戲星星升級。
+V6.2 把 10級→1級改成「正規教學邏輯」，不是只靠遊戲星星升級。
 
 ### 四個核心能力
 1. 技巧・音階・指法
@@ -186,7 +186,7 @@ V5.8 把 10級→1級改成「正規教學邏輯」，不是只靠遊戲星星�
 - 每一類至少 3 顆星
 - 同時達成本級總星星門檻
 - 任一核心能力未達 3 顆，不可用其他高分補掉
-- V4.5 舊進度可遷移星星，但解鎖會依 V5.8 新規則重新計算
+- V4.5 舊進度可遷移星星，但解鎖會依 V6.2 新規則重新計算
 
 ### 教學順序
 坐姿/手型 → 指號 → 五指位置 → 基本節奏 → 地標音 →
@@ -195,7 +195,7 @@ V5.8 把 10級→1級改成「正規教學邏輯」，不是只靠遊戲星星�
 快速視奏/聽力 → 完整演奏能力
 
 ### 每級內容真正不同
-V5.8 的 curriculum.json 現在每級都有：
+V6.2 的 curriculum.json 現在每級都有：
 - keys
 - technique
 - rhythm
@@ -210,9 +210,9 @@ V5.8 的 curriculum.json 現在每級都有：
 這套 10→1 是本 App 的自訂教學分級，不宣稱等同任何單一官方檢定級別。
 
 
-## V5.8 — Lesson Content Bank
+## V6.2 — Lesson Content Bank
 
-V4.6 是正規課綱；V5.8 開始把「教材內容」真正填進去。
+V4.6 是正規課綱；V6.2 開始把「教材內容」真正填進去。
 
 新增 `data/lesson-bank.json`，每級都有：
 - 技巧實際練習題
@@ -232,12 +232,12 @@ V4.6 是正規課綱；V5.8 開始把「教材內容」真正填進去。
 - 可取得該級技巧練習 / 曲目任務
 - Course 頁可展開查看每級真正教材
 
-V5.8 的目標是讓「10級、9級、8級……」不只是標題，而是真的出不同內容。
+V6.2 的目標是讓「10級、9級、8級……」不只是標題，而是真的出不同內容。
 
 
-## V5.8 — Formal Lesson Flow
+## V6.2 — Formal Lesson Flow
 
-V5.8 把「教材」變成真正的一堂課。
+V6.2 把「教材」變成真正的一堂課。
 
 固定課堂順序：
 1. 老師示範
@@ -262,12 +262,12 @@ V5.8 把「教材」變成真正的一堂課。
 - `js/pages/lesson.js`
 - `css/lesson.css`
 
-V5.8 的目標：更接近真正鋼琴老師的上課流程，而不是選題後直接考試。
+V6.2 的目標：更接近真正鋼琴老師的上課流程，而不是選題後直接考試。
 
 
-# V5.8 COMPLETE PIANO ACADEMY
+# V6.2 COMPLETE PIANO ACADEMY
 
-V5.8 不再用小版本逐項補功能，而是整合成完整學院。
+V6.2 不再用小版本逐項補功能，而是整合成完整學院。
 
 ## 核心能力
 1. 技巧・音階・指法
@@ -312,10 +312,10 @@ V5.8 不再用小版本逐項補功能，而是整合成完整學院。
 - 授權 / 自有 MusicXML、MIDI 匯入槽
 
 ## 分級聲明
-V5.8 的 10級→1級是本 App 的自訂課程進程，吸收正式鋼琴教學常見能力結構，但不是 ABRSM、Trinity、RCM 或任何單一官方檢定的等值表。
+V6.2 的 10級→1級是本 App 的自訂課程進程，吸收正式鋼琴教學常見能力結構，但不是 ABRSM、Trinity、RCM 或任何單一官方檢定的等值表。
 
 
-# V5.8 — 1000 Complete Score Library
+# V6.2 — 1000 Complete Score Library
 
 新增 1000 首「完整原創教學樂譜」；不是 1000 個空白曲名。
 
@@ -356,9 +356,9 @@ V5.8 的 10級→1級是本 App 的自訂課程進程，吸收正式鋼琴教學
 這些分類使用原創風格曲與授權 / 自有 MusicXML、MIDI 匯入。
 
 
-# V5.8 — Score Engraving & Library UX
+# V6.2 — Score Engraving & Library UX
 
-V5.8 將 V5.1 的 1000 首 events 進一步變成「可閱讀、可挑小節」的樂譜體驗。
+V6.2 將 V5.1 的 1000 首 events 進一步變成「可閱讀、可挑小節」的樂譜體驗。
 
 新增：
 - Grand Staff 樂譜預覽
@@ -385,7 +385,7 @@ V5.8 將 V5.1 的 1000 首 events 進一步變成「可閱讀、可挑小節」�
 - js/pages/score-detail.js
 
 
-# V5.8 — MASTER CLOCK SYNC + STAFF GEOMETRY FIX
+# V6.2 — MASTER CLOCK SYNC + STAFF GEOMETRY FIX
 
 這版優先修正三個核心問題：
 
@@ -423,7 +423,7 @@ setTimeout 只負責「提前喚醒 scheduler」；
 - js/modules/demo-scheduler/index.js
 
 
-# V5.8 — EVENT LOCK + AUDIO HEALTH FIX
+# V6.2 — EVENT LOCK + AUDIO HEALTH FIX
 
 修正實機發現的兩個問題。
 
@@ -444,7 +444,7 @@ AudioEngine 改為：
 - Practice 顯示音色健康狀態
 
 
-# V5.8 — AUDIO MIXER
+# V6.2 — AUDIO MIXER
 
 新增三組獨立音量：
 - 鋼琴聲：0–200%，預設 135%
@@ -460,7 +460,7 @@ Metronome → MetroGain → MasterGain → Output
 調整 BPM 不會改變音量；調音量也不會影響 Master Clock。
 
 
-# V5.8 — 7-SECOND READY BUFFER
+# V6.2 — 7-SECOND READY BUFFER
 
 按「開始」後新增固定 7 秒準備時間。
 
@@ -483,7 +483,7 @@ Metronome → MetroGain → MasterGain → Output
 - 準備時間內彈琴不計錯
 
 
-# V5.8 — FOCUS PRACTICE + SETTINGS DRAWER
+# V6.2 — FOCUS PRACTICE + SETTINGS DRAWER
 
 依照 V2.9 練習畫面的優點重新整理：
 - 五線譜是主要視覺
@@ -506,7 +506,7 @@ Metronome → MetroGain → MasterGain → Output
 - Scoring / Stars
 
 
-# V5.8 — USER SCHOOL SCORE: THE WAMPUS CATS
+# V6.2 — USER SCHOOL SCORE: THE WAMPUS CATS
 
 新增使用者提供的學校教材譜面：
 - Dueling High School Bands
@@ -560,7 +560,7 @@ Metronome → MetroGain → MasterGain → Output
 - 之後可再逐首細修到更貼近原譜每一顆音、每個和弦與指法。
 
 
-## V6.1 手機拍照上傳＋同步練習轉換
+## V6.2 手機拍照上傳＋同步練習轉換
 
 這一版新增了手機友善流程：
 - 可直接用手機相機拍樂譜並上傳。
@@ -573,3 +573,12 @@ Metronome → MetroGain → MasterGain → Output
 - 手機拍照圖片會先壓縮後存入瀏覽器本機儲存（localStorage）。
 - 同步練習版目前屬於 **starter conversion**：會依你選的模板（右手單音 / 左手單音 / 雙手分解 / 雙手和弦 / 音階 / 技巧練習曲）建立可運作的同步事件資料。
 - 原始照片不會被假裝 OCR 成錯誤音符；後續仍可逐首精修。
+
+
+## V6.2 — 大五線譜＋拍點漸層提示
+- 練習畫面的五線譜放大為主視覺。
+- 高音 / 低音譜表都增加線距、音符大小與譜號尺寸。
+- Focus Practice 模式下可佔約 70% 螢幕高度。
+- 音符在距離判定線約 2.4 拍內開始平滑變色，越靠近拍點越接近青色。
+- 不使用閃爍、縮放、跳動或 pulse；只有連續顏色插值與柔和光暈。
+- 碰線判定、聲音與節拍器仍由同一 Master Clock 控制。
