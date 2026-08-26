@@ -1,319 +1,385 @@
-# PIANO LEARNING V2.2 — MIDI + Chord Recognition
+# PIANO LEARNING V5.2 Clean Rebuild
 
-## 新增 MIDI 輸入
-- USB MIDI 電鋼琴 / 電子琴
-- 作業系統已辨識的 Bluetooth MIDI 裝置
-- Chrome / Edge 等支援 Web MIDI 的瀏覽器可直接連接
-- 連接必須由使用者按「連接 MIDI」觸發
+全新主程式，不再引用 V3.x `app-core.js`。
 
-## 多音與雙手判定
-MIDI 模式可判定：
-- 單音
-- 左手雙音
-- 三和弦 / 多音
-- 左右手同一拍同時出現的完整音組
+## 獨立頁面
+- index.html：首頁
+- pages/library.html：樂譜庫
+- pages/practice.html：練習
+- pages/import.html：拍照 / MusicXML / MIDI
+- pages/sound.html：鋼琴音色
+- pages/progress.html：進度 / AI
+- pages/errors.html：錯誤診斷
 
-每一拍會比較：
-- 譜面要求的全部音
-- 實際按下的全部音
-- 是否缺音 / 多音 / 錯音
-- 拍點誤差 ms
-- chordCompleteness 完整度
+## 已重建
+- 樂譜庫 / 搜尋 / 分級
+- READY 練習
+- 譜面移動
+- BPM / 手別 / 模式 UI
+- 本地鋼琴 sample
+- 六種鋼琴音色選擇
+- 拍照樂譜保存（待 OMR）
+- MusicXML / MIDI 專用入口
+- AI 建議
+- 進度
+- 全站錯誤捕捉
 
-只有「所有要求音都正確 + 沒有多按 + 拍點正確」才算完全吻合。
+## 範例網站
+完整 V3.8 保存在 `範例網站_V3.8/`，V4 runtime 不引用它。
 
-## 麥克風模式
-真鋼琴仍可使用麥克風模式；目前主要適用單音辨識。多音和弦建議 MIDI，準確度明顯較高。
-
-## 專注模式
-延續 V2.1.1：判定時不閃爍、不跳亮、不脈衝。
-
-
-## V2.2.1 Audio Master Clock 同步修正
-- 節拍器不再由畫面幀率觸發。
-- 使用 Web Audio `AudioContext.currentTime` 作為唯一主時鐘。
-- 節拍聲會提前排程到精確 AudioContext 時間點。
-- 五線譜位置每一幀都從 AudioContext 時間反推，不會因手機掉幀逐漸漂移。
-- 譜面鋼琴示範聲也改成同一 AudioContext 時間預排程。
-- 暫停、播放、倒回都重新鎖定同一音訊時間軸。
-
-理論同步鏈：
-Audio Master Clock → BPM → 節拍聲 → 音符到藍線 → 示範鋼琴聲 → MIDI/麥克風判定。
+## 下一步移植
+從範例網站逐項移植：
+- 完整 MusicXML parser
+- MIDI parser / Web MIDI
+- 麥克風音高判定
+- 雙手和弦
+- 完整評分 / 考試模式
+- Photo Score IndexedDB 圖片原檔
+- 完整音色包管理
 
 
-## V2.2.2 — 雙手功能完整修正
+## V5.2 — MusicXML / MIDI Import Engine
 
-雙手模式現在完整連動：
-- 高音譜表＝右手
-- 低音譜表＝左手
-- 雙手時兩譜同步顯示與移動
-- 譜面鋼琴聲可依右手 / 左手 / 雙手模式播放
-- 雙手模式的示範聲會同時播放左右手事件
-- 和弦內多顆音會同時發聲
-- 示範音長依譜面 durationBeats 計算
-- 節拍器 / BPM / 起拍 / 暫停 / 播放 / 倒回共用 Audio Master Clock
-- MIDI 可以判定雙手同拍多音
-- 麥克風模式清楚標示以單音追蹤為主
-- 紀錄標示右手 / 左手 / 雙手
-- 修正左右手視覺音符索引衝突，改用 hand + event + chordIndex 唯一鍵
-- 到拍仍維持無閃爍專注模式
+新增真正數位譜 parser：
+- MusicXML / XML
+- Standard MIDI / MID
+- BPM
+- 拍號
+- MusicXML key
+- 休止符
+- 音符時值
+- MIDI delta time / running status / tempo meta event / time signature meta event
 
+匯入成功：
+1. 解析
+2. 顯示結果與警告
+3. 保存 localStorage
+4. 自動合併到 V4 Library
+5. 可直接從 Import 或 Library 進 Practice
 
-## V2.3 — 練習分析與錯誤回放
-
-紀錄區新增：
-- 音高正確率
-- 節拍正確率
-- 完全吻合率
-- 平均節拍誤差
-- 右手 / 左手表現
-- MIDI 和弦平均完整度
-- 太早 / 準時 / 太晚 / 漏音統計
-- 自動找出最弱小節
-- 最弱 5 個小節排行
-- 「重練」可直接跳回該小節並開啟目前小節循環
-- 「練最弱小節」一鍵進入 Focus Practice
-
-分析資料只放在紀錄區，不在彈奏畫面中跳出，維持專注模式。
+目前 V5.2 為安全移植第一階段：
+MusicXML 多聲部與 MIDI 同時和弦先取主要旋律，會明確顯示略過數量，不會假裝已完整保留。
 
 
-## V2.4 — 電影完整樂譜
-
-新增「電影」整首分類。
-
-### 內建
-新增 24 首原創完整電影感鋼琴曲，全部為完整長度：
-- 冒險
-- 魔法
-- 懸疑
-- 浪漫
-- 太空
-- 英雄
-- 奇幻
-- 動畫電影感
-- 片尾抒情
-
-一般為 32 小節；Level 6–8 為 36 小節。
-
-每首都支援：
-- READY 後才播放
-- 完整右手 / 左手 Grand Staff
-- 雙手模式
-- 譜面鋼琴示範聲
-- 節拍器 / BPM / 起拍
-- Audio Master Clock 同步
-- 播放 / 暫停 / 倒回
-- MIDI 多音與和弦判定
-- 麥克風單音追蹤
-- 練習紀錄
-- 弱小節分析與重練
-- 無閃爍專注模式
-
-### 受版權保護的電影原聲
-近代電影正式主題曲與原聲鋼琴譜不直接內建完整內容。
-電影分類另外提供 16 個完整 MusicXML / MIDI 授權匯入槽。
-使用者匯入合法取得的完整譜後，可使用同一套完整練習功能。
-
-
-## V2.5 — 曲庫管理
-
-樂譜數量增加後，新增完整管理功能：
-- 曲名 / 分類 / 調性 / BPM 關鍵字搜尋
-- 依程度篩選
-- 依經典 / 考試 / 時尚 / 電影 / Disney / 短練習分類
-- 只看完整曲
-- 收藏
-- 最近練習
-- 排序：曲名、程度、BPM、長度、最近練習
-- 一鍵清除全部篩選
-- 即時顯示目前符合條件的樂譜數量
-
-收藏與最近練習會保存在瀏覽器 localStorage。
-
-
-## V2.6 — 學習路徑＋進度保存
+## V5.2 — MIDI Polyphony + Grand Staff
 
 新增：
-- 預備級 → Level 8 學習路徑
-- 每級完成度
-- 完成前一級 60% 後解鎖下一級
-- 自動推薦下一課
-- 完成課程數
-- 完成完整曲數
-- 星星獎勵
-- 今日 15 分鐘練習目標
-- 本週練習天數
-- 進度資料保存在 localStorage
+- MIDI 同時間多音完整保留
+- 同拍和弦事件可保存為 note array
+- MIDI 依中央 C（MIDI 60）自動分左右手
+- Practice 重新支援 Grand Staff 雙手顯示
+- 右手深灰、左手紫色
+- 同拍和弦音頭同時顯示
+- Practice 顯示實際音符數
 
-星星規則：
-- 完全吻合率 ≥ 90%：3 ★
-- ≥ 75%：2 ★
-- ≥ 55%：1 ★
+V5.2 之後：
+MIDI 不再為了簡化而只取最高音。
 
-學習路徑與星星只顯示在首頁／進度頁，不會在彈奏畫面跳出。
+目前 MusicXML 仍以主要 voice 為主；下一版可繼續處理 MusicXML 多聲部 / chord / staff 1/2。
 
 
-## V2.7 — 考試模擬＋正式演奏
+## V5.2 — Kids Training Suite
 
-新增三種練習類型：
+新增：
+- 音階練習（含 C / G 與雙手示範）
+- 指法顯示切換
+- 雙手訓練
+- 視奏訓練（10級、9級隨機視奏）
+- 聽奏訓練（播放題目 / 作答 / 修正）
+- 拍子不對自動開節拍器（示範邏輯）
+- 每次 1～5 顆星星獎勵
+- 兒童曲庫分類：流行音樂、古典音樂、卡通歌、熱門歌、宮崎駿
+- 訓練中心獨立頁面：pages/training.html
 
-### 練習模式
-- 可倒回
-- 可小節循環
-- 可使用節拍器
-- 可使用譜面鋼琴示範聲
-- 可開啟紀錄與弱小節分析
-
-### 考試模擬
-開始前可以完成所有準備；按下播放後：
-- 鎖定 BPM、速度、左右手與模式設定
-- 禁止倒回
-- 禁止小節循環
-- 禁止示範鋼琴聲
-- 考試中不能打開紀錄分析
-- 完整演奏結束後才解除鎖定
-- 結束後產生 A / B / C / D / 再練習評級
-- 顯示總分、音高、節奏與完整度
-
-### 正式演奏
-- 不使用示範鋼琴聲
-- 不使用弱小節即時提示
-- 適合完整不中斷演奏
-- 保留必要播放 / 暫停與輸入判定
-
-所有模式仍維持 READY 後由學生自行按播放才開始。
+這版優先提供手機也能操作的訓練流程。
 
 
-## V2.8 — 學校教材總庫
+## V5.2 — Input & Scoring Engine
 
-新增「學校教材」完整分類，依學生常見學習進程收納：
+這版把 V4.3 的示意功能改成真正判定引擎。
 
-### 預備級 / 低年級
-- 中央 C
-- 五指位置
-- 四分音符、二分音符
-- 簡單童謠
-- 單手旋律
+### 真正輸入
+- Web MIDI 即時 Note On
+- 麥克風 getUserMedia
+- 自相關音高偵測
+- MIDI / 麥克風 / 虛擬琴鍵統一輸入事件
 
-### Level 1–2
-- 八分音符
-- 3/4、4/4
-- C / G 大調基礎
-- 傳統與公版兒童曲
-- 簡單左右手
+### 真正評分
+- 依樂譜時間軸找目前應彈音
+- 音高正確 / 錯音
+- 節拍早 / 準 / 晚
+- timing error ms
+- 和弦多音完成度
+- 音高 %
+- 節拍 %
+- 完全吻合 %
+- 完成度
+- 1～5 顆星自動計算
 
-### Level 3–4
-- 左手伴奏
-- 附點節奏
-- 小調
-- 分解和弦
-- 切分音
-- 雙手對話
+### 自動節拍器
+最近輸入若持續大幅早 / 晚，Scoring Engine 會發出 auto-metronome 事件，Practice 真正啟動 Web Audio 節拍器。
 
-### Level 5–6
-- 音階 / 琶音
-- I / IV / V 和弦
-- 終止式
-- 視奏
-- Alberti Bass
-- 6/8
-- 手部獨立
+### 聽奏
+訓練頁可用：
+- MIDI
+- 麥克風
+- 畫面琴鍵
+作答。彈錯直接顯示「你彈什麼 / 正確是什麼」。
 
-### Level 7–8
-- 二聲部
-- 和聲
-- 轉調
-- 中高階視奏
-- 正式演奏練習
-- 全課程總複習曲
+### 視奏
+10級與9級的隨機規則再擴充，並避免連續產生完全相同題目。
 
-本版新增 56 首學校教材類完整樂譜／完整學習曲。
-其中公版與傳統旋律可直接內建；受版權保護的課本歌曲不直接內建完整內容。
-另提供 16 個「學校課本／老師指定」MusicXML / MIDI 匯入槽。
-
-所有學校教材均納入：
-- 搜尋
-- 收藏
-- 最近練習
-- 完整曲篩選
-- READY
-- 雙手譜
-- 示範鋼琴聲
-- MIDI / 麥克風
-- Audio Master Clock
-- 練習紀錄
-- 弱小節分析
-- 學習路徑
-- 考試模式
-- 無閃爍專注模式
+注意：
+麥克風功能需要瀏覽器允許麥克風權限；部署到 GitHub Pages HTTPS 時最適合使用。
 
 
-## V2.9 — Photo Score Import
+## V5.2 — Course Progression 10級 → 1級
 
-新增「📷 拍照樂譜」功能與曲庫分類。
+新增真正兒童課程路線：
 
-### 支援來源
-- 手機／平板直接開相機拍一頁
-- 相簿一次選多張樂譜照片
-- 掃描 PDF 原檔保存
+- 10級
+- 9級
+- 8級
+- 7級
+- 6級
+- 5級
+- 4級
+- 3級
+- 2級
+- 1級
 
-### 多頁處理
-- 頁面排序
-- 前移／後移
-- 90° 旋轉
-- 自動偵測內容範圍並裁掉大部分白邊
-- 單頁刪除
-- 顯示頁數與儲存容量
+每一級四個任務：
+1. 音階 / 指法
+2. 視奏
+3. 聽奏
+4. 兒童曲目
 
-### 曲目資料
-- 曲名
-- 作者／來源
-- 程度
+每關最高 5 顆星。
+本級累積達到解鎖門檻，才會自動開下一級。
+
+### 星星與進度
+- 最高星星紀錄
+- 嘗試次數
+- 最佳分數
+- 是否完成
+- 總星星
+- 今日練習分鐘
+- 自動解鎖下一級
+- localStorage 保存
+
+### 與 V4.4 整合
+Practice 真實評分結束後，若是從 Course 進入，會把實際 1～5 顆星寫入課程進度。
+Training 的視奏 / 聽奏 / 音階也會寫入同一套 Course Progression。
+
+
+## V5.2 — Formal Pedagogy Curriculum
+
+V5.2 把 10級→1級改成「正規教學邏輯」，不是只靠遊戲星星升級。
+
+### 四個核心能力
+1. 技巧・音階・指法
+2. 五線譜・視奏
+3. 聽力・聽奏
+4. 曲目・演奏
+
+### 升級規則
+- 每一類至少 3 顆星
+- 同時達成本級總星星門檻
+- 任一核心能力未達 3 顆，不可用其他高分補掉
+- V4.5 舊進度可遷移星星，但解鎖會依 V5.2 新規則重新計算
+
+### 教學順序
+坐姿/手型 → 指號 → 五指位置 → 基本節奏 → 地標音 →
+級進/跳進 → 一個八度音階 → 和弦/調號 → 雙手 →
+兩個八度/琶音 → 複合拍 → 多聲部 → 踏板/音色 →
+快速視奏/聽力 → 完整演奏能力
+
+### 每級內容真正不同
+V5.2 的 curriculum.json 現在每級都有：
+- keys
+- technique
+- rhythm
+- reading
+- aural
+- sight-reading range / length / hands
+- ear-training range / length
+- repertoire direction
+- tempo
+- mastery gate
+
+這套 10→1 是本 App 的自訂教學分級，不宣稱等同任何單一官方檢定級別。
+
+
+## V5.2 — Lesson Content Bank
+
+V4.6 是正規課綱；V5.2 開始把「教材內容」真正填進去。
+
+新增 `data/lesson-bank.json`，每級都有：
+- 技巧實際練習題
+- 指法
+- 建議 BPM
+- 節奏時值池
+- 視奏題型
+- 視奏音域
+- 聽力題型
+- 曲目任務
+- 正式練習流程
+
+新增 Lesson Engine：
+- `js/modules/lesson-engine/index.js`
+- 可依級別產生視奏題
+- 可依級別產生聽奏題
+- 可取得該級技巧練習 / 曲目任務
+- Course 頁可展開查看每級真正教材
+
+V5.2 的目標是讓「10級、9級、8級……」不只是標題，而是真的出不同內容。
+
+
+## V5.2 — Formal Lesson Flow
+
+V5.2 把「教材」變成真正的一堂課。
+
+固定課堂順序：
+1. 老師示範
+2. 慢速分段
+3. 單手練習
+4. 雙手練習
+5. 正常速度
+6. 正式測驗
+
+規則：
+- 必要步驟不可跳過
+- 每一步保存完成狀態
+- 正式測驗才給最終 1～5 顆星
+- 3★ = 達標
+- 低於 3★ 自動加入 Review Queue
+- Progress 頁顯示「今天要複習」
+- 從 Course 點任何課，先進 `pages/lesson.html`
+
+新增：
+- `js/modules/lesson-session/index.js`
+- `pages/lesson.html`
+- `js/pages/lesson.js`
+- `css/lesson.css`
+
+V5.2 的目標：更接近真正鋼琴老師的上課流程，而不是選題後直接考試。
+
+
+# V5.2 COMPLETE PIANO ACADEMY
+
+V5.2 不再用小版本逐項補功能，而是整合成完整學院。
+
+## 核心能力
+1. 技巧・音階・指法
+2. 節奏・拍感
+3. 五線譜・視奏
+4. 聽力・聽奏
+5. 樂理・音樂知識
+6. 曲目・演奏
+7. 音樂表現・創造
+8. 弱項複習
+
+## 完整功能
+- 10級→1級
+- 正式 Lesson Flow
+- 技巧 / 音階 / 琶音 / 和弦
+- 指法
+- Grand Staff
+- Sight Reading
+- Ear Training
+- Rhythm Training
+- Theory
+- Repertoire
+- MIDI
+- Microphone pitch detection
+- Pitch / rhythm / exact scoring
+- Auto Metronome
+- 1–5 stars
+- Review Queue
+- Daily 15-minute goal
+- Academy Progress
+- Teacher / Parent dashboard
+- Mock Exam
+- MusicXML / MIDI import
+- Photo Score pending OMR
+- Error Diagnostics
+
+## 版權
+熱門歌、Disney、宮崎駿、電影、卡通等受版權保護的完整樂譜，不內建未授權內容。
+系統提供：
+- 公版作品
+- 原創風格曲
+- 授權 / 自有 MusicXML、MIDI 匯入槽
+
+## 分級聲明
+V5.2 的 10級→1級是本 App 的自訂課程進程，吸收正式鋼琴教學常見能力結構，但不是 ABRSM、Trinity、RCM 或任何單一官方檢定的等值表。
+
+
+# V5.2 — 1000 Complete Score Library
+
+新增 1000 首「完整原創教學樂譜」；不是 1000 個空白曲名。
+
+分類：
+- 音階・技巧：160
+- 視奏練習：160
+- 節奏練習：120
+- 古典風格原創：140
+- 流行風格原創：120
+- 卡通風格原創：100
+- 動畫・電影風格原創：100
+- 雙手練習：60
+- 聽奏練習：40
+
+合計：1000 首。
+
+每首包含：
+- 完整 events
+- BPM
+- 拍號
+- 調性
+- 級別
+- 小節數
+- 完整譜標記
 - 分類
-- 是否完整曲
+- 可直接進 Practice
+- 部分音階譜含 fingering
+- 部分雙手/風格曲含 chord / polyphony
 
-### 儲存方式
-圖片／PDF 使用 IndexedDB 保存，不使用 localStorage，避免大型圖片很快超出容量。
-儲存後會出現在：
-- 匯入頁「我的拍照樂譜」
-- 主樂譜庫「📷 拍照樂譜」分類
-- 搜尋與完整曲篩選
+新增：
+- data/scores-1000.json
+- data/scores-1000-index.json
+- pages/score-categories.html
+- Library 分頁、搜尋、分類、級別過濾
 
-### OMR 狀態
-V2.9 已預留 Optical Music Recognition（OMR）流程，但不內建假辨識。
-未連接真正的 OMR 引擎／服務前，拍照譜清楚標示「待 OMR」。
-因此不會把照片猜成錯誤的音高或節奏，也不會讓尚未辨識的圖片直接進入跟譜演奏。
-
-後續 OMR 成功輸出 MusicXML 後，可再送進目前既有 MusicXML importer，轉為 READY、雙手譜、示範聲、MIDI／麥克風判定、紀錄與分析。
+版權：
+受版權保護的熱門歌 / 卡通 / Disney / 宮崎駿 / 電影完整樂譜不直接內建。
+這些分類使用原創風格曲與授權 / 自有 MusicXML、MIDI 匯入。
 
 
-## V3.0 — Studio Grand Piano Engine
+# V5.2 — Score Engraving & Library UX
 
-新增可選鋼琴音色：
-- Lite Piano
-- Studio Grand
-- Concert Grand
-- Warm Grand
-- Bright Grand
-- Soft Piano
+V5.2 將 V5.1 的 1000 首 events 進一步變成「可閱讀、可挑小節」的樂譜體驗。
 
-新增音質選擇：
-- Lite
-- Studio
-- Grand
+新增：
+- Grand Staff 樂譜預覽
+- 高音 / 低音譜表
+- 左右手顏色區分
+- 升記號
+- 休止符
+- 小節線
+- 小節編號
+- ledger line
+- 指法
+- note duration 外觀
+- 完整樂譜詳情頁
+- 指定小節練習
+- 收藏
+- 最近使用
+- Library 收藏 / 最近篩選
+- Library 「看完整譜」按鈕
 
-本版已讓不同音色實際改變：
-- 音色亮度
-- Attack
-- Release
-- 動態曲線
-- 輕量 Room 模擬
-- Sustain Pedal（MIDI CC64）
-- Soft Pedal（MIDI CC67）
-- Polyphony 狀態
-- 音色設定保存
-
-重要說明：
-V3.0 使用現有本地鋼琴 sample 搭配音色引擎建立 6 種聲音。
-畫面上的 1-step / 3-step / 5-step dynamic 是目前動態映射模式，不代表專案已經內含 5 套不同力度錄音。
-真正大型多力度 Studio / Concert sample pack 後續可做成額外下載包，避免 GitHub Pages 初次載入過大。
+新增：
+- js/modules/score-renderer/index.js
+- css/score-renderer.css
+- pages/score-detail.html
+- js/pages/score-detail.js

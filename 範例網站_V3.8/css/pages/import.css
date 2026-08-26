@@ -1,0 +1,9 @@
+html[data-page-module="import"] #homeView{display:block}
+html[data-page-module="import"] #coursesPanel,
+html[data-page-module="import"] #songsPanel,
+html[data-page-module="import"] #quickPanel,
+html[data-page-module="import"] #progressPanel{display:none!important}
+html[data-page-module="import"] #importPanel{display:block!important}
+
+/* V3.5 ownership: import */
+html[data-page-module="import"]{--active-module:"import";}

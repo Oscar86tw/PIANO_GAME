@@ -1,0 +1,9 @@
+html[data-page-module="library"] #homeView{display:block}
+html[data-page-module="library"] #coursesPanel,
+html[data-page-module="library"] #importPanel,
+html[data-page-module="library"] #quickPanel,
+html[data-page-module="library"] #progressPanel{display:none!important}
+html[data-page-module="library"] #songsPanel{display:block!important}
+
+/* V3.5 ownership: library */
+html[data-page-module="library"]{--active-module:"library";}

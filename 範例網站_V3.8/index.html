@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#7067d9">
+  <title>PIANO LEARNING V3.8 · 首頁</title>
+  <link rel="stylesheet" href="css/core.css?v=3.8">
+  <link rel="stylesheet" href="css/pages/home.css?v=3.8">
+</head>
+<body>
+  <main id="app">
+    <section id="homeView" class="view active">
+      <header class="home-header">
+        <div>
+          <div class="brand">PIANO LEARNING</div>
+          <h1>今天想練什麼？</h1>
+          <p>選一堂課，或直接開始彈一首歌。</p>
+        </div>
+        <div class="version-badge">VERSION V3.8</div>
+        <div class="architecture-badge">MODULAR</div>
+        <button id="moduleHealthBtn" class="module-health-badge" type="button">MODULE <span id="moduleHealthText">CHECK</span></button>
+      </header>
+
+      <nav class="home-tabs" aria-label="主要功能">
+        <button class="tab active" data-tab="courses">課程</button>
+        <button class="tab" data-tab="songs">歌曲</button>
+        <button class="tab" data-tab="import">匯入樂譜</button>
+        <button class="tab" data-tab="quick">5 分鐘練習</button>
+        <button class="tab" data-tab="progress">進度</button>
+      </nav>
+
+      <section id="coursesPanel" class="tab-panel active">
+        <div class="section-title">
+          <div><small>LEARN</small><h2>完整分級課程</h2></div>
+          <span>預備級＋Level 1–8</span>
+        </div>
+
+        <div class="curriculum-toolbar">
+          <label>程度
+            <select id="levelFilter">
+              <option value="prep">預備級</option>
+              <option value="1">Level 1</option>
+              <option value="2">Level 2</option>
+              <option value="3">Level 3</option>
+              <option value="4">Level 4</option>
+              <option value="5">Level 5</option>
+              <option value="6">Level 6</option>
+              <option value="7">Level 7</option>
+              <option value="8">Level 8</option>
+            </select>
+          </label>
+          <label>分類
+            <select id="categoryFilter">
+              <option value="all">全部分類</option>
+              <option value="notes">識譜</option>
+              <option value="rhythm">節奏</option>
+              <option value="technique">技巧</option>
+              <option value="scales">音階・琶音</option>
+              <option value="chords">和弦・和聲</option>
+              <option value="sight">視奏</option>
+              <option value="ear">聽力</option>
+              <option value="repertoire">曲目・演奏</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="curriculumSummary" class="curriculum-summary"></div>
+        <div id="curriculumGrid" class="course-grid curriculum-grid"></div>
+      </section>
+
+      <section id="songsPanel" class="tab-panel">
+        <div class="section-title">
+          <div><small>PLAY</small><h2>樂譜庫</h2></div>
+          <span>200+ 樂譜</span>
+        </div>
+        <div class="collection-row" aria-label="整首樂譜分類">
+          <button class="collection-filter active" data-collection="all">全部</button>
+          <button class="collection-filter" data-collection="classic">經典</button>
+          <button class="collection-filter" data-collection="exam">考試</button>
+          <button class="collection-filter" data-collection="fashion">時尚</button>
+          <button class="collection-filter" data-collection="movie">電影</button>
+          <button class="collection-filter" data-collection="school">學校教材</button>
+          <button class="collection-filter" data-collection="photo">📷 拍照樂譜</button>
+          <button class="collection-filter" data-collection="disney">迪士尼</button>
+          <button class="collection-filter" data-collection="practice">短練習</button>
+        </div>
+        <div class="library-tools">
+          <label class="library-search">
+            <span>搜尋樂譜</span>
+            <input id="songSearch" type="search" placeholder="輸入曲名、分類、調性…" autocomplete="off">
+          </label>
+          <label>
+            <span>排序</span>
+            <select id="songSort">
+              <option value="default">預設</option>
+              <option value="title">曲名 A–Z</option>
+              <option value="level">程度</option>
+              <option value="bpm">BPM</option>
+              <option value="duration">長度</option>
+              <option value="recent">最近練習</option>
+            </select>
+          </label>
+          <label>
+            <span>顯示</span>
+            <select id="songViewFilter">
+              <option value="all">全部</option>
+              <option value="full">只看完整曲</option>
+              <option value="favorite">只看收藏</option>
+              <option value="recent">最近練習</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="library-summary">
+          <span id="visibleSongCount">0 首</span>
+          <button id="clearLibraryFilters" type="button">清除篩選</button>
+        </div>
+
+        <div class="filter-row">
+          <button class="filter active" data-level="all">全部程度</button>
+          <button class="filter" data-level="prep">預備級</button>
+          <button class="filter" data-level="1">Level 1</button>
+          <button class="filter" data-level="2">Level 2</button>
+          <button class="filter" data-level="3">Level 3</button>
+          <button class="filter" data-level="4">Level 4</button>
+          <button class="filter" data-level="5">Level 5</button>
+          <button class="filter" data-level="6">Level 6</button>
+          <button class="filter" data-level="7">Level 7</button>
+          <button class="filter" data-level="8">Level 8</button>
+        </div>
+        <div id="songList" class="song-list"></div>
+      </section>
+
+      <section id="importPanel" class="tab-panel">
+        <div class="section-title">
+          <div><small>IMPORT</small><h2>匯入自己的樂譜</h2></div>
+          <span>Photo / MusicXML / MIDI</span>
+        </div>
+        
+        <section class="photo-import-card" id="photoImportCard">
+          <div class="photo-import-head">
+            <div>
+              <small>PHOTO SCORE IMPORT</small>
+              <h3>📷 拍照加入樂譜</h3>
+              <p>可直接開相機拍攝，也可從相簿一次選多頁。照片會先保存在這台裝置，等 OMR 辨識後再轉成可播放的數位譜。</p>
+            </div>
+            <div class="omr-state" id="omrState">
+              <span>OMR</span>
+              <b>待連接</b>
+            </div>
+          </div>
+
+          <div class="photo-source-actions">
+            <input id="cameraScoreInput" class="visually-hidden" type="file" accept="image/*" capture="environment">
+            <input id="galleryScoreInput" class="visually-hidden" type="file" accept="image/*" multiple>
+            <input id="photoPdfInput" class="visually-hidden" type="file" accept="application/pdf,.pdf">
+            <button id="takeScorePhotoBtn" class="primary" type="button">📷 拍一頁樂譜</button>
+            <button id="chooseScorePhotosBtn" class="soft-btn" type="button">🖼️ 從相簿選多頁</button>
+            <button id="chooseScorePdfBtn" class="soft-btn" type="button">📄 加入掃描 PDF</button>
+          </div>
+
+          <div class="photo-score-form">
+            <label>曲名
+              <input id="photoScoreTitle" type="text" placeholder="例如：老師今天指定的曲子">
+            </label>
+            <label>作者／來源
+              <input id="photoScoreAuthor" type="text" placeholder="作者、學校、老師或課本">
+            </label>
+            <label>程度
+              <select id="photoScoreLevel">
+                <option value="prep">預備級</option>
+                <option value="1">Level 1</option>
+                <option value="2">Level 2</option>
+                <option value="3">Level 3</option>
+                <option value="4">Level 4</option>
+                <option value="5">Level 5</option>
+                <option value="6">Level 6</option>
+                <option value="7">Level 7</option>
+                <option value="8">Level 8</option>
+                <option value="unknown" selected>未分級</option>
+              </select>
+            </label>
+            <label>分類
+              <select id="photoScoreCategory">
+                <option value="school">學校教材</option>
+                <option value="exam">考試</option>
+                <option value="classic">經典</option>
+                <option value="movie">電影</option>
+                <option value="fashion">時尚</option>
+                <option value="disney">迪士尼</option>
+                <option value="other" selected>其他</option>
+              </select>
+            </label>
+            <label class="photo-checkbox">
+              <input id="photoScoreFull" type="checkbox" checked>
+              <span>這是完整曲</span>
+            </label>
+          </div>
+
+          <div class="photo-page-toolbar">
+            <div>
+              <b id="photoDraftCount">0 頁</b>
+              <span id="photoDraftStorage">尚未加入照片</span>
+            </div>
+            <button id="clearPhotoDraftBtn" class="soft-btn" type="button">清空本次</button>
+          </div>
+
+          <div id="photoPageList" class="photo-page-list">
+            <div class="photo-empty">拍照或選取圖片後，頁面會顯示在這裡。</div>
+          </div>
+
+          <div class="photo-save-actions">
+            <button id="savePhotoScoreBtn" class="primary" type="button">加入我的樂譜庫</button>
+            <span id="photoImportStatus" class="import-status" aria-live="polite">照片只會先儲存在本機；尚未進行 OMR 辨識。</span>
+          </div>
+
+          <div class="import-notes">
+            <b>V2.9 辨識規則</b>
+            <span>本版完成拍照、多頁、排序、旋轉、裁白邊、PDF 保存、曲目資料與本機樂譜庫。OMR 接口已預留，但未連接辨識服務時會標示「待辨識」，不會把照片猜成錯誤音符。</span>
+          </div>
+        </section>
+
+        <section id="photoLibraryManager" class="photo-library-manager">
+          <div class="section-title compact-title">
+            <div><small>MY PHOTO SCORES</small><h3>我的拍照樂譜</h3></div>
+            <span id="photoLibraryCount">0 首</span>
+          </div>
+          <div id="photoLibraryList" class="photo-library-list">
+            <div class="photo-empty">目前還沒有拍照樂譜。</div>
+          </div>
+        </section>
+
+        <div class="import-card">
+          <div class="import-copy">
+            <span class="import-icon">𝄞</span>
+            <div>
+              <h3>把學生正在學的譜加入樂譜庫</h3>
+              <p>支援 .musicxml / .xml / .mid / .midi。匯入後會解析音高、節奏、BPM、拍號與調性，並先停在 READY。</p>
+            </div>
+          </div>
+          <input id="scoreFileInput" class="visually-hidden" type="file" accept=".musicxml,.xml,.mid,.midi,application/xml,audio/midi,audio/x-midi">
+          <div class="import-actions">
+            <button id="chooseScoreBtn" class="primary" type="button">選擇樂譜檔案</button>
+            <button id="clearImportedBtn" class="soft-btn" type="button">清除已匯入樂譜</button>
+          </div>
+          <div id="importStatus" class="import-status" aria-live="polite">尚未選擇檔案。</div>
+          <div class="import-notes">
+            <b>目前匯入規則</b>
+            <span>MusicXML 先讀第一個主要聲部；MIDI 會把同時出現的和弦暫時取最高音，保留節奏位置。正式雙手／和弦譜會在後續版本擴充。</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="quickPanel" class="tab-panel">
+        <div class="quick-card">
+          <div class="quick-orb">5</div>
+          <div>
+            <small>DAILY PRACTICE</small>
+            <h2>5 分鐘快速練習</h2>
+            <p>音符、節奏、視譜各一小段，不用挑歌。</p>
+            <button id="quickStart" class="primary">開始練習</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="progressPanel" class="tab-panel">
+        <div class="section-title">
+          <div><small>PROGRESS</small><h2>學習路徑</h2></div>
+          <span id="progressLevelLabel">預備級</span>
+        </div>
+
+        <div class="progress-overview">
+          <div>
+            <small>目前星星</small>
+            <b id="totalStarsValue">0 ★</b>
+          </div>
+          <div>
+            <small>完成課程</small>
+            <b id="completedLessonsValue">0</b>
+          </div>
+          <div>
+            <small>完成完整曲</small>
+            <b id="completedSongsValue">0</b>
+          </div>
+          <div>
+            <small>本週練習</small>
+            <b id="weeklyPracticeValue">0 天</b>
+          </div>
+        </div>
+
+        <section class="next-lesson-card">
+          <div>
+            <small>NEXT LESSON</small>
+            <h3 id="nextLessonTitle">準備開始第一課</h3>
+            <p id="nextLessonDesc">從識譜與中央 C 開始。</p>
+          </div>
+          <button id="startNextLessonBtn" class="primary" type="button">開始下一課</button>
+        </section>
+
+        <div class="daily-goal">
+          <div>
+            <small>今日練習</small>
+            <strong id="dailyGoalText">0 / 15 分鐘</strong>
+          </div>
+          <div class="daily-goal-bar"><span id="dailyGoalBar"></span></div>
+        </div>
+
+        
+        <section class="adaptive-progress-card">
+          <div class="adaptive-progress-head">
+            <div><small>ADAPTIVE STATUS</small><strong>自適應學習狀態</strong></div>
+            <span id="adaptiveStatusBadge">建立資料中</span>
+          </div>
+          <div class="adaptive-progress-grid">
+            <div><small>近期穩定度</small><b id="adaptiveStabilityValue">—</b></div>
+            <div><small>建議速度</small><b id="adaptiveTempoValue">—</b></div>
+            <div><small>較弱手</small><b id="adaptiveWeakHandValue">—</b></div>
+            <div><small>學習趨勢</small><b id="adaptiveTrendValue">—</b></div>
+          </div>
+          <p id="adaptiveProgressText">完成幾次練習後，系統會開始依表現調整建議。</p>
+        </section>
+
+        <div class="level-path" id="levelPath"></div>
+      </section>
+    </section>
+
+    <section id="practiceView" class="view practice-view">
+      <header class="practice-top">
+        <button id="backBtn" class="icon-btn" aria-label="返回">←</button>
+        <div class="practice-title">
+          <div class="practice-meta"><span id="timeSignature">4/4</span><span id="keySignature">C Major</span></div>
+          <small id="practiceModeLabel">PLAY</small>
+          <strong id="practiceTitle">Twinkle Twinkle Little Star</strong>
+        </div>
+        <button id="pauseBtn" class="pause-btn" aria-label="暫停"><span></span><span></span></button>
+      </header>
+
+      <div class="top-progress"><div id="topProgressBar"></div></div>
+
+      <section class="prepare-banner" id="prepareBanner">
+        <div>
+          <small>READY</small>
+          <strong>先完成設定，再按播放開始</strong>
+          <span>可以先開麥克風、節拍器、譜面鋼琴聲，調整 BPM、速度與左右手。</span>
+        </div>
+        <button id="readyPlayBtn" class="ready-play">▶ 開始</button>
+      </section>
+
+      <section class="practice-stage" id="practiceStage">
+        <div class="grand-staff" id="grandStaff">
+          <div class="staff-shell treble-staff" data-hand="right">
+            <div class="clef">𝄞</div>
+            <div class="staff-window" id="staffWindow">
+              <div class="hand-label">右手</div>
+              <div class="staff-lines"><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="fixed-playhead" aria-hidden="true"></div>
+              <div id="scrollingScore" class="scrolling-score"></div>
+              <div id="feedbackTint" class="feedback-tint" aria-hidden="true"></div>
+              <div id="rhythmAssist" class="rhythm-assist" hidden>
+                <span></span><span></span><span></span><span></span><b id="assistBpm">90 BPM</b>
+              </div>
+            </div>
+          </div>
+          <div class="staff-shell bass-staff" data-hand="left">
+            <div class="clef bass-clef">𝄢</div>
+            <div class="staff-window bass-window" id="bassStaffWindow">
+              <div class="hand-label">左手</div>
+              <div class="staff-lines"><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="fixed-playhead" aria-hidden="true"></div>
+              <div id="scrollingBassScore" class="scrolling-score"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="transport-bar" aria-label="播放控制">
+          <button id="rewindBtn" class="transport-btn" type="button" title="倒回一小節">↶<span>倒回</span></button>
+          <button id="playBtn" class="transport-btn primary-transport" type="button" title="播放">▶<span>播放</span></button>
+          <button id="pauseTransportBtn" class="transport-btn" type="button" title="暫停">Ⅱ<span>暫停</span></button>
+          <button id="recordBtn" class="transport-btn" type="button" title="查看練習紀錄">●<span>紀錄</span></button>
+          <div class="transport-time"><small id="transportStatus">準備中</small><b id="transportTime">00:00</b></div>
+        </div>
+
+        <div id="recordDrawer" class="record-drawer" hidden>
+          <div class="record-head">
+            <div><small>PRACTICE LOG</small><strong>本次練習紀錄</strong></div>
+            <button id="closeRecordBtn" type="button">關閉</button>
+          </div>
+          <div id="recordSummary" class="record-summary">尚未開始練習。</div>
+          <section id="examResultCard" class="exam-result-card" hidden>
+            <div class="exam-result-head">
+              <div><small>EXAM RESULT</small><strong>考試模擬結果</strong></div>
+              <b id="examGrade">—</b>
+            </div>
+            <div class="exam-result-grid">
+              <div><small>總分</small><b id="examScore">—</b></div>
+              <div><small>音高</small><b id="examPitchScore">—</b></div>
+              <div><small>節奏</small><b id="examRhythmScore">—</b></div>
+              <div><small>完整度</small><b id="examCompletionScore">—</b></div>
+            </div>
+            <p id="examResultText">完整演奏後才會產生成績。</p>
+          </section>
+          
+          <section id="aiCoachCard" class="ai-coach-card">
+            <div class="ai-coach-head">
+              <div>
+                <small>AI PRACTICE COACH</small>
+                <strong>練習教練</strong>
+              </div>
+              <div class="ai-coach-actions">
+                <button id="speakAiCoachBtn" type="button">🔊 朗讀建議</button>
+                <button id="applyAiCoachBtn" type="button">開始建議練習</button>
+              </div>
+            </div>
+            <div id="aiCoachSummary" class="ai-coach-summary">
+              完成練習後，這裡會根據音高、節拍、左右手與弱小節自動整理下一步。
+            </div>
+            <div id="aiCoachPlan" class="ai-coach-plan"></div>
+          </section>
+
+          <section id="practiceAnalytics" class="practice-analytics">
+            <div class="analytics-grid">
+              <div><small>音高正確率</small><b id="pitchAccuracyValue">—</b></div>
+              <div><small>節拍正確率</small><b id="rhythmAccuracyValue">—</b></div>
+              <div><small>完全吻合</small><b id="exactAccuracyValue">—</b></div>
+              <div><small>平均節拍誤差</small><b id="avgTimingValue">—</b></div>
+              <div><small>右手表現</small><b id="rightHandAccuracyValue">—</b></div>
+              <div><small>左手表現</small><b id="leftHandAccuracyValue">—</b></div>
+              <div><small>和弦完整度</small><b id="chordAccuracyValue">—</b></div>
+              <div><small>最需重練</small><b id="weakMeasureValue">—</b></div>
+            </div>
+            <div class="timing-balance">
+              <div><small>太早</small><b id="earlyCount">0</b></div>
+              <div><small>準時</small><b id="onTimeCount">0</b></div>
+              <div><small>太晚</small><b id="lateCount">0</b></div>
+              <div><small>漏音</small><b id="missCount">0</b></div>
+            </div>
+            <div class="weak-measures">
+              <div class="weak-head">
+                <div><small>FOCUS PRACTICE</small><strong>需要重練的小節</strong></div>
+                <button id="practiceWeakestBtn" type="button">練最弱小節</button>
+              </div>
+              <div id="weakMeasureList" class="weak-measure-list">完成一些練習後，這裡會自動整理。</div>
+            </div>
+          </section>
+          <div id="recordList" class="record-list"></div>
+        </div>
+
+        
+        <section id="adaptiveReadyCard" class="adaptive-ready-card" hidden>
+          <div class="adaptive-ready-head">
+            <div>
+              <small>AI ADAPTIVE LEARNING</small>
+              <strong id="adaptiveReadyTitle">AI 建議設定</strong>
+              <span id="adaptiveReadyReason">根據最近練習紀錄產生。</span>
+            </div>
+            <b id="adaptiveReadyLevel">建議</b>
+          </div>
+          <div id="adaptiveReadySettings" class="adaptive-ready-settings"></div>
+          <div class="adaptive-ready-actions">
+            <button id="applyAdaptiveBtn" class="primary" type="button">套用建議</button>
+            <button id="ignoreAdaptiveBtn" class="soft-btn" type="button">這次忽略</button>
+          </div>
+        </section>
+
+        <div id="sessionModeNotice" class="session-mode-notice">
+          <div>
+            <small>練習模式</small>
+            <strong id="sessionModeTitle">可以倒回、循環與使用示範聲</strong>
+            <span id="sessionModeDesc">適合分段練習與修正錯誤。</span>
+          </div>
+          <b id="sessionModeBadge">PRACTICE</b>
+        </div>
+
+        <div class="practice-footer">
+          <div class="compact-controls">
+            <label>練習速度
+              <select id="speedSelect">
+                <option value="0.5">50%</option>
+                <option value="0.75">75%</option>
+                <option value="1" selected>100%</option>
+              </select>
+            </label>
+            <label>手部
+              <select id="handSelect">
+                <option value="right">右手</option>
+                <option value="left">左手</option>
+                <option value="both">雙手</option>
+              </select>
+            </label>
+            <label>練習類型
+              <select id="sessionModeSelect">
+                <option value="practice" selected>練習模式</option>
+                <option value="exam">考試模擬</option>
+                <option value="performance">正式演奏</option>
+              </select>
+            </label>
+            <label>學習模式
+              <select id="practiceMode">
+                <option value="play">演奏</option>
+                <option value="learn">學習</option>
+              </select>
+            </label>
+            <label>起拍
+              <select id="countInSelect">
+                <option value="0">無</option>
+                <option value="1">1 小節</option>
+                <option value="2">2 小節</option>
+              </select>
+            </label>
+            <label>小節循環
+              <select id="measureLoopSelect">
+                <option value="off">關</option>
+                <option value="current">目前小節</option>
+              </select>
+            </label>
+            <label>主速率 BPM
+              <div class="tempo-control">
+                <button id="tempoMinus" type="button" aria-label="降低 BPM">−</button>
+                <input id="tempoInput" type="number" min="30" max="240" step="1" value="84" inputmode="numeric">
+                <button id="tempoPlus" type="button" aria-label="提高 BPM">＋</button>
+              </div>
+              <small class="tempo-note">控制節拍器、譜面、示範聲與判定</small>
+            </label>
+          </div>
+
+          <div class="audio-row">
+            <button id="micBtn" class="soft-btn">啟動麥克風</button>
+            <button id="midiBtn" class="soft-btn">連接 MIDI</button>
+            <span id="midiStatus" class="sample-status">MIDI：未連接</span>
+            <button id="metroBtn" class="soft-btn">節拍器：關</button>
+            <button id="demoSoundBtn" class="soft-btn">譜面鋼琴聲：關</button>
+            <button id="tempoReset" class="soft-btn">恢復原譜 BPM</button>
+            <label class="sound-volume">示範音量<input id="demoVolume" type="range" min="0" max="1" step="0.05" value="0.45"></label>
+            <label class="piano-voice-control">鋼琴音色
+              <select id="pianoVoiceSelect">
+                <option value="lite">Lite Piano</option>
+                <option value="studio" selected>Studio Grand</option>
+                <option value="concert">Concert Grand</option>
+                <option value="warm">Warm Grand</option>
+                <option value="bright">Bright Grand</option>
+                <option value="soft">Soft Piano</option>
+              </select>
+            </label>
+            <label class="piano-voice-control">音質
+              <select id="pianoQualitySelect">
+                <option value="lite">Lite</option>
+                <option value="studio" selected>Studio</option>
+                <option value="grand">Grand</option>
+              </select>
+            </label>
+            <button id="soundPackManagerBtn" class="soft-btn sound-pack-open" type="button">🎹 音色包管理</button>
+            <button id="scoreHealthBtn" class="soft-btn score-health-btn" type="button">♫ 樂譜顯示 <span id="scoreHealthText">正常</span></button>
+            <button id="errorMonitorBtn" class="soft-btn error-monitor-open" type="button">⚠ 錯誤訊息 <span id="errorCountBadge">0</span></button>
+            <span id="pianoSampleStatus" class="sample-status">本地鋼琴音色：待啟用</span>
+            <div class="heard">
+              <small>目前聽到</small>
+              <b id="heardNote">—</b>
+            </div>
+          </div>
+
+          <div class="piano-engine-status" id="pianoEngineStatus">
+            <div><small>鋼琴音色</small><b id="pianoVoiceStatus">Studio Grand</b></div>
+            <div><small>音質</small><b id="pianoQualityStatus">Studio</b></div>
+            <div><small>動態</small><b id="velocityLayerStatus">Velocity</b></div>
+            <div><small>延音踏板</small><b id="pedalStatus">未踩</b></div>
+            <div><small>共鳴</small><b id="resonanceStatus">模擬</b></div>
+            <div><small>Polyphony</small><b id="polyphonyStatus">64</b></div>
+          </div>
+
+          <div class="both-hands-status" id="bothHandsStatus">
+            <div><small>右手譜</small><b id="rightStaffStatus">顯示</b></div>
+            <div><small>左手譜</small><b id="leftStaffStatus">淡化</b></div>
+            <div><small>示範鋼琴聲</small><b id="demoHandStatus">關</b></div>
+            <div><small>目前右手目標</small><b id="rightTargetNote">—</b></div>
+            <div><small>目前左手目標</small><b id="leftTargetNote">—</b></div>
+            <div><small>判定能力</small><b id="judgeCapability">麥克風：單音</b></div>
+          </div>
+
+          <div class="match-status">
+            <div><small>譜面音符</small><b id="scoreNote">—</b></div>
+            <div><small>實際彈奏</small><b id="playedNote">—</b></div>
+            <div><small>節拍誤差</small><b id="timingDelta">—</b></div>
+            <div><small>已記錄</small><b id="recordCount">0</b></div>
+            <div><small>輸入來源</small><b id="inputSource">—</b></div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+  
+
+
+  <div id="appErrorToast" class="app-error-toast" hidden role="status" aria-live="assertive">
+    <div>
+      <small id="appErrorToastArea">SYSTEM</small>
+      <strong id="appErrorToastTitle">發生錯誤</strong>
+      <span id="appErrorToastMessage">請查看錯誤訊息。</span>
+    </div>
+    <button id="openErrorFromToastBtn" type="button">查看</button>
+    <button id="closeErrorToastBtn" type="button" aria-label="關閉">×</button>
+  </div>
+
+  <div id="errorMonitorModal" class="error-monitor-modal" hidden>
+    <div class="error-monitor-backdrop" data-close-error-monitor></div>
+    <section class="error-monitor-dialog" role="dialog" aria-modal="true" aria-labelledby="errorMonitorTitle">
+      <div class="error-monitor-head">
+        <div>
+          <small>SYSTEM ERROR MONITOR</small>
+          <h2 id="errorMonitorTitle">⚠ 系統錯誤訊息</h2>
+          <p>按鈕、樂譜、MIDI、麥克風、音色或資料庫發生問題時，會記錄在這裡。</p>
+        </div>
+        <button id="closeErrorMonitorBtn" class="icon-btn" type="button">×</button>
+      </div>
+      <div class="error-monitor-summary">
+        <div><small>本次錯誤</small><b id="errorTotalValue">0</b></div>
+        <div><small>最後發生</small><b id="errorLastTimeValue">—</b></div>
+        <div><small>最後功能</small><b id="errorLastAreaValue">—</b></div>
+        <div><small>系統狀態</small><b id="errorHealthValue">正常</b></div>
+      </div>
+      <div class="error-monitor-actions">
+        <button id="copyLatestErrorBtn" class="primary" type="button">複製最新錯誤資訊</button>
+        <button id="copyAllErrorsBtn" type="button">複製全部</button>
+        <button id="clearErrorsBtn" type="button">清除紀錄</button>
+        <button id="repairScoreBtn" type="button">重新建立樂譜</button>
+      </div>
+      <div id="errorCopyStatus" class="import-status">沒有錯誤紀錄。</div>
+      <div id="errorLogList" class="error-log-list">
+        <div class="error-log-empty">目前系統沒有偵測到錯誤。</div>
+      </div>
+    </section>
+  </div>
+
+  <div id="soundPackModal" class="sound-pack-modal" hidden>
+    <div class="sound-pack-backdrop" data-close-sound-pack></div>
+    <section class="sound-pack-dialog" role="dialog" aria-modal="true" aria-labelledby="soundPackTitle">
+      <div class="sound-pack-dialog-head">
+        <div>
+          <small>PIANO SOUND PACKS</small>
+          <h2 id="soundPackTitle">鋼琴音色包管理</h2>
+          <p>Lite 音色隨網站內建；其他音色包可從本機匯入 WAV / MP3，並保存在這台裝置。</p>
+        </div>
+        <button id="closeSoundPackBtn" class="icon-btn" type="button">×</button>
+      </div>
+
+      <div class="sound-pack-summary">
+        <div><small>目前音色</small><b id="currentPackLabel">Studio Grand</b></div>
+        <div><small>已安裝</small><b id="installedPackCount">1 / 6</b></div>
+        <div><small>額外容量</small><b id="installedPackBytes">0 MB</b></div>
+        <div><small>Sample 數</small><b id="installedSampleCount">30</b></div>
+      </div>
+
+      <div id="soundPackList" class="sound-pack-list"></div>
+
+      <section class="sound-pack-import">
+        <div>
+          <small>IMPORT LOCAL SAMPLE PACK</small>
+          <strong>匯入自己的鋼琴樣本</strong>
+          <p>檔名可用 <code>C4.mp3</code>、<code>Cs4.wav</code>、<code>F#3.mp3</code>。缺少某些琴鍵時會自動以最近 sample 補足。</p>
+        </div>
+        <input id="soundPackFilesInput" class="visually-hidden" type="file" accept="audio/mpeg,audio/wav,audio/x-wav,.mp3,.wav" multiple>
+        <button id="importSoundPackBtn" class="primary" type="button">選擇 WAV / MP3</button>
+      </section>
+
+      <div id="soundPackImportStatus" class="import-status">尚未匯入新的音色包。</div>
+
+      <section class="sound-pack-test">
+        <div>
+          <small>SOUND CHECK</small>
+          <strong>音色測試</strong>
+        </div>
+        <div class="sound-pack-test-actions">
+          <button data-test-note="C4" type="button">C4</button>
+          <button data-test-note="E4" type="button">E4</button>
+          <button data-test-note="G4" type="button">G4</button>
+          <button id="testChordBtn" type="button">C Major 和弦</button>
+          <button id="testPedalBtn" type="button">延音踏板測試</button>
+        </div>
+      </section>
+    </section>
+  </div>
+
+
+  <script>
+    window.APP_BASE="";
+    window.PAGE_MODULE="home";
+    window.MODULE_ROUTES={"home": "index.html", "library": "pages/library.html", "importer": "pages/import.html", "progress": "pages/progress.html", "practice": "pages/practice.html", "sound": "pages/sound.html", "errors": "pages/errors.html"};
+  </script>
+  <script src="js/core/navigation.js?v=3.8"></script>
+  <script src="js/core/page-bootstrap.js?v=3.8"></script>
+  <script src="js/core/event-bus.js?v=3.8"></script>
+  <script src="js/core/module-registry.js?v=3.8"></script>
+  <script src="js/core/module-loader.js?v=3.8"></script>
+<script src="js/core/error-client.js?v=3.8"></script>
+  <script src="js/core/app-core.js?v=3.8"></script>
+  <script src="js/core/event-bridge.js?v=3.8"></script>
+  <script src="js/core/page-isolation.js?v=3.8"></script>
+  <script src="js/core/module-health.js?v=3.8"></script>
+  <script src="js/pages/home.js?v=3.8"></script>
+  <script src="js/core/module-startup.js?v=3.8"></script>
+
+</body>
+</html>

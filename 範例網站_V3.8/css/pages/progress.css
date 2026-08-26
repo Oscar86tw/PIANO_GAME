@@ -1,0 +1,9 @@
+html[data-page-module="progress"] #homeView{display:block}
+html[data-page-module="progress"] #coursesPanel,
+html[data-page-module="progress"] #songsPanel,
+html[data-page-module="progress"] #importPanel,
+html[data-page-module="progress"] #quickPanel{display:none!important}
+html[data-page-module="progress"] #progressPanel{display:block!important}
+
+/* V3.5 ownership: progress */
+html[data-page-module="progress"]{--active-module:"progress";}

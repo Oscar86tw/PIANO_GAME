@@ -1,0 +1,5 @@
+html[data-page-module="sound"] #homeView{display:none!important}
+html[data-page-module="sound"] #practiceView{display:block!important}
+
+/* V3.5 ownership: sound */
+html[data-page-module="sound"]{--active-module:"sound";}

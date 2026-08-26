@@ -1,0 +1,5 @@
+html[data-page-module="errors"] #homeView{display:none!important}
+html[data-page-module="errors"] #practiceView{display:block!important}
+
+/* V3.5 ownership: errors */
+html[data-page-module="errors"]{--active-module:"errors";}

@@ -1,0 +1,6 @@
+html[data-page-module="practice"] #homeView{display:none!important}
+html[data-page-module="practice"] #practiceView{display:block!important}
+html[data-page-module="practice"] .practice-card{max-width:1500px;margin-inline:auto}
+
+/* V3.5 ownership: practice */
+html[data-page-module="practice"]{--active-module:"practice";}

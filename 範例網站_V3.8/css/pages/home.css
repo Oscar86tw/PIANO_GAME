@@ -1,0 +1,5 @@
+html[data-page-module="home"] #homeView{display:block}
+html[data-page-module="home"] #practiceView{display:none!important}
+
+/* V3.5 ownership: home */
+html[data-page-module="home"]{--active-module:"home";}
