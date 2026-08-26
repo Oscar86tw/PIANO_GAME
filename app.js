@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V2.2: 216 built-in pedagogical scores ----------
+// ---------- V2.2.1: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V2.2: full-length repertoire collections ----------
+// ---------- V2.2.1: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -249,7 +249,7 @@ const DISNEY_IMPORT_SLOTS=[
   'Disney Piano Song 09','Disney Piano Song 10','Disney Piano Song 11','Disney Piano Song 12'
 ];
 
-// ---------- V2.2: generated left-hand accompaniment ----------
+// ---------- V2.2.1: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -613,11 +613,11 @@ function renderCurriculum(){
 }
 
 let state = {
-  song:'twinkle',running:false,paused:false,startAt:0,pauseStart:0,pauseTotal:0,
+  song:'twinkle',running:false,paused:false,startAt:0,pauseStart:0,pauseTotal:0,audioStartTime:0,pausedElapsed:0,
   speed:1,mode:'play',hand:'right',micStream:null,audioCtx:null,analyser:null,
-  audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,assistTimer:null,assistBeat:0,
+  audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,metroScheduler:null,nextMetroBeat:0,assistTimer:null,assistBeat:0,
   judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,lastMasterBeat:-1,
-  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,eventTimeline:[],rightTimeline:[],leftTimeline:[],countInBeats:0,loopMeasure:false,demoSoundOn:false,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoVolume:0.45,pianoVoices:new Set(),inputMode:null,midiAccess:null,midiInputs:[],midiChordNotes:new Set(),midiChordStart:null,midiChordTimer:null,judgedMidiGroups:new Set()
+  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,eventTimeline:[],rightTimeline:[],leftTimeline:[],countInBeats:0,loopMeasure:false,demoSoundOn:false,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoScheduled:new Set(),demoVolume:0.45,pianoVoices:new Set(),inputMode:null,midiAccess:null,midiInputs:[],midiChordNotes:new Set(),midiChordStart:null,midiChordTimer:null,judgedMidiGroups:new Set()
 };
 
 function showView(name){
@@ -732,7 +732,7 @@ function fmtTime(sec){
   return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
 }
 function enterReadyState(){
-  state.running=false; state.paused=false; state.pauseTotal=0; state.lastMasterBeat=-1;
+  state.running=false; state.paused=false; state.pauseTotal=0; state.pausedElapsed=0; state.audioStartTime=0; state.lastMasterBeat=-1; state.demoScheduled=new Set();
   $('prepareBanner').classList.remove('running');
   $('topProgressBar').style.width='0%';
   $('transportTime').textContent='00:00';
@@ -744,12 +744,17 @@ function enterReadyState(){
   if(state.metroOn) stopMetronome(false);
   hideAssist();
 }
-function playFromCurrent(){
+async function playFromCurrent(){
+  const ctx=ensureAudioContext();
+  try{await ctx.resume()}catch(e){}
   if(!state.running){
-    startPractice();
+    await startPractice();
   }else if(state.paused){
-    state.pauseTotal+=performance.now()-state.pauseStart;
+    state.audioStartTime=ctx.currentTime-(state.pausedElapsed||0);
+    state.startAt=performance.now()-(state.pausedElapsed||0)*1000;
     state.paused=false;
+    state.lastMasterBeat=-1;
+    startMetronome();
     $('pauseTransportBtn').classList.remove('active');
     $('playBtn').classList.add('active');
   }
@@ -758,8 +763,10 @@ function playFromCurrent(){
 }
 function pausePractice(){
   if(!state.running || state.paused) return;
+  state.pausedElapsed=elapsed();
   state.paused=true;
   state.pauseStart=performance.now();
+  stopMetronome(false);
   $('pauseTransportBtn').classList.add('active');
   $('playBtn').classList.remove('active');
   stopAllPianoVoices();
@@ -767,14 +774,19 @@ function pausePractice(){
 }
 function seekTo(sec){
   sec=Math.max(0,Math.min(effectiveDuration(),sec));
-  const now=performance.now();
-  state.startAt=now-sec*1000;
+  const ctx=ensureAudioContext();
+  state.pausedElapsed=sec;
+  state.audioStartTime=ctx.currentTime-sec;
+  state.startAt=performance.now()-sec*1000;
   state.pauseTotal=0;
-  if(state.paused) state.pauseStart=now;
+  if(state.paused) state.pauseStart=performance.now();
   state.lastMasterBeat=-1;
   state.demoPlayed=new Set();
-  state.judged=new Set([...state.judged].filter(i=>noteTime(i)<sec)); state.judgedMidiGroups=new Set();
+  state.demoScheduled=new Set();
+  state.judged=new Set([...state.judged].filter(i=>noteTime(i)<sec));
+  state.judgedMidiGroups=new Set();
   renderStaticScore();
+  if(state.running && !state.paused) startMetronome();
 }
 function rewindMeasure(){
   if(!state.running){
@@ -856,7 +868,9 @@ $('midiBtn').addEventListener('click',connectMIDI);
 $('metroBtn').addEventListener('click',()=>{
   state.metroOn=!state.metroOn;
   $('metroBtn').textContent='節拍器：'+(state.metroOn?'開':'關');
-  if(state.metroOn && state.running && !state.paused) startMetronome(); else stopMetronome(false);
+  // Transport audio scheduler must keep running even when the metronome is muted,
+  // because score-demo piano also uses the same master audio clock.
+  if(state.running && !state.paused) startMetronome();
 });
 
 function setTempo(v,manual=true){
@@ -996,6 +1010,28 @@ function playLocalPiano(note,velocity=0.85,duration=1.1){
   src.onended=()=>state.pianoVoices.delete(src);
 }
 
+function playLocalPianoAt(note,when,velocity=0.85,duration=1.1){
+  if(!state.demoSoundOn || !state.pianoReady) return;
+  const ctx=ensureAudioContext();
+  const targetMidi=noteToMidi(note);
+  const sample=nearestPianoSample(targetMidi);
+  const buffer=state.pianoBuffers.get(sample.midi);
+  if(!buffer) return;
+  const src=ctx.createBufferSource();
+  const gain=ctx.createGain();
+  src.buffer=buffer;
+  src.playbackRate.value=Math.pow(2,(targetMidi-sample.midi)/12);
+  gain.gain.value=Math.max(0,Math.min(1,state.demoVolume))*velocity;
+  src.connect(gain).connect(ctx.destination);
+  const start=Math.max(ctx.currentTime,when);
+  src.start(start);
+  state.pianoVoices.add(src);
+  gain.gain.setValueAtTime(gain.gain.value,start+Math.max(.15,duration*.65));
+  gain.gain.exponentialRampToValueAtTime(.001,start+duration);
+  src.stop(start+Math.min(buffer.duration/playbackRateSafe(src.playbackRate.value),duration+.25));
+  src.onended=()=>state.pianoVoices.delete(src);
+}
+
 function playbackRateSafe(v){ return Math.max(.25,Math.min(4,v||1)); }
 
 async function toggleDemoSound(){
@@ -1015,6 +1051,8 @@ async function toggleDemoSound(){
 
     state.demoSoundOn=true;
     state.demoPlayed=new Set();
+    state.demoScheduled=new Set();
+    if(state.running && !state.paused) startMetronome();
     btn.textContent='譜面鋼琴聲：開';
     btn.classList.add('is-on');
 
@@ -1022,6 +1060,7 @@ async function toggleDemoSound(){
     playLocalPiano('C4',0.9,1.0);
   }else{
     state.demoSoundOn=false;
+    state.demoScheduled=new Set();
     btn.textContent='譜面鋼琴聲：關';
     btn.classList.remove('is-on');
     state.demoPlayed=new Set();
@@ -1053,8 +1092,11 @@ function leadInBeats(){ return 1 + state.countInBeats; }
 // Add 2 extra beats: one count-in beat before first note and one release beat at the end.
 function elapsed(){
   if(!state.running) return 0;
-  const now=state.paused?state.pauseStart:performance.now();
-  return Math.max(0,(now-state.startAt-state.pauseTotal)/1000);
+  if(state.paused) return Math.max(0,state.pausedElapsed||0);
+  const ctx=state.audioCtx;
+  if(ctx && state.audioStartTime>0) return Math.max(0,ctx.currentTime-state.audioStartTime);
+  // Fallback only if Web Audio is unavailable.
+  return Math.max(0,(performance.now()-state.startAt)/1000);
 }
 function makeTimeline(events,hand){
   let beat=0;
@@ -1233,14 +1275,32 @@ function applyNoteApproachVisual(el, timeUntilHit, judged=false){
 }
 
 
-function startPractice(){
+async function startPractice(){
   stopAnimationOnly();
-  state.running=true; state.paused=false; state.pauseTotal=0; state.startAt=performance.now();
+  const ctx=ensureAudioContext();
+  try{await ctx.resume()}catch(e){}
+  state.running=true;
+  state.paused=false;
+  state.pauseTotal=0;
+  state.pausedElapsed=0;
+  state.audioStartTime=ctx.currentTime;
+  state.startAt=performance.now();
   $('prepareBanner').classList.add('running');
   $('playBtn').classList.add('active');
   $('pauseTransportBtn').classList.remove('active');
-  state.judged=new Set(); state.judgedMidiGroups=new Set(); state.goodStreak=0; state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set(); state.lastMasterBeat=-1;
-  $('recordCount').textContent='0'; $('playedNote').textContent='—'; $('timingDelta').textContent='—'; $('scoreNote').textContent='—';
+  state.judged=new Set();
+  state.judgedMidiGroups=new Set();
+  state.goodStreak=0;
+  state.performanceLog=[];
+  state.lastCapturedAt=0;
+  state.currentTargetIndex=-1;
+  state.demoPlayed=new Set();
+  state.demoScheduled=new Set();
+  state.lastMasterBeat=-1;
+  $('recordCount').textContent='0';
+  $('playedNote').textContent='—';
+  $('timingDelta').textContent='—';
+  $('scoreNote').textContent='—';
   startMetronome();
   gameLoop();
 }
@@ -1251,16 +1311,13 @@ function restartPractice(){
   else enterReadyState();
 }
 function stopAnimationOnly(){ if(state.gameRaf) cancelAnimationFrame(state.gameRaf); state.gameRaf=0; }
-function stopPractice(){ state.running=false; state.paused=false; stopAnimationOnly(); stopMetronome(false); hideAssist(); $('playBtn')?.classList.remove('active'); $('pauseTransportBtn')?.classList.remove('active'); stopAllPianoVoices() }
+function stopPractice(){ state.running=false; state.paused=false; state.pausedElapsed=0; stopAnimationOnly(); stopMetronome(false); hideAssist(); $('playBtn')?.classList.remove('active'); $('pauseTransportBtn')?.classList.remove('active'); stopAllPianoVoices(); state.demoScheduled=new Set(); }
 
 function updateMasterBeat(e){
   const beatIndex=Math.floor(e/beatSeconds());
 
   if(beatIndex!==state.lastMasterBeat){
     state.lastMasterBeat=beatIndex;
-
-    // Metronome click is generated from exactly the same beat index that drives score movement.
-    if(state.metroOn) metroClick(beatIndex%4===0);
 
     // Rhythm-assist dots also follow the same master beat.
     if(!$('rhythmAssist').hidden){
@@ -1284,20 +1341,6 @@ function gameLoop(){
   if(bassRoot) bassRoot.style.transform=`translateX(${x}px)`;
   $('topProgressBar').style.width=Math.min(100,e/effectiveDuration()*100)+'%';
   $('transportTime').textContent=fmtTime(e);
-  if(state.demoSoundOn && state.pianoReady){
-    const timelines=state.hand==='right'?[state.rightTimeline]:state.hand==='left'?[state.leftTimeline]:[state.rightTimeline,state.leftTimeline];
-    timelines.forEach(timeline=>timeline.forEach(ev=>{
-      if(ev.isRest)return;
-      const key=ev.hand+'_'+ev.eventIndex;
-      if(state.demoPlayed.has(key))return;
-      if(e>=ev.startTime && e<ev.startTime+0.12){
-        state.demoPlayed.add(key);
-        const notes=Array.isArray(ev.note)?ev.note:[ev.note];
-        notes.forEach(n=>playScoreSample(n));
-      }
-    }));
-  }
-
 
   let nearest=-1,delta=99;
   const nEvents=noteEvents();
@@ -1351,7 +1394,7 @@ function gameLoop(){
 }
 
 function flash(kind){
-  // V2.2: intentionally disabled. No screen flash at beat/hit time.
+  // V2.2.1: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   const r=$('rhythmAssist');
@@ -1648,20 +1691,60 @@ function autoCorrelate(buffer,sampleRate){
   return pos>0?sampleRate/pos:-1;
 }
 
-function metroClick(accent){
-  if(!state.audioCtx) state.audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-  const ctx=state.audioCtx, osc=ctx.createOscillator(), gain=ctx.createGain();
+function metroClickAt(when,accent){
+  const ctx=ensureAudioContext();
+  const osc=ctx.createOscillator(), gain=ctx.createGain();
   osc.frequency.value=accent?1100:820;
-  gain.gain.setValueAtTime(.0001,ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(.12,ctx.currentTime+.005);
-  gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.06);
-  osc.connect(gain).connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime+.07);
+  gain.gain.setValueAtTime(.0001,when);
+  gain.gain.exponentialRampToValueAtTime(.12,when+.005);
+  gain.gain.exponentialRampToValueAtTime(.0001,when+.06);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(when); osc.stop(when+.07);
+}
+function metroClick(accent){
+  const ctx=ensureAudioContext();
+  metroClickAt(ctx.currentTime+.002,accent);
+}
+function scheduleTransportAudio(){
+  if(!state.running || state.paused) return;
+  const ctx=ensureAudioContext();
+  const lookAhead=.12;
+  const endTime=ctx.currentTime+lookAhead;
+  const beatDur=beatSeconds();
+
+  if(state.metroOn){
+    while(state.audioStartTime+state.nextMetroBeat*beatDur<=endTime){
+      const when=state.audioStartTime+state.nextMetroBeat*beatDur;
+      if(when>=ctx.currentTime-.01) metroClickAt(Math.max(ctx.currentTime+.001,when),state.nextMetroBeat%4===0);
+      state.nextMetroBeat++;
+    }
+  }
+
+  if(state.demoSoundOn && state.pianoReady){
+    const timelines=state.hand==='right'?[state.rightTimeline]:state.hand==='left'?[state.leftTimeline]:[state.rightTimeline,state.leftTimeline];
+    timelines.forEach(timeline=>timeline.forEach(ev=>{
+      if(ev.isRest) return;
+      const key=ev.hand+'_'+ev.eventIndex;
+      if(state.demoScheduled.has(key)) return;
+      const when=state.audioStartTime+ev.startTime;
+      if(when<=endTime && when>=ctx.currentTime-.02){
+        state.demoScheduled.add(key);
+        const notes=Array.isArray(ev.note)?ev.note:[ev.note];
+        notes.forEach(n=>playLocalPianoAt(n,Math.max(ctx.currentTime+.001,when),.86,1.0));
+      }
+    }));
+  }
 }
 function startMetronome(){
-  // No independent setInterval. The game loop drives beats from the same master clock.
+  stopMetronome(false);
   state.lastMasterBeat=-1;
+  const currentBeat=Math.max(0,Math.floor(elapsed()/beatSeconds()));
+  state.nextMetroBeat=currentBeat;
+  scheduleTransportAudio();
+  state.metroScheduler=setInterval(scheduleTransportAudio,25);
 }
 function stopMetronome(update=true){
+  if(state.metroScheduler){clearInterval(state.metroScheduler);state.metroScheduler=null;}
   state.lastMasterBeat=-1;
   if(update){
     state.metroOn=false;

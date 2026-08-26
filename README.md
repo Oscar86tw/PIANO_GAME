@@ -27,3 +27,15 @@ MIDI 模式可判定：
 
 ## 專注模式
 延續 V2.1.1：判定時不閃爍、不跳亮、不脈衝。
+
+
+## V2.2.1 Audio Master Clock 同步修正
+- 節拍器不再由畫面幀率觸發。
+- 使用 Web Audio `AudioContext.currentTime` 作為唯一主時鐘。
+- 節拍聲會提前排程到精確 AudioContext 時間點。
+- 五線譜位置每一幀都從 AudioContext 時間反推，不會因手機掉幀逐漸漂移。
+- 譜面鋼琴示範聲也改成同一 AudioContext 時間預排程。
+- 暫停、播放、倒回都重新鎖定同一音訊時間軸。
+
+理論同步鏈：
+Audio Master Clock → BPM → 節拍聲 → 音符到藍線 → 示範鋼琴聲 → MIDI/麥克風判定。
