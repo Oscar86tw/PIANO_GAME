@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V1.6</title>
-  <link rel="stylesheet" href="style.css">
+  <title>PIANO LEARNING V1.8</title>
+  <link rel="stylesheet" href="style.css?v=1.8">
 </head>
 <body>
   <main id="app">
@@ -16,12 +16,13 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V1.6</div>
+        <div class="version-badge">VERSION V1.8</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
         <button class="tab active" data-tab="courses">課程</button>
         <button class="tab" data-tab="songs">歌曲</button>
+        <button class="tab" data-tab="import">匯入樂譜</button>
         <button class="tab" data-tab="quick">5 分鐘練習</button>
         <button class="tab" data-tab="progress">進度</button>
       </nav>
@@ -79,6 +80,32 @@
         <div id="songList" class="song-list"></div>
       </section>
 
+      <section id="importPanel" class="tab-panel">
+        <div class="section-title">
+          <div><small>IMPORT</small><h2>匯入自己的樂譜</h2></div>
+          <span>MusicXML / MIDI</span>
+        </div>
+        <div class="import-card">
+          <div class="import-copy">
+            <span class="import-icon">𝄞</span>
+            <div>
+              <h3>把學生正在學的譜加入歌曲庫</h3>
+              <p>支援 .musicxml / .xml / .mid / .midi。匯入後會解析音高、節奏、BPM、拍號與調性，並先停在 READY。</p>
+            </div>
+          </div>
+          <input id="scoreFileInput" class="visually-hidden" type="file" accept=".musicxml,.xml,.mid,.midi,application/xml,audio/midi,audio/x-midi">
+          <div class="import-actions">
+            <button id="chooseScoreBtn" class="primary" type="button">選擇樂譜檔案</button>
+            <button id="clearImportedBtn" class="soft-btn" type="button">清除已匯入樂譜</button>
+          </div>
+          <div id="importStatus" class="import-status" aria-live="polite">尚未選擇檔案。</div>
+          <div class="import-notes">
+            <b>目前匯入規則</b>
+            <span>MusicXML 先讀第一個主要聲部；MIDI 會把同時出現的和弦暫時取最高音，保留節奏位置。正式雙手／和弦譜會在後續版本擴充。</span>
+          </div>
+        </div>
+      </section>
+
       <section id="quickPanel" class="tab-panel">
         <div class="quick-card">
           <div class="quick-orb">5</div>
@@ -104,6 +131,7 @@
       <header class="practice-top">
         <button id="backBtn" class="icon-btn" aria-label="返回">←</button>
         <div class="practice-title">
+          <div class="practice-meta"><span id="timeSignature">4/4</span><span id="keySignature">C Major</span></div>
           <small id="practiceModeLabel">PLAY</small>
           <strong id="practiceTitle">Twinkle Twinkle Little Star</strong>
         </div>
@@ -143,7 +171,7 @@
           <button id="playBtn" class="transport-btn primary-transport" type="button" title="播放">▶<span>播放</span></button>
           <button id="pauseTransportBtn" class="transport-btn" type="button" title="暫停">Ⅱ<span>暫停</span></button>
           <button id="recordBtn" class="transport-btn" type="button" title="查看練習紀錄">●<span>紀錄</span></button>
-          <div class="transport-time"><small>位置</small><b id="transportTime">00:00</b></div>
+          <div class="transport-time"><small id="transportStatus">準備中</small><b id="transportTime">00:00</b></div>
         </div>
 
         <div id="recordDrawer" class="record-drawer" hidden>
@@ -175,6 +203,19 @@
               <select id="practiceMode">
                 <option value="play">演奏</option>
                 <option value="learn">學習</option>
+              </select>
+            </label>
+            <label>起拍
+              <select id="countInSelect">
+                <option value="0">無</option>
+                <option value="1">1 小節</option>
+                <option value="2">2 小節</option>
+              </select>
+            </label>
+            <label>小節循環
+              <select id="measureLoopSelect">
+                <option value="off">關</option>
+                <option value="current">目前小節</option>
               </select>
             </label>
             <label>主速率 BPM
@@ -209,6 +250,6 @@
       </section>
     </section>
   </main>
-  <script src="app.js"></script>
+  <script src="app.js?v=1.8"></script>
 </body>
 </html>

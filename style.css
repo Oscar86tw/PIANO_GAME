@@ -243,3 +243,56 @@ button{cursor:pointer}
   .record-row{grid-template-columns:34px 1fr 1fr}
   .record-row span:last-child{grid-column:2/-1}
 }
+
+
+/* V1.7 — real note values, rests, time signature */
+.practice-meta{display:flex;justify-content:center;gap:8px;margin-bottom:2px}
+.practice-meta span{font-size:.62rem;padding:2px 7px;border-radius:999px;background:#ffffff20;color:#f3f1ff}
+.note-flag{position:absolute;width:18px;height:10px;border-top:3px solid #32374b;border-radius:50%;left:25px;top:17px;transform:rotate(28deg)}
+.music-note.eighth .note-flag{display:block}
+.music-note.quarter .note-flag,.music-note.half .note-flag,.music-note.whole .note-flag{display:none}
+.music-note.half .note-head,.music-note.whole .note-head{background:white;border:3px solid #32374b}
+.music-note.whole .note-stem{display:none}
+.music-note.whole .note-head{width:25px;height:14px}
+.music-rest{position:absolute;transform:translate(-50%,-50%);font-weight:900;color:#32374b;font-size:2rem}
+.music-rest.quarter::before{content:"𝄽"}
+.music-rest.eighth::before{content:"𝄾"}
+.music-rest.half::before{content:"𝄼"}
+.music-rest.whole::before{content:"𝄻"}
+.duration-mark{position:absolute;transform:translateX(-50%);font-size:.58rem;color:#8a91a4;top:215px}
+.beat-guide{position:absolute;top:63px;height:150px;width:1px;background:#d8dbe2;opacity:.65}
+.beat-guide.strong{background:#9ea5b4;opacity:.9}
+@media(max-width:800px){
+  .duration-mark{top:175px}
+  .beat-guide{top:48px;height:120px}
+}
+@media(max-width:540px){
+  .duration-mark{top:153px}
+  .beat-guide{top:44px;height:105px}
+}
+
+
+/* V1.7.1 hotfix */
+.transport-btn,.ready-play{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.transport-btn:disabled,.ready-play:disabled{opacity:.45;cursor:not-allowed}
+.transport-time small{font-weight:800;color:#7569dc}
+.prepare-banner{position:relative;z-index:4}
+.transport-bar{position:relative;z-index:5}
+@media(max-width:700px){
+  .transport-btn{font-size:1rem;min-height:54px}
+  .transport-btn span{font-size:.7rem}
+}
+
+
+/* V1.8 — local MusicXML / MIDI import */
+.import-card{background:#fff;border:1px solid #e2e6ef;border-radius:22px;padding:22px}
+.import-copy{display:flex;align-items:center;gap:16px}
+.import-icon{display:grid;place-items:center;width:62px;height:62px;border-radius:18px;background:#efedff;color:#655bd0;font-size:2.5rem;flex:0 0 auto}
+.import-copy h3{margin:0 0 5px;color:#3f4b67}.import-copy p{margin:0;color:#78839a;line-height:1.55}
+.import-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.import-status{margin-top:14px;padding:12px 14px;border-radius:12px;background:#f6f7fb;color:#64708a;border:1px solid #e6e9f1}
+.import-status.success{background:#eef9f3;color:#397a57;border-color:#cdebd9}.import-status.error{background:#fff1f2;color:#a14d5a;border-color:#f2d0d5}
+.import-notes{display:grid;gap:4px;margin-top:14px;padding-top:14px;border-top:1px solid #edf0f5;color:#7c869c;font-size:.78rem;line-height:1.5}.import-notes b{color:#536078}
+.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.song-row .source{display:block;color:#a0a8ba;font-size:.66rem;margin-top:3px}
+@media(max-width:540px){.import-copy{align-items:flex-start}.import-icon{width:50px;height:50px;font-size:2rem}.import-actions>*{width:100%}}

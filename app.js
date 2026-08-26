@@ -2,15 +2,61 @@
 const $=id=>document.getElementById(id);
 
 const songs = {
-  twinkle:{title:'Twinkle Twinkle Little Star',level:'Beginner',bpm:84,duration:48,notes:['C4','C4','G4','G4','A4','A4','G4','F4','F4','E4','E4','D4','D4','C4']},
-  ode:{title:'Ode to Joy',level:'Easy',bpm:96,duration:52,notes:['E4','E4','F4','G4','G4','F4','E4','D4','C4','C4','D4','E4','E4','D4','D4']},
-  mary:{title:'Mary Had a Little Lamb',level:'Beginner',bpm:88,duration:46,notes:['E4','D4','C4','D4','E4','E4','E4','D4','D4','D4','E4','G4','G4']},
-  scale:{title:'C Major Scale',level:'Beginner',bpm:80,duration:40,notes:['C3','D3','E3','F3','G3','A3','B3','C4','D4','E4','F4','G4']},
-  canon:{title:'Canon Theme',level:'Normal',bpm:92,duration:62,notes:['D4','A4','B4','F#4','G4','D4','G4','A4','D4','F#4','A4','B4']},
-  sight:{title:'Sight Reading Practice',level:'Easy',bpm:90,duration:55,notes:['C4','E4','D4','F4','E4','G4','F4','A4','G4','E4','D4','C4']}
+  twinkle:{
+    title:'Twinkle Twinkle Little Star',level:'Beginner',bpm:84,timeSig:[4,4],key:'C Major',
+    events:[
+      ['C4',1],['C4',1],['G4',1],['G4',1],['A4',1],['A4',1],['G4',2],
+      ['F4',1],['F4',1],['E4',1],['E4',1],['D4',1],['D4',1],['C4',2]
+    ]
+  },
+  ode:{
+    title:'Ode to Joy',level:'Easy',bpm:96,timeSig:[4,4],key:'C Major',
+    events:[
+      ['E4',1],['E4',1],['F4',1],['G4',1],['G4',1],['F4',1],['E4',1],['D4',1],
+      ['C4',1],['C4',1],['D4',1],['E4',1],['E4',1.5],['D4',0.5],['D4',2]
+    ]
+  },
+  mary:{
+    title:'Mary Had a Little Lamb',level:'Beginner',bpm:88,timeSig:[4,4],key:'C Major',
+    events:[
+      ['E4',1],['D4',1],['C4',1],['D4',1],
+      ['E4',1],['E4',1],['E4',2],
+      ['REST',1],['D4',1],['D4',2],
+      ['E4',1],['G4',1],['G4',2]
+    ]
+  },
+  scale:{
+    title:'C Major Scale',level:'Beginner',bpm:80,timeSig:[4,4],key:'C Major',
+    events:[
+      ['C3',1],['D3',1],['E3',1],['F3',1],['G3',1],['A3',1],['B3',1],['C4',1],
+      ['D4',0.5],['E4',0.5],['F4',1],['G4',2]
+    ]
+  },
+  canon:{
+    title:'Canon Theme',level:'Normal',bpm:92,timeSig:[4,4],key:'D Major',
+    events:[
+      ['D4',1],['A4',1],['B4',1],['F#4',1],['G4',1],['D4',1],['G4',1],['A4',1],
+      ['D4',0.5],['F#4',0.5],['A4',1],['B4',2]
+    ]
+  },
+  sight:{
+    title:'Sight Reading Practice',level:'Easy',bpm:90,timeSig:[3,4],key:'C Major',
+    events:[
+      ['C4',1],['E4',1],['D4',1],
+      ['F4',0.5],['E4',0.5],['G4',1],['REST',1],
+      ['F4',1],['A4',1],['G4',1],
+      ['E4',1],['D4',1],['C4',1]
+    ]
+  }
 };
 
-const library = [
+for(const song of Object.values(songs)){
+  song.notes=song.events.filter(e=>e[0]!=='REST').map(e=>e[0]);
+  song.totalBeats=song.events.reduce((sum,e)=>sum+e[1],0);
+  song.duration=song.totalBeats*60/song.bpm;
+}
+
+let library = [
   ['twinkle','Twinkle Twinkle Little Star','Beginner','00:48'],
   ['mary','Mary Had a Little Lamb','Beginner','00:46'],
   ['scale','C Major Scale','Beginner','00:40'],
@@ -19,6 +65,180 @@ const library = [
   ['canon','Canon Theme','Normal','01:02']
 ];
 
+
+
+const BUILTIN_LIBRARY_COUNT = library.length;
+const IMPORT_STORAGE_KEY='pianoLearningImportedScoresV18';
+
+function formatDurationSeconds(sec){
+  sec=Math.max(0,Math.round(sec||0));
+  return `${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+}
+function normalizeImportedSong(song){
+  song.bpm=Math.max(30,Math.min(240,Math.round(Number(song.bpm)||90)));
+  song.timeSig=Array.isArray(song.timeSig)&&song.timeSig.length===2?song.timeSig:[4,4];
+  song.key=song.key||'Imported';
+  song.level='Imported';
+  song.events=(song.events||[]).filter(e=>Array.isArray(e)&&e.length>=2&&Number(e[1])>0).map(e=>[e[0],+Number(e[1]).toFixed(3)]);
+  song.notes=song.events.filter(e=>e[0]!=='REST').map(e=>e[0]);
+  song.totalBeats=song.events.reduce((sum,e)=>sum+Number(e[1]),0);
+  song.duration=song.totalBeats*60/song.bpm;
+  return song;
+}
+function rebuildImportedLibrary(){
+  library=library.slice(0,BUILTIN_LIBRARY_COUNT);
+  Object.entries(songs).forEach(([id,s])=>{
+    if(!s.imported) return;
+    library.push([id,s.title,'Imported',formatDurationSeconds(s.duration)]);
+  });
+}
+function persistImportedScores(){
+  try{
+    const data={};
+    Object.entries(songs).forEach(([id,s])=>{if(s.imported)data[id]=s});
+    localStorage.setItem(IMPORT_STORAGE_KEY,JSON.stringify(data));
+  }catch(e){}
+}
+function loadImportedScores(){
+  try{
+    const data=JSON.parse(localStorage.getItem(IMPORT_STORAGE_KEY)||'{}');
+    Object.entries(data).forEach(([id,s])=>{songs[id]=normalizeImportedSong({...s,imported:true})});
+    rebuildImportedLibrary();
+  }catch(e){}
+}
+function uniqueImportId(name){
+  const base='import_'+String(name||'score').toLowerCase().replace(/\.[^.]+$/,'').replace(/[^a-z0-9\u4e00-\u9fff]+/g,'_').replace(/^_+|_+$/g,'').slice(0,36);
+  let id=base||'import_score',n=2;
+  while(songs[id]) id=(base||'import_score')+'_'+n++;
+  return id;
+}
+function keyNameFromFifths(fifths){
+  const major={ '-7':'Cb Major','-6':'Gb Major','-5':'Db Major','-4':'Ab Major','-3':'Eb Major','-2':'Bb Major','-1':'F Major','0':'C Major','1':'G Major','2':'D Major','3':'A Major','4':'E Major','5':'B Major','6':'F# Major','7':'C# Major'};
+  return major[String(fifths)]||'Imported';
+}
+function pitchFromMusicXml(note){
+  const pitch=note.querySelector('pitch'); if(!pitch)return null;
+  const step=pitch.querySelector('step')?.textContent?.trim();
+  const octave=pitch.querySelector('octave')?.textContent?.trim();
+  const alter=Number(pitch.querySelector('alter')?.textContent||0);
+  if(!step||octave==null)return null;
+  let accidental=''; if(alter===1)accidental='#'; else if(alter===-1)accidental='b';
+  if(accidental==='b'){
+    const flats={Db:'C#',Eb:'D#',Gb:'F#',Ab:'G#',Bb:'A#'};
+    const key=step+'b';
+    if(flats[key]) return flats[key]+octave;
+  }
+  return step+accidental+octave;
+}
+function parseMusicXML(text,fileName){
+  const xml=new DOMParser().parseFromString(text,'application/xml');
+  if(xml.querySelector('parsererror')) throw new Error('MusicXML 格式無法解析');
+  const part=xml.querySelector('part'); if(!part) throw new Error('MusicXML 找不到樂譜 Part');
+  const title=xml.querySelector('work-title')?.textContent?.trim()||xml.querySelector('movement-title')?.textContent?.trim()||fileName.replace(/\.[^.]+$/,'');
+  let divisions=1,bpm=90,timeSig=[4,4],key='C Major',primaryVoice=null,ignoredVoices=0,ignoredChords=0;
+  let events=[];
+  const soundTempo=xml.querySelector('sound[tempo]')?.getAttribute('tempo');
+  const perMinute=xml.querySelector('per-minute')?.textContent;
+  if(soundTempo||perMinute) bpm=Number(soundTempo||perMinute)||90;
+  part.querySelectorAll('measure').forEach(measure=>{
+    const div=measure.querySelector(':scope > attributes > divisions'); if(div) divisions=Number(div.textContent)||divisions;
+    const beats=measure.querySelector(':scope > attributes > time > beats');
+    const beatType=measure.querySelector(':scope > attributes > time > beat-type');
+    if(beats&&beatType) timeSig=[Number(beats.textContent)||4,Number(beatType.textContent)||4];
+    const fifths=measure.querySelector(':scope > attributes > key > fifths'); if(fifths) key=keyNameFromFifths(Number(fifths.textContent));
+    measure.querySelectorAll(':scope > note').forEach(note=>{
+      const voice=note.querySelector('voice')?.textContent?.trim()||'1';
+      if(primaryVoice===null) primaryVoice=voice;
+      if(voice!==primaryVoice){ignoredVoices++;return}
+      if(note.querySelector('chord')){ignoredChords++;return}
+      const duration=Number(note.querySelector('duration')?.textContent||0);
+      if(duration<=0)return;
+      const beatsValue=duration/divisions;
+      if(note.querySelector('rest')) events.push(['REST',beatsValue]);
+      else{
+        const pitch=pitchFromMusicXml(note); if(pitch)events.push([pitch,beatsValue]);
+      }
+    });
+  });
+  if(!events.length)throw new Error('這份 MusicXML 沒有找到可用的主要聲部音符');
+  return normalizeImportedSong({title,bpm,timeSig,key,events,imported:true,sourceType:'MusicXML',importWarnings:{ignoredVoices,ignoredChords}});
+}
+function readVarLen(view,posObj){
+  let value=0,b;
+  do{if(posObj.pos>=view.byteLength)throw new Error('MIDI 檔案不完整');b=view.getUint8(posObj.pos++);value=(value<<7)|(b&0x7f)}while(b&0x80);
+  return value;
+}
+function midiNoteName(m){
+  const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  return names[m%12]+(Math.floor(m/12)-1);
+}
+function parseMIDI(buffer,fileName){
+  const view=new DataView(buffer), dec=new TextDecoder(); let pos=0;
+  const str=n=>{let s='';for(let i=0;i<n;i++)s+=String.fromCharCode(view.getUint8(pos++));return s};
+  if(str(4)!=='MThd')throw new Error('不是標準 MIDI 檔案');
+  const headerLen=view.getUint32(pos);pos+=4;
+  const format=view.getUint16(pos);pos+=2; const tracks=view.getUint16(pos);pos+=2; const division=view.getUint16(pos);pos+=2;
+  pos=8+headerLen;
+  if(division&0x8000)throw new Error('目前暫不支援 SMPTE 時基 MIDI');
+  const tpq=division; let bpm=90,timeSig=[4,4],trackName='',notes=[];
+  for(let t=0;t<tracks;t++){
+    if(pos+8>view.byteLength)break;
+    const id=str(4),len=view.getUint32(pos);pos+=4,end=pos+len;
+    if(id!=='MTrk'){pos=end;continue}
+    let tick=0,running=0; const active=new Map();
+    while(pos<end){
+      const po={pos}; const delta=readVarLen(view,po);pos=po.pos;tick+=delta;
+      let status=view.getUint8(pos++); if(status<0x80){pos--;status=running}else running=status;
+      if(status===0xff){
+        const type=view.getUint8(pos++);const q={pos};const l=readVarLen(view,q);pos=q.pos;
+        if(type===0x51&&l===3){const us=(view.getUint8(pos)<<16)|(view.getUint8(pos+1)<<8)|view.getUint8(pos+2);if(us)bpm=60000000/us}
+        else if(type===0x58&&l>=2){timeSig=[view.getUint8(pos),Math.pow(2,view.getUint8(pos+1))]}
+        else if(type===0x03&&!trackName){trackName=dec.decode(new Uint8Array(buffer,pos,l))}
+        pos+=l;continue;
+      }
+      if(status===0xf0||status===0xf7){const q={pos};const l=readVarLen(view,q);pos=q.pos+l;continue}
+      const type=status&0xf0,channel=status&0x0f;
+      if(type===0x80||type===0x90){
+        const note=view.getUint8(pos++),vel=view.getUint8(pos++),k=channel+':'+note;
+        if(type===0x90&&vel>0){active.set(k,{tick,note})}
+        else if(active.has(k)){const a=active.get(k);notes.push({start:a.tick,end:tick,note:a.note});active.delete(k)}
+      }else if(type===0xa0||type===0xb0||type===0xe0)pos+=2;
+      else if(type===0xc0||type===0xd0)pos+=1;
+      else throw new Error('MIDI 事件格式無法解析');
+    }
+    pos=end;
+  }
+  if(!notes.length)throw new Error('MIDI 沒有找到音符事件');
+  notes.sort((a,b)=>a.start-b.start||b.note-a.note);
+  const groups=[];
+  notes.forEach(n=>{let g=groups[groups.length-1];if(!g||g.start!==n.start){g={start:n.start,notes:[]};groups.push(g)}g.notes.push(n)});
+  const events=[];let cursor=0,ignoredChords=0;
+  const q=v=>Math.max(.25,Math.round(v*4)/4);
+  groups.forEach((g,i)=>{
+    const chosen=g.notes.reduce((a,b)=>a.note>b.note?a:b);ignoredChords+=Math.max(0,g.notes.length-1);
+    const startBeat=g.start/tpq;
+    if(startBeat>cursor+.12){events.push(['REST',q(startBeat-cursor)]);cursor=startBeat}
+    const actualEnd=chosen.end/tpq;
+    const nextStart=i+1<groups.length?groups[i+1].start/tpq:null;
+    const maxDur=Math.max(.25,actualEnd-startBeat);
+    const dur=q(nextStart!=null?Math.min(maxDur,Math.max(.25,nextStart-startBeat)):maxDur);
+    events.push([midiNoteName(chosen.note),dur]);cursor=startBeat+dur;
+  });
+  return normalizeImportedSong({title:(trackName||fileName.replace(/\.[^.]+$/,'')).trim(),bpm,timeSig,key:'MIDI',events,imported:true,sourceType:'MIDI',importWarnings:{ignoredChords}});
+}
+async function importScoreFile(file){
+  if(!file)return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  let song;
+  if(ext==='musicxml'||ext==='xml') song=parseMusicXML(await file.text(),file.name);
+  else if(ext==='mid'||ext==='midi') song=parseMIDI(await file.arrayBuffer(),file.name);
+  else throw new Error('請選擇 MusicXML 或 MIDI 檔案');
+  const id=uniqueImportId(file.name);songs[id]=song;persistImportedScores();rebuildImportedLibrary();loadImportedScores();
+renderSongList();
+  const warn=song.importWarnings||{};
+  const extra=(warn.ignoredChords||warn.ignoredVoices)?`（已略過 ${warn.ignoredChords||0} 個和弦附加音、${warn.ignoredVoices||0} 個其他聲部事件）`:'';
+  return {id,song,message:`已匯入：${song.title}｜${Math.round(song.bpm)} BPM｜${song.timeSig.join('/')}｜${song.events.length} 個事件 ${extra}`};
+}
 
 const curriculum = {
   prep:{
@@ -149,7 +369,7 @@ let state = {
   speed:1,mode:'play',hand:'right',micStream:null,audioCtx:null,analyser:null,
   audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,assistTimer:null,assistBeat:0,
   judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,lastMasterBeat:-1,
-  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,demoSoundOn:false,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoVolume:0.45,pianoVoices:new Set()
+  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,eventTimeline:[],countInBeats:0,loopMeasure:false,demoSoundOn:false,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoVolume:0.45,pianoVoices:new Set()
 };
 
 function showView(name){
@@ -171,7 +391,8 @@ function renderSongList(level='all'){
   library.filter(x=>level==='all'||x[2].toLowerCase()===level).forEach(([id,title,lvl,duration])=>{
     const b=document.createElement('button');
     b.className='song-row'; b.type='button';
-    b.innerHTML=`<span><strong>${title}</strong><small>${songs[id].bpm} BPM</small></span><span class="level">${lvl}</span><span class="duration">${duration}</span>`;
+    const source=songs[id]?.imported ? (songs[id].sourceType||'Imported') : '內建練習';
+    b.innerHTML=`<span><strong>${title}</strong><small>${songs[id].bpm} BPM</small><span class="source">${source}</span></span><span class="level">${lvl}</span><span class="duration">${duration}</span>`;
     b.addEventListener('click',()=>openPractice(id,'PLAY'));
     root.appendChild(b);
   });
@@ -189,6 +410,24 @@ document.querySelectorAll('.filter').forEach(btn=>{
   });
 });
 $('quickStart').addEventListener('click',()=>openPractice('sight','5 MIN'));
+$('chooseScoreBtn').addEventListener('click',()=>$('scoreFileInput').click());
+$('scoreFileInput').addEventListener('change',async()=>{
+  const file=$('scoreFileInput').files?.[0]; if(!file)return;
+  const status=$('importStatus');status.className='import-status';status.textContent='正在解析 '+file.name+'…';
+  try{
+    const result=await importScoreFile(file);
+    status.className='import-status success';status.textContent=result.message+'。已加入歌曲庫。';
+  }catch(err){
+    console.error(err);status.className='import-status error';status.textContent='匯入失敗：'+(err?.message||'未知錯誤');
+  }finally{$('scoreFileInput').value=''}
+});
+$('clearImportedBtn').addEventListener('click',()=>{
+  Object.keys(songs).forEach(id=>{if(songs[id]?.imported)delete songs[id]});
+  try{localStorage.removeItem(IMPORT_STORAGE_KEY)}catch(e){}
+  rebuildImportedLibrary();renderSongList();
+  const status=$('importStatus');status.className='import-status';status.textContent='已清除瀏覽器內已匯入的樂譜。';
+});
+
 
 function openPractice(songId,label='PLAY'){
   state.song=songId; state.running=false; state.paused=false; state.pauseTotal=0; state.judged=new Set(); state.goodStreak=0;
@@ -197,6 +436,14 @@ function openPractice(songId,label='PLAY'){
   $('tempoInput').value=state.tempoBpm;
   $('speedSelect').value='1';
   $('practiceTitle').textContent=songs[songId].title;
+  $('timeSignature').textContent=songs[songId].timeSig.join('/');
+  $('keySignature').textContent=songs[songId].key;
+  state.countInBeats=0; state.loopMeasure=false;
+  buildEventTimeline();
+  $('countInSelect').value='0';
+  $('measureLoopSelect').value='off';
+  $('recordDrawer').hidden=true;
+  $('recordBtn').classList.remove('active');
   $('practiceModeLabel').textContent=label;
   showView('practice');
   renderStaticScore();
@@ -213,6 +460,8 @@ function enterReadyState(){
   $('prepareBanner').classList.remove('running');
   $('topProgressBar').style.width='0%';
   $('transportTime').textContent='00:00';
+  $('transportStatus').textContent='準備中';
+  renderStaticScore();
   $('playBtn').classList.remove('active');
   $('pauseTransportBtn').classList.remove('active');
   if(state.metroOn) stopMetronome(false);
@@ -228,6 +477,7 @@ function playFromCurrent(){
     $('playBtn').classList.add('active');
   }
   $('prepareBanner').classList.add('running');
+  $('transportStatus').textContent='播放中';
 }
 function pausePractice(){
   if(!state.running || state.paused) return;
@@ -236,6 +486,7 @@ function pausePractice(){
   $('pauseTransportBtn').classList.add('active');
   $('playBtn').classList.remove('active');
   stopAllPianoVoices();
+  $('transportStatus').textContent='暫停';
 }
 function seekTo(sec){
   sec=Math.max(0,Math.min(effectiveDuration(),sec));
@@ -249,9 +500,14 @@ function seekTo(sec){
   renderStaticScore();
 }
 function rewindMeasure(){
-  const current=state.running?elapsed():0;
-  const measure=beatSeconds()*4;
+  if(!state.running){
+    enterReadyState();
+    return;
+  }
+  const current=elapsed();
+  const measure=beatSeconds()*songs[state.song].timeSig[0];
   seekTo(Math.max(0,current-measure));
+  $('transportStatus').textContent=state.paused?'暫停':'播放中';
 }
 function renderRecordDrawer(){
   const log=state.performanceLog||[];
@@ -267,7 +523,7 @@ function renderRecordDrawer(){
     const exactOk=x.pitchCorrect&&x.rhythmCorrect;
     row.innerHTML=`<b>#${x.index+1}</b><span>譜 ${x.expectedNote||'—'} → 彈 ${x.playedNote||'—'}</span>
       <span class="${exactOk?'ok':'bad'}">${exactOk?'吻合':'需練習'}</span>
-      <span>${x.timingErrorMs==null?'MISS':(x.timingErrorMs>0?'+':'')+x.timingErrorMs+' ms'}</span>`;
+      <span>${x.timingErrorMs==null?'MISS':(x.timingErrorMs>0?'+':'')+x.timingErrorMs+' ms'}｜${x.durationBeats||1}拍</span>`;
     root.appendChild(row);
   });
 }
@@ -301,6 +557,17 @@ $('speedSelect').addEventListener('change',()=>{
 });
 $('practiceMode').addEventListener('change',()=>{state.mode=$('practiceMode').value;});
 $('handSelect').addEventListener('change',()=>{state.hand=$('handSelect').value;});
+$('countInSelect').addEventListener('change',()=>{
+  const measures=parseInt($('countInSelect').value)||0;
+  state.countInBeats=measures*songs[state.song].timeSig[0];
+  buildEventTimeline();
+  renderStaticScore();
+  if(state.running) restartPractice();
+});
+$('measureLoopSelect').addEventListener('change',()=>{
+  state.loopMeasure=$('measureLoopSelect').value==='current';
+});
+
 $('micBtn').addEventListener('click',startMicrophone);
 $('metroBtn').addEventListener('click',()=>{
   state.metroOn=!state.metroOn;
@@ -496,21 +763,44 @@ function effectiveBpm(){
   return Math.max(30,Math.min(240,Math.round(state.tempoBpm || songs[state.song].bpm)));
 }
 function beatSeconds(){ return 60/effectiveBpm(); }
+function leadInBeats(){ return 1 + state.countInBeats; }
 
 // Current demo songs use one quarter-note beat per note.
 // Add 2 extra beats: one count-in beat before first note and one release beat at the end.
-function effectiveDuration(){
-  return (songs[state.song].notes.length + 2) * beatSeconds();
-}
 function elapsed(){
   if(!state.running) return 0;
   const now=state.paused?state.pauseStart:performance.now();
   return Math.max(0,(now-state.startAt-state.pauseTotal)/1000);
 }
-function noteTime(i){
-  // First note arrives on beat 1, exactly one beat after transport starts.
-  return (i+1)*beatSeconds();
+function buildEventTimeline(){
+  const song=songs[state.song];
+  let beat=0;
+  state.eventTimeline=song.events.map((ev,eventIndex)=>{
+    const [note,beats]=ev;
+    const item={
+      eventIndex,
+      note,
+      beats,
+      startBeat:beat,
+      endBeat:beat+beats,
+      startTime:(leadInBeats()+beat)*beatSeconds(),
+      endTime:(leadInBeats()+beat+beats)*beatSeconds(),
+      isRest:note==='REST'
+    };
+    beat+=beats;
+    return item;
+  });
 }
+function noteEvents(){ return state.eventTimeline.filter(e=>!e.isRest); }
+function noteTime(i){
+  const n=noteEvents()[i];
+  return n ? n.startTime : 0;
+}
+function effectiveDuration(){
+  const song=songs[state.song];
+  return (leadInBeats() + song.totalBeats + 1) * beatSeconds();
+}
+
 
 const degree={C:0,D:1,E:2,F:3,G:4,A:5,B:6};
 function noteY(note){
@@ -523,32 +813,81 @@ function noteY(note){
 function fingerFor(i){ return [1,2,3,4,5,4,3,2][i%8]; }
 
 function renderStaticScore(){
+  buildEventTimeline();
   const root=$('scrollingScore'); root.innerHTML='';
-  const s=songs[state.song];
-  const pxPerSec=150;
+  const song=songs[state.song];
+  const pxPerBeat=95;
   const lead=window.innerWidth<600?260:380;
-  const totalWidth=lead+effectiveDuration()*pxPerSec+400;
+  const totalWidth=lead+(leadInBeats()+song.totalBeats+4)*pxPerBeat;
   root.style.width=totalWidth+'px';
   root.dataset.lead=lead;
-  root.dataset.pxPerSec=pxPerSec;
-  s.notes.forEach((note,i)=>{
-    const n=document.createElement('div');
-    n.className='music-note'; n.dataset.i=i;
-    n.style.left=(lead+noteTime(i)*pxPerSec)+'px';
-    n.style.top=noteY(note)+'px';
-    n.innerHTML='<span class="note-head"></span><span class="note-stem"></span>';
-    root.appendChild(n);
-    const f=document.createElement('div');
-    f.className='finger'; f.style.left=n.style.left; f.textContent=fingerFor(i);
-    root.appendChild(f);
+  root.dataset.pxPerBeat=pxPerBeat;
+
+  // Beat guides
+  const totalBeats=leadInBeats()+song.totalBeats;
+  for(let b=0;b<=totalBeats;b++){
+    const line=document.createElement('div');
+    line.className='beat-guide'+(b%song.timeSig[0]===0?' strong':'');
+    line.style.left=(lead+b*pxPerBeat)+'px';
+    root.appendChild(line);
+  }
+
+  let noteIndex=0;
+  state.eventTimeline.forEach(ev=>{
+    const x=lead+(leadInBeats()+ev.startBeat)*pxPerBeat;
+    if(ev.isRest){
+      const r=document.createElement('div');
+      r.className='music-rest '+durationClass(ev.beats);
+      r.dataset.event=ev.eventIndex;
+      r.style.left=x+'px'; r.style.top='138px';
+      root.appendChild(r);
+    }else{
+      const n=document.createElement('div');
+      n.className='music-note '+durationClass(ev.beats);
+      n.dataset.i=noteIndex;
+      n.dataset.event=ev.eventIndex;
+      n.style.left=x+'px';
+      n.style.top=noteY(ev.note)+'px';
+      n.innerHTML='<span class="note-head"></span><span class="note-stem"></span><span class="note-flag"></span>';
+      root.appendChild(n);
+
+      const f=document.createElement('div');
+      f.className='finger'; f.style.left=x+'px'; f.textContent=fingerFor(noteIndex);
+      root.appendChild(f);
+      noteIndex++;
+    }
+
+    const mark=document.createElement('div');
+    mark.className='duration-mark';
+    mark.style.left=x+'px';
+    mark.textContent=durationLabel(ev.beats);
+    root.appendChild(mark);
   });
-  const bars=Math.ceil((songs[state.song].notes.length+1)/4);
+
+  const bars=Math.ceil((leadInBeats()+song.totalBeats)/song.timeSig[0]);
   for(let i=1;i<=bars;i++){
     const line=document.createElement('div');
     line.className='measure-line';
-    line.style.left=(lead+i*(beatSeconds()*4)*pxPerSec)+'px';
+    line.style.left=(lead+(leadInBeats()+i*song.timeSig[0])*pxPerBeat)+'px';
     root.appendChild(line);
   }
+  // READY position: score is stationary; first note waits one beat to the right of playhead.
+  const playhead=$('staffWindow').clientWidth*.22;
+  root.style.transform=`translateX(${playhead-lead}px)`;
+}
+function durationClass(beats){
+  if(beats>=4) return 'whole';
+  if(beats>=2) return 'half';
+  if(beats<=.5) return 'eighth';
+  return 'quarter';
+}
+function durationLabel(beats){
+  if(beats===4) return '全音符';
+  if(beats===2) return '二分';
+  if(beats===1.5) return '附點';
+  if(beats===1) return '四分';
+  if(beats===.5) return '八分';
+  return beats+'拍';
 }
 
 function startPractice(){
@@ -594,41 +933,64 @@ function gameLoop(){
   if(state.paused){state.gameRaf=requestAnimationFrame(gameLoop);return}
   const e=elapsed(), s=songs[state.song], root=$('scrollingScore');
   updateMasterBeat(e);
-  const pxPerSec=+root.dataset.pxPerSec;
+  const pxPerBeat=+root.dataset.pxPerBeat;
   const playhead=$('staffWindow').clientWidth*.22;
   const lead=+root.dataset.lead;
-  const x=playhead-lead-e*pxPerSec;
+  const x=playhead-lead-(e/beatSeconds())*pxPerBeat;
   root.style.transform=`translateX(${x}px)`;
   $('topProgressBar').style.width=Math.min(100,e/effectiveDuration()*100)+'%';
   $('transportTime').textContent=fmtTime(e);
+  if(state.demoSoundOn && state.pianoReady){
+    state.eventTimeline.forEach(ev=>{
+      if(ev.isRest) return;
+      if(state.demoPlayed.has(ev.eventIndex)) return;
+      if(e>=ev.startTime && e<ev.startTime+0.12){
+        state.demoPlayed.add(ev.eventIndex);
+        playScoreSample(ev.note);
+      }
+    });
+  }
+
 
   let nearest=-1,delta=99;
-  s.notes.forEach((note,i)=>{
-    const expected=noteTime(i);
+  const nEvents=noteEvents();
+
+  nEvents.forEach((ev,i)=>{
+    const expected=ev.startTime;
     const d=Math.abs(e-expected);
     const el=root.querySelector(`.music-note[data-i="${i}"]`);
     if(el) el.classList.toggle('current',d<0.22);
     if(d<delta){delta=d;nearest=i}
-    if(el && e-expected>0.35) el.classList.add('passed');
-    if(state.demoSoundOn && !state.demoPlayed.has(i) && e>=expected){
-      state.demoPlayed.add(i); playScoreSample(note);
-    }
+    if(el && e-ev.endTime>0.22) el.classList.add('passed');
 
     if(e-expected>0.42 && !state.judged.has(i)){
       state.judged.add(i);
       logPerformance({
-        index:i, expectedNote:note, playedNote:null,
+        index:i, expectedNote:ev.note, playedNote:null,
         expectedTime:expected, playedTime:null,
         timingErrorMs:null, pitchCorrect:false, rhythmCorrect:false,
-        result:'miss'
+        result:'miss',durationBeats:ev.beats
       });
       if(el) el.classList.add('timing-error');
       flash('miss'); showAssist(); state.goodStreak=0;
     }
   });
+
   state.currentTargetIndex=nearest;
-  if(nearest>=0) $('scoreNote').textContent=s.notes[nearest];
-  if(e>=effectiveDuration()){savePracticeSummary();stopPractice();$('playBtn').classList.remove('active');$('transportTime').textContent=fmtTime(effectiveDuration());return}
+  if(nearest>=0) $('scoreNote').textContent=nEvents[nearest].note;
+  if(state.loopMeasure && state.running){
+    const sig=songs[state.song].timeSig[0];
+    const beatNow=Math.max(0,e/beatSeconds()-leadInBeats());
+    const measureIndex=Math.max(0,Math.floor(beatNow/sig));
+    const measureEnd=(leadInBeats()+(measureIndex+1)*sig)*beatSeconds();
+    if(e>=measureEnd-0.03){
+      const measureStart=(leadInBeats()+measureIndex*sig)*beatSeconds();
+      seekTo(measureStart);
+      return;
+    }
+  }
+
+  if(e>=effectiveDuration()){savePracticeSummary();stopPractice();$('playBtn').classList.remove('active');$('transportTime').textContent=fmtTime(effectiveDuration());$('transportStatus').textContent='完成';return}
   state.gameRaf=requestAnimationFrame(gameLoop);
 }
 
@@ -729,16 +1091,18 @@ function judgeInput(note){
   state.lastCapturedAt=now;
 
   const s=songs[state.song], e=elapsed();
+  const nEvents=noteEvents();
   let best=-1,bestDelta=999;
-  s.notes.forEach((n,i)=>{
+  nEvents.forEach((ev,i)=>{
     if(state.judged.has(i)) return;
-    const d=Math.abs(e-noteTime(i));
+    const d=Math.abs(e-ev.startTime);
     if(d<bestDelta){bestDelta=d;best=i}
   });
   if(best<0) return;
 
-  const expected=s.notes[best];
-  const expectedTime=noteTime(best);
+  const targetEvent=nEvents[best];
+  const expected=targetEvent.note;
+  const expectedTime=targetEvent.startTime;
   const timingError=e-expectedTime;
   const timingErrorMs=Math.round(timingError*1000);
   const pitchCorrect=note===expected;
@@ -762,7 +1126,8 @@ function judgeInput(note){
       timingErrorMs,
       pitchCorrect,
       rhythmCorrect,
-      result:(pitchCorrect&&rhythmCorrect)?'exact':pitchCorrect?'timing_error':'pitch_error'
+      result:(pitchCorrect&&rhythmCorrect)?'exact':pitchCorrect?'timing_error':'pitch_error',
+      durationBeats:targetEvent.beats
     });
 
     if(pitchCorrect && rhythmCorrect){
