@@ -3,112 +3,101 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#111827" />
-  <title>PIANO GAME V0.1</title>
+  <meta name="theme-color" content="#080510" />
+  <title>PIANO GAME ARCADE V0.2</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="app-shell">
-    <header class="topbar">
+  <div class="scanlines"></div>
+  <main class="arcade-shell">
+    <header class="marquee">
+      <div class="marquee-light l1"></div><div class="marquee-light l2"></div><div class="marquee-light l3"></div>
       <div>
-        <p class="eyebrow">REAL PIANO INTERACTIVE PRACTICE</p>
-        <h1>🎹 PIANO GAME <span>V0.1</span></h1>
-        <p class="subtitle">真鋼琴收音 × 視譜 × 即時判定 × 星星挑戰</p>
+        <p class="eyebrow">REAL PIANO ARCADE SYSTEM</p>
+        <h1>PIANO <span>RUSH</span></h1>
+        <p class="subtitle">真鋼琴 × 即時判定 × 街機節奏挑戰</p>
       </div>
-      <div class="status-pill" id="audioStatus">🎤 麥克風未啟動</div>
+      <div class="coin-panel">
+        <span id="audioStatus">🎤 MIC OFF</span>
+        <strong>CREDIT 01</strong>
+      </div>
     </header>
 
-    <section class="control-grid card">
-      <label>歌曲
-        <select id="songSelect"></select>
-      </label>
-      <label>模式
-        <select id="modeSelect">
-          <option value="follow">Follow Me｜彈對才前進</option>
-          <option value="free">Free Play｜自由練習</option>
-        </select>
-      </label>
-      <label>輸入方式
-        <select id="inputSelect">
-          <option value="mic">🎤 真鋼琴麥克風</option>
-          <option value="screen">🎹 畫面琴鍵測試</option>
-        </select>
-      </label>
-      <div class="actions">
-        <button id="micBtn" class="primary">啟動麥克風</button>
-        <button id="startBtn">開始挑戰</button>
-        <button id="resetBtn">重新開始</button>
+    <section class="machine-panel">
+      <aside class="song-select panel">
+        <div class="panel-title">SELECT MUSIC</div>
+        <div id="songCards" class="song-cards"></div>
+        <div class="mini-controls">
+          <label>MODE<select id="modeSelect"><option value="follow">FOLLOW ME</option><option value="free">FREE PLAY</option></select></label>
+          <label>INPUT<select id="inputSelect"><option value="mic">MICROPHONE</option><option value="screen">SCREEN KEYS</option></select></label>
+        </div>
+      </aside>
+
+      <section class="game-screen panel">
+        <div class="hud">
+          <div><span>SCORE</span><strong id="score">000000</strong></div>
+          <div><span>COMBO</span><strong id="combo">0</strong></div>
+          <div><span>ACCURACY</span><strong id="accuracy">--%</strong></div>
+        </div>
+
+        <div class="stage">
+          <div class="stage-glow"></div>
+          <div class="song-banner">
+            <small>NOW PLAYING</small>
+            <h2 id="songTitle">Twinkle Twinkle Little Star</h2>
+            <div id="difficulty" class="difficulty">★ EASY</div>
+          </div>
+
+          <div class="note-highway-wrap">
+            <div class="note-highway">
+              <div class="lane-grid"></div>
+              <div id="noteStream" class="falling-notes"></div>
+              <div class="hit-line"><span></span></div>
+            </div>
+            <div id="judge" class="judge">READY?</div>
+            <div id="comboBurst" class="combo-burst"></div>
+          </div>
+
+          <div class="live-readout">
+            <div><span>TARGET</span><strong id="expectedNote">—</strong><small id="expectedHz">WAIT</small></div>
+            <div class="vs">VS</div>
+            <div><span>YOU PLAYED</span><strong id="heardNote">—</strong><small id="heardHz">0 Hz</small></div>
+          </div>
+
+          <div class="progress-track"><div id="progressBar"></div></div>
+          <div class="progress-text"><span id="noteIndex">0</span> / <span id="noteTotal">0</span></div>
+          <div class="meter"><div id="levelMeter"></div></div>
+        </div>
+      </section>
+
+      <aside class="side-panel panel">
+        <div class="panel-title">PLAYER 1</div>
+        <div class="rank-orb" id="rankOrb">S</div>
+        <div class="stars" id="stars">☆☆☆</div>
+        <div class="mission-box"><span>MISSION</span><strong>90%+</strong><small>Get 3 Stars!</small></div>
+        <button id="micBtn" class="arcade-btn mic">MIC ON</button>
+        <button id="startBtn" class="arcade-btn start">START</button>
+        <button id="resetBtn" class="arcade-btn reset">RESET</button>
+        <p class="hint" id="hint">先啟動麥克風，再按 START。</p>
+      </aside>
+    </section>
+
+    <section class="keyboard-panel panel">
+      <div class="keyboard-head"><div><span>LIVE PIANO INPUT</span><h3>真實鋼琴同步鍵盤</h3></div><b id="inputBadge">MIC MODE</b></div>
+      <div id="keyboard" class="keyboard"></div>
+    </section>
+
+    <section class="result-overlay" id="resultCard" hidden>
+      <div class="result-box">
+        <small>STAGE CLEAR</small>
+        <h2 id="resultRank">RANK S</h2>
+        <div id="resultStars" class="result-stars">★★★</div>
+        <p id="resultText"></p>
+        <button id="againBtn" class="arcade-btn start">PLAY AGAIN</button>
       </div>
     </section>
 
-    <section class="scoreboard">
-      <article class="metric card"><span>分數</span><strong id="score">0</strong></article>
-      <article class="metric card"><span>Combo</span><strong id="combo">0</strong></article>
-      <article class="metric card"><span>正確率</span><strong id="accuracy">—</strong></article>
-      <article class="metric card"><span>星星</span><strong id="stars">☆☆☆</strong></article>
-    </section>
-
-    <section class="practice card">
-      <div class="practice-head">
-        <div>
-          <p class="section-label">CURRENT SCORE</p>
-          <h2 id="songTitle">Twinkle Twinkle Little Star</h2>
-        </div>
-        <div class="progress-text"><span id="noteIndex">0</span>/<span id="noteTotal">0</span></div>
-      </div>
-      <div class="progress-track"><div id="progressBar"></div></div>
-
-      <div class="staff" aria-label="簡化五線譜">
-        <div class="clef">𝄞</div>
-        <div class="staff-lines">
-          <i></i><i></i><i></i><i></i><i></i>
-          <div id="noteStream" class="note-stream"></div>
-        </div>
-      </div>
-
-      <div class="detect-grid">
-        <div class="detect-box expected">
-          <span>現在要彈</span>
-          <strong id="expectedNote">—</strong>
-          <small id="expectedHz">等待開始</small>
-        </div>
-        <div class="judge" id="judge">READY</div>
-        <div class="detect-box heard">
-          <span>現場聽到</span>
-          <strong id="heardNote">—</strong>
-          <small id="heardHz">0 Hz</small>
-        </div>
-      </div>
-
-      <div class="meter-wrap">
-        <span>低</span><div class="meter"><div id="levelMeter"></div></div><span>高</span>
-      </div>
-      <p class="hint" id="hint">按「啟動麥克風」，允許瀏覽器收音後，再按「開始挑戰」。</p>
-    </section>
-
-    <section class="card keyboard-card">
-      <div class="keyboard-head">
-        <div>
-          <p class="section-label">LIVE KEYBOARD</p>
-          <h2>即時琴鍵</h2>
-        </div>
-        <p>可先用滑鼠／觸控測試遊戲流程</p>
-      </div>
-      <div id="keyboard" class="keyboard" aria-label="鋼琴琴鍵"></div>
-    </section>
-
-    <section class="card result-card" id="resultCard" hidden>
-      <p class="section-label">PRACTICE RESULT</p>
-      <h2>🎉 挑戰完成！</h2>
-      <div class="result-stars" id="resultStars">☆☆☆</div>
-      <p id="resultText"></p>
-      <button id="againBtn" class="primary">再彈一次</button>
-    </section>
-
-    <footer>
-      <strong>PIANO GAME V0.1</strong>
-      <span>單音即時辨識原型｜下一版可加入節奏、MIDI、MusicXML、雙手與多音辨識</span>
-    </footer>
+    <div class="countdown" id="countdown" hidden>3</div>
   </main>
   <script src="app.js"></script>
 </body>
