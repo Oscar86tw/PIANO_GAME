@@ -148,16 +148,16 @@ async function startGame(){
   await countdown();
   Object.assign(state,{index:0,score:0,combo:0,maxCombo:0,attempts:0,hits:0,running:true,paused:false,totalPause:0,lastAccepted:0});
   state.startAt=performance.now(); state.judged=new Set(); state.hitNotes=new Set();
-  $('resultCard').hidden=true; $('pauseBtn').textContent='PAUSE'; setJudge('GO!'); updateStats(); renderSong();
-  $('hint').textContent='TIME ATTACK! 音符會照時間持續前進，彈錯也不會停。';
+  $('resultCard').hidden=true; $('pauseBtn').textContent='暫停'; setJudge('開始'); updateStats(); renderSong();
+  $('hint').textContent='課堂練習進行中：音符會依時間前進，請跟著節奏完成。';
   gameLoop();
 }
-function countdown(){return new Promise(resolve=>{const el=$('countdown');el.hidden=false;let n=3;el.textContent=n;const t=setInterval(()=>{n--;if(n===0)el.textContent='GO!';else if(n<0){clearInterval(t);el.hidden=true;resolve()}else el.textContent=n},650)})}
+function countdown(){return new Promise(resolve=>{const el=$('countdown');el.hidden=false;let n=3;el.textContent=n;const t=setInterval(()=>{n--;if(n===0)el.textContent='開始';else if(n<0){clearInterval(t);el.hidden=true;resolve()}else el.textContent=n},650)})}
 function resetGame(){
   state.running=false;state.paused=false; if(state.gameRaf) cancelAnimationFrame(state.gameRaf);
   Object.assign(state,{index:0,score:0,combo:0,maxCombo:0,attempts:0,hits:0,totalPause:0});
-  state.judged=new Set();state.hitNotes=new Set();updateStats();renderSong();setJudge('READY?');
-  $('heardNote').textContent='—';$('heardHz').textContent='0 Hz';$('pauseBtn').textContent='PAUSE';
+  state.judged=new Set();state.hitNotes=new Set();updateStats();renderSong();setJudge('準備好了嗎？');
+  $('heardNote').textContent='—';$('heardHz').textContent='0 Hz';$('pauseBtn').textContent='暫停';
 }
 function gameLoop(){
   if(!state.running||state.paused)return;
@@ -176,17 +176,17 @@ function gameLoop(){
 function finish(){
   state.running=false;state.paused=false;if(state.gameRaf)cancelAnimationFrame(state.gameRaf);
   const acc=state.attempts?Math.round(state.hits/state.attempts*100):0, stars=acc>=90?3:acc>=75?2:acc>=55?1:0, rank=rankFor(acc);
-  $('resultRank').textContent=`RANK ${rank}`;$('resultStars').textContent='★'.repeat(stars)+'☆'.repeat(3-stars);
-  $('resultText').textContent=`SCORE ${state.score} ｜ ACCURACY ${acc}% ｜ MAX COMBO ${state.maxCombo}`;
+  $('resultRank').textContent=`等級 ${rank}`;$('resultStars').textContent='★'.repeat(stars)+'☆'.repeat(3-stars);
+  $('resultText').textContent=`分數 ${state.score} ｜ 正確率 ${acc}% ｜ 最長連擊 ${state.maxCombo}`;
   $('resultCard').hidden=false; setJudge('TIME UP!','good'); updateClock();
 }
 function togglePause(){
   if(!state.running && !state.paused)return;
   if(!state.paused){
-    state.paused=true; state.pauseAt=performance.now(); $('pauseBtn').textContent='RESUME'; setJudge('PAUSE');
+    state.paused=true; state.pauseAt=performance.now(); $('pauseBtn').textContent='繼續'; setJudge('暫停');
     if(state.gameRaf)cancelAnimationFrame(state.gameRaf);
   }else{
-    state.totalPause+=performance.now()-state.pauseAt; state.paused=false; $('pauseBtn').textContent='PAUSE'; setJudge('GO!');
+    state.totalPause+=performance.now()-state.pauseAt; state.paused=false; $('pauseBtn').textContent='暫停'; setJudge('繼續');
     gameLoop();
   }
 }
@@ -195,7 +195,7 @@ function flashKey(note){
   setTimeout(()=>document.querySelectorAll(`[data-note="${note}"]`).forEach(k=>k.classList.remove('active')),180);
 }
 function acceptNote(note,hz=0){
-  $('heardNote').textContent=note;$('heardHz').textContent=hz?`${hz.toFixed(1)} Hz`:'SCREEN KEY';flashKey(note);
+  $('heardNote').textContent=note;$('heardHz').textContent=hz?`${hz.toFixed(1)} Hz`:'畫面琴鍵';flashKey(note);
   if(!state.running||state.paused||modeSelect.value==='free')return;
   const now=performance.now(); if(now-state.lastAccepted<110)return;
   const s=currentSong(), e=elapsed(); let best=-1,bestDelta=999;
@@ -223,8 +223,8 @@ $('pauseBtn').addEventListener('click',togglePause);
 $('resetBtn').addEventListener('click',resetGame);
 $('againBtn').addEventListener('click',startGame);
 inputSelect.addEventListener('change',()=>{
-  $('inputBadge').textContent=inputSelect.value==='mic'?'MIC MODE':'TOUCH MODE';
-  $('hint').textContent=inputSelect.value==='mic'?'請啟動 MIC，再開始挑戰。':'可以直接點下方琴鍵測試時間判定。';
+  $('inputBadge').textContent=inputSelect.value==='mic'?'麥克風模式':'觸控模式';
+  $('hint').textContent=inputSelect.value==='mic'?'請先啟動麥克風，再開始練習。':'可直接點下方琴鍵，測試音符與時間判定。';
 });
 function buildKeyboard(){
   const root=$('keyboard');let whitePos=0;
@@ -243,8 +243,8 @@ async function startMicrophone(){
     const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
     state.stream=stream;const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC();state.audio=ctx;await ctx.resume();
     const analyser=ctx.createAnalyser();analyser.fftSize=4096;analyser.smoothingTimeConstant=.12;ctx.createMediaStreamSource(stream).connect(analyser);
-    const buf=new Float32Array(analyser.fftSize);$('audioStatus').textContent='🟢 MIC LIVE';$('micBtn').textContent='MIC LIVE';
-    $('hint').textContent='麥克風已連線。音符會依歌曲時間持續跑動。';
+    const buf=new Float32Array(analyser.fftSize);$('audioStatus').textContent='🟢 麥克風已連線';$('micBtn').textContent='麥克風已連線';
+    $('hint').textContent='麥克風已連線，請跟著樂譜與時間軸進行練習。';
     const loop=()=>{
       analyser.getFloatTimeDomainData(buf);let rms=0;for(const v of buf)rms+=v*v;rms=Math.sqrt(rms/buf.length);
       $('levelMeter').style.width=`${Math.min(100,rms*700)}%`;
@@ -252,7 +252,7 @@ async function startMicrophone(){
       state.raf=requestAnimationFrame(loop);
     };
     if(state.raf)cancelAnimationFrame(state.raf);loop();
-  }catch(err){console.error(err);$('audioStatus').textContent='🔴 MIC ERROR';$('hint').textContent='無法取得麥克風權限。請使用 HTTPS 並允許麥克風。'}
+  }catch(err){console.error(err);$('audioStatus').textContent='🔴 麥克風錯誤';$('hint').textContent='無法取得麥克風權限，請使用 HTTPS 並允許麥克風。'}
 }
 $('micBtn').addEventListener('click',startMicrophone);
 function autoCorrelate(buffer,sampleRate){

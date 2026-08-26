@@ -4,28 +4,28 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#080510" />
-  <title>PIANO GAME ARCADE V0.3</title>
+  <title>PIANO LEARNING STUDIO V0.4</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="scanlines"></div>
-  <main class="arcade-shell">
+  <main class="arcade-shell learning-theme">
     <header class="marquee">
       <div class="marquee-light l1"></div><div class="marquee-light l2"></div><div class="marquee-light l3"></div>
       <div>
-        <p class="eyebrow">REAL PIANO ARCADE SYSTEM</p>
-        <h1>PIANO <span>RUSH</span></h1>
-        <p class="subtitle">真鋼琴 × 即時判定 × 街機節奏挑戰</p>
+        <p class="eyebrow">REAL PIANO LEARNING SYSTEM</p>
+        <h1>PIANO <span>STUDIO</span></h1>
+        <p class="subtitle">真鋼琴 × 即時判定 × 課堂式互動練習</p>
       </div>
       <div class="coin-panel">
         <span id="audioStatus">🎤 MIC OFF</span>
-        <strong>CREDIT 01</strong>
+        <strong>LESSON MODE</strong>
       </div>
     </header>
 
     <section class="machine-panel">
       <aside class="song-select panel">
-        <div class="panel-title">SELECT MUSIC</div>
+        <div class="panel-title">樂譜選擇</div>
         <div class="difficulty-tabs" id="difficultyTabs">
           <button type="button" data-level="BEGINNER">BEGINNER</button>
           <button type="button" data-level="EASY">EASY</button>
@@ -36,23 +36,23 @@
         <div class="library-meta"><span id="libraryCount">10 SONGS</span><span>50 TOTAL</span></div>
         <div id="songCards" class="song-cards"></div>
         <div class="mini-controls">
-          <label>MODE<select id="modeSelect"><option value="follow">FOLLOW ME</option><option value="free">FREE PLAY</option></select></label>
-          <label>INPUT<select id="inputSelect"><option value="mic">MICROPHONE</option><option value="screen">SCREEN KEYS</option></select></label>
+          <label>練習模式<select id="modeSelect"><option value="follow">跟彈練習</option><option value="free">自由彈奏</option></select></label>
+          <label>輸入方式<select id="inputSelect"><option value="mic">麥克風收音</option><option value="screen">畫面琴鍵</option></select></label>
         </div>
       </aside>
 
       <section class="game-screen panel">
         <div class="hud">
-          <div><span>SCORE</span><strong id="score">000000</strong></div>
-          <div><span>COMBO</span><strong id="combo">0</strong></div>
-          <div><span>ACCURACY</span><strong id="accuracy">--%</strong></div>
-          <div><span>TIME</span><strong id="timeLeft">00:00</strong></div>
+          <div><span>分數</span><strong id="score">000000</strong></div>
+          <div><span>連擊</span><strong id="combo">0</strong></div>
+          <div><span>正確率</span><strong id="accuracy">--%</strong></div>
+          <div><span>時間</span><strong id="timeLeft">00:00</strong></div>
         </div>
 
         <div class="stage">
           <div class="stage-glow"></div>
           <div class="song-banner">
-            <small>NOW PLAYING</small>
+            <small>目前練習</small>
             <h2 id="songTitle">Ode to Joy</h2>
             <div class="song-info-row">
               <div id="difficulty" class="difficulty">★★★ NORMAL</div>
@@ -72,9 +72,9 @@
           </div>
 
           <div class="live-readout">
-            <div><span>TARGET</span><strong id="expectedNote">—</strong><small id="expectedHz">WAIT</small></div>
+            <div><span>目標音符</span><strong id="expectedNote">—</strong><small id="expectedHz">WAIT</small></div>
             <div class="vs">VS</div>
-            <div><span>YOU PLAYED</span><strong id="heardNote">—</strong><small id="heardHz">0 Hz</small></div>
+            <div><span>你彈出的音</span><strong id="heardNote">—</strong><small id="heardHz">0 Hz</small></div>
           </div>
 
           <div class="progress-track"><div id="progressBar"></div></div>
@@ -88,30 +88,30 @@
       </section>
 
       <aside class="side-panel panel">
-        <div class="panel-title">PLAYER 1</div>
+        <div class="panel-title">學習資訊</div>
         <div class="rank-orb" id="rankOrb">S</div>
         <div class="stars" id="stars">☆☆☆</div>
-        <div class="mission-box"><span>MISSION</span><strong>90%+</strong><small>Get 3 Stars!</small></div>
-        <button id="micBtn" class="arcade-btn mic">MIC ON</button>
-        <button id="startBtn" class="arcade-btn start">START</button>
-        <button id="pauseBtn" class="arcade-btn reset">PAUSE</button>
-        <button id="resetBtn" class="arcade-btn reset">RESET</button>
-        <p class="hint" id="hint">先啟動麥克風，再按 START。</p>
+        <div class="mission-box"><span>本次目標</span><strong>90%+</strong><small>獲得 3 顆星</small></div>
+        <button id="micBtn" class="arcade-btn mic">啟動麥克風</button>
+        <button id="startBtn" class="arcade-btn start">開始練習</button>
+        <button id="pauseBtn" class="arcade-btn reset">暫停</button>
+        <button id="resetBtn" class="arcade-btn reset">重新開始</button>
+        <p class="hint" id="hint">先啟動麥克風，再按「開始練習」。</p>
       </aside>
     </section>
 
     <section class="keyboard-panel panel">
-      <div class="keyboard-head"><div><span>LIVE PIANO INPUT</span><h3>真實鋼琴同步鍵盤</h3></div><b id="inputBadge">MIC MODE</b></div>
+      <div class="keyboard-head"><div><span>LIVE PIANO INPUT</span><h3>真實鋼琴同步鍵盤</h3></div><b id="inputBadge">麥克風模式</b></div>
       <div id="keyboard" class="keyboard"></div>
     </section>
 
     <section class="result-overlay" id="resultCard" hidden>
       <div class="result-box">
-        <small>STAGE CLEAR</small>
+        <small>練習完成</small>
         <h2 id="resultRank">RANK S</h2>
         <div id="resultStars" class="result-stars">★★★</div>
         <p id="resultText"></p>
-        <button id="againBtn" class="arcade-btn start">PLAY AGAIN</button>
+        <button id="againBtn" class="arcade-btn start">再練一次</button>
       </div>
     </section>
 

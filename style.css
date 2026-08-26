@@ -26,3 +26,79 @@
 .time-warning{animation:timePulse .7s infinite alternate}
 @keyframes timePulse{from{opacity:1}to{opacity:.45}}
 @media (max-width:900px){.hud{grid-template-columns:repeat(2,minmax(0,1fr))}.song-cards{max-height:260px}}
+
+
+/* V0.4 learning classroom theme */
+:root{--cyan:#5aa4f5;--pink:#6d8ee8;--violet:#8ba5f8;--yellow:#ffcf66;--green:#4dbb8a;--red:#d46b72;--panel:#ffffff;--line:#d7e0f5}
+html,body{background:linear-gradient(180deg,#eef4ff 0,#f7fbff 50%,#eef5fb 100%)}
+body{color:#2b3a55}
+.scanlines{display:none}
+.learning-theme .marquee{border:1px solid #cfdcf6;background:linear-gradient(180deg,#ffffff,#f3f7ff);box-shadow:0 10px 30px rgba(72,103,160,.12)}
+.learning-theme .marquee:before{display:none}
+.learning-theme .marquee h1{font-style:normal;letter-spacing:-.03em;text-shadow:none;color:#2f5ea8}
+.learning-theme .marquee h1 span{color:#7a97ea;text-shadow:none}
+.learning-theme .eyebrow{color:#6b85b9}
+.learning-theme .subtitle{color:#56698f}
+.learning-theme .coin-panel span{color:#4a8b78}
+.learning-theme .coin-panel strong{color:#6b85b9}
+.learning-theme .marquee-light{display:none}
+.learning-theme .panel{border:1px solid #dbe5f7;background:linear-gradient(180deg,#ffffff,#f7faff);box-shadow:0 8px 24px rgba(77,104,157,.08)}
+.learning-theme .panel-title{color:#4e6ea8;background:linear-gradient(90deg,#edf3ff,#f8fbff);border-bottom:1px solid #e3ecfb}
+.learning-theme .song-card{border:1px solid #dce5f4;background:#fff;color:#35507a}
+.learning-theme .song-card small,.learning-theme .song-card .meta,.learning-theme .song-card .number,.learning-theme .library-meta,.learning-theme .mini-controls label{color:#7083a8}
+.learning-theme .song-card.active{border-color:#8badf8;box-shadow:0 8px 18px rgba(113,146,222,.18);background:linear-gradient(90deg,#f3f7ff,#ffffff);transform:none}
+.learning-theme .song-card.active:after{color:#6d8ee8}
+.learning-theme .mini-controls{border-top:1px solid #e2e9f8}
+.learning-theme .mini-controls select{background:#fff;color:#39527b;border:1px solid #d6e0f3}
+.learning-theme .difficulty-tabs button{background:#fff;color:#5e7297;border:1px solid #d5e0f3}
+.learning-theme .difficulty-tabs button.active{background:linear-gradient(135deg,#8fb4ff,#b6caff);box-shadow:0 6px 16px rgba(112,143,223,.2)}
+.learning-theme .hud{background:#f7faff;border-bottom:1px solid #e2ebf8}
+.learning-theme .hud div{border-right:1px solid #e2ebf8}
+.learning-theme .hud span{color:#7890b4}
+.learning-theme .hud strong{color:#28476f;text-shadow:none}
+.learning-theme .stage{padding:18px;background:linear-gradient(180deg,#fff,#fbfdff)}
+.learning-theme .stage-glow{display:none}
+.learning-theme .song-banner small{color:#7a92c1}
+.learning-theme .song-banner h2{color:#2f4a73}
+.learning-theme .difficulty{color:#5776ad;border:1px solid #d4dff4;background:#f7faff}
+.learning-theme .note-highway{border:1px solid #dce5f5;background:linear-gradient(180deg,#f8fbff 0,#eef4fd 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+.learning-theme .lane-grid{background:linear-gradient(90deg,transparent 24.8%,rgba(92,121,173,.08) 25%,transparent 25.2%,transparent 49.8%,rgba(92,121,173,.08) 50%,transparent 50.2%,transparent 74.8%,rgba(92,121,173,.08) 75%,transparent 75.2%),linear-gradient(180deg,transparent,rgba(88,126,192,.04))}
+.learning-theme .lane-grid:after{background:repeating-linear-gradient(to bottom,transparent 0 45px,rgba(92,121,173,.08) 46px 47px)}
+.learning-theme .fall-note{background:linear-gradient(90deg,#93b8ff,#c3d6ff);color:#2a4770;box-shadow:0 6px 14px rgba(127,153,214,.25)}
+.learning-theme .hit-line{background:linear-gradient(90deg,transparent,#8aa9ec,#f8fbff,#8aa9ec,transparent);box-shadow:none}
+.learning-theme .hit-line span{border:2px solid #8aa9ec;box-shadow:none;background:#fff}
+.learning-theme .judge{color:#4b6da8;text-shadow:none}
+.learning-theme .judge.good{color:#3d996d;text-shadow:none}
+.learning-theme .judge.bad{color:#cf6875;text-shadow:none}
+.learning-theme .combo-burst{color:#5a86d6;text-shadow:none}
+.learning-theme .live-readout>div:not(.vs){background:#fff;border:1px solid #dfe8f7}
+.learning-theme .live-readout span,.learning-theme .vs,.learning-theme .live-readout small{color:#7e90b2}
+.learning-theme .live-readout strong{color:#2c486f}
+.learning-theme .progress-track{background:#eaf0f9}
+.learning-theme .progress-track div{background:linear-gradient(90deg,#8db4ff,#a8c2ff,#c7d8ff);box-shadow:none}
+.learning-theme .progress-text{color:#7488ae}
+.learning-theme .progress-text b{color:#2f4a72}
+.learning-theme .meter{background:#e8eef8}
+.learning-theme .side-panel{background:linear-gradient(180deg,#ffffff,#f8fbff)}
+.learning-theme .rank-orb{border:4px solid #bad0ff;color:#4d6faa;background:radial-gradient(circle,#f8fbff,#eaf1ff 72%);box-shadow:none}
+.learning-theme .stars{color:#ffbf4f}
+.learning-theme .mission-box{border:1px solid #e0e9f8;background:#fff}
+.learning-theme .mission-box span,.learning-theme .mission-box small,.learning-theme .hint{color:#7488af}
+.learning-theme .mission-box strong{color:#5276bd}
+.learning-theme .arcade-btn{box-shadow:none;border:1px solid rgba(0,0,0,.04)}
+.learning-theme .arcade-btn.mic{background:linear-gradient(180deg,#dff3ea,#cfeee1);color:#2f7d62}
+.learning-theme .arcade-btn.start{background:linear-gradient(180deg,#a9c3ff,#8fb0ff);color:#23416c}
+.learning-theme .arcade-btn.reset{background:linear-gradient(180deg,#eef3fb,#dfe8f6);color:#4c6288}
+.learning-theme .keyboard-panel{background:linear-gradient(180deg,#ffffff,#f8fbff)}
+.learning-theme .keyboard-head span{color:#6f88b9}
+.learning-theme .keyboard-head h3{color:#304a74}
+.learning-theme .keyboard-head b{border:1px solid #d8e3f7;color:#5479ba;background:#fff}
+.learning-theme .key{border:1px solid #cad4e6;background:linear-gradient(#ffffff,#eef2f8);color:#5a6c87}
+.learning-theme .key.active{background:linear-gradient(#fff5c8,#ffe39b);box-shadow:0 8px 16px rgba(255,213,102,.22)}
+.learning-theme .black{background:linear-gradient(#6e7f9e,#42526f);color:#e9efff;border:1px solid #36435a}
+.learning-theme .black.active{background:linear-gradient(#89aef8,#5e89e6);box-shadow:0 8px 16px rgba(107,144,226,.3)}
+.learning-theme .countdown{background:rgba(237,243,255,.92);color:#40639a;text-shadow:none}
+.learning-theme .result-overlay{background:rgba(239,244,255,.92)}
+.learning-theme .result-box{border:1px solid #d8e4f7;background:linear-gradient(180deg,#ffffff,#f8fbff);box-shadow:0 16px 36px rgba(91,118,171,.16)}
+.learning-theme .result-box small{color:#7089ba}
+.learning-theme .result-box h2,.learning-theme .result-stars,.learning-theme .result-box p{color:#35517a;text-shadow:none}
