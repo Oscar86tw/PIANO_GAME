@@ -7,6 +7,29 @@
   const layer=$('scoreLayer'),song=await Practice.loadSong(id);
 
   let showFingering=true,demoOn=false,inputConnected=false,practiceRunning=false,paused=false;
+
+  function setupAudioMixer(){
+    const v=AudioEngine.getVolumes();
+    $('pianoVolume').value=Math.round(v.piano*100);
+    $('metroVolume').value=Math.round(v.metronome*100);
+    $('masterVolume').value=Math.round(v.master*100);
+
+    const update=()=>{
+      const piano=Number($('pianoVolume').value)/100;
+      const metronome=Number($('metroVolume').value)/100;
+      const master=Number($('masterVolume').value)/100;
+      AudioEngine.setVolume('piano',piano);
+      AudioEngine.setVolume('metronome',metronome);
+      AudioEngine.setVolume('master',master);
+      $('pianoVolumeValue').textContent=Math.round(piano*100)+'%';
+      $('metroVolumeValue').textContent=Math.round(metronome*100)+'%';
+      $('masterVolumeValue').textContent=Math.round(master*100)+'%';
+    };
+    ['pianoVolume','metroVolume','masterVolume'].forEach(id=>$(id).addEventListener('input',update));
+    update();
+  }
+  setupAudioMixer();
+
   let effectiveBpm=Number(song.bpm)||80;
 
   function renderScore(){
@@ -53,10 +76,17 @@
   async function beginFromStart(){
     effectiveBpm=calcEffectiveBpm();
     Practice.reset(layer);TransportMaster.stop();
+
+    $('practiceStatus').textContent='準備音色與時間軸…';
+    await AudioEngine.preload();
+    const health=AudioEngine.health();
+    $('audioHealth').textContent=health.loadedSamples?`${health.loadedSamples}/${health.expectedSamples}`:'Fallback';
+
+    const timeline=Practice.getTimeline();
     await TransportMaster.start(effectiveBpm,0);
-    ScoringEngine.start(song,effectiveBpm,{transport:TransportMaster,events:Practice.getActiveEvents()});
+    ScoringEngine.start(song,effectiveBpm,{transport:TransportMaster,timeline});
     practiceRunning=true;paused=false;Practice.start(layer);
-    if(demoOn)DemoScheduler.enable(Practice.getActiveEvents());
+    if(demoOn)await DemoScheduler.enable(timeline);
     if(Metronome.enabled)Metronome.resetSchedule();
     $('practiceStatus').textContent=inputConnected?'PLAYING · 同步即時判定':'PLAYING · 同步播放';
     $('practiceStatus').className='status '+(inputConnected?'ok':'');
@@ -65,7 +95,7 @@
   async function resumePractice(){
     effectiveBpm=calcEffectiveBpm();TransportMaster.setBpm(effectiveBpm);
     await TransportMaster.resume();practiceRunning=true;paused=false;Practice.start(layer);
-    if(demoOn){DemoScheduler.enabled=true;DemoScheduler.resetSchedule();DemoScheduler.scheduler()}
+    if(demoOn){DemoScheduler.enabled=true;DemoScheduler.timeline=Practice.getTimeline();DemoScheduler.resetSchedule();DemoScheduler.scheduler()}
     $('practiceStatus').textContent='PLAYING · 已同步繼續';$('practiceStatus').className='status ok';
   }
 
@@ -92,7 +122,7 @@
   $('pianoDemoBtn').onclick=async()=>{
     demoOn=!demoOn;$('pianoDemoBtn').textContent='譜面鋼琴聲：'+(demoOn?'開（同步）':'關');$('pianoDemoBtn').className='btn'+(demoOn?' primary':'');
     if(practiceRunning){
-      if(demoOn)await DemoScheduler.enable(Practice.getActiveEvents());else DemoScheduler.disable();
+      if(demoOn)await DemoScheduler.enable(Practice.getTimeline());else DemoScheduler.disable();
     }else if(!demoOn)DemoScheduler.disable();
   };
 
@@ -132,6 +162,13 @@
   function syncHud(){
     $('masterBeat').textContent=TransportMaster.currentBeat().toFixed(2);$('masterBpm').textContent=Math.round(calcEffectiveBpm());requestAnimationFrame(syncHud);
   }
+  Events.on('audio:health',h=>{
+    $('audioHealth').textContent=h.loadedSamples?`${h.loadedSamples}/${h.expectedSamples}`:'Fallback';
+  });
+  AudioEngine.preload().then(()=>{
+    const h=AudioEngine.health();
+    $('audioHealth').textContent=h.loadedSamples?`${h.loadedSamples}/${h.expectedSamples}`:'Fallback';
+  }).catch(()=>{$('audioHealth').textContent='Fallback'});
   syncHud();applyTempo();
 
   const virtual=document.createElement('div');virtual.className='virtual-input-row';virtual.innerHTML='<small>手機測試琴鍵：</small>'+['C4','D4','E4','F4','G4','A4','B4','C5'].map(n=>`<button type="button" class="btn" data-vnote="${n}">${n}</button>`).join('');

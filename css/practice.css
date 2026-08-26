@@ -28,3 +28,14 @@
 .sync-strip{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.sync-pill{font-size:.65rem;border-radius:999px;padding:5px 8px;background:#eef7f8;color:#47747c}
 @media(max-width:850px){.practice-settings{grid-template-columns:1fr 1fr}.result-panel{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.input-monitor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* V5.4 event-lock */
+.playhead{left:22%;transform:translateX(-1.5px)}
+.note[data-start-beat]{will-change:transform}
+
+.audio-mixer{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:8px;margin-top:10px}
+.audio-mixer .field{background:#fafbfc;border:1px solid #e2e6ef;border-radius:10px;padding:9px}
+.audio-mixer input[type="range"]{width:100%}
+.audio-mixer label{display:flex;justify-content:space-between;gap:8px}
+.audio-mixer b{color:#6658c9}
+@media(max-width:760px){.audio-mixer{grid-template-columns:1fr}}

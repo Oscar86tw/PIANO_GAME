@@ -1,4 +1,4 @@
-# V5.3 Clean Architecture
+# V5.5 Clean Architecture
 
 ## Core
 - storage.js
@@ -31,20 +31,20 @@
 - 錯誤 → errors
 
 
-## V5.3 Polyphony ownership
+## V5.5 Polyphony ownership
 - MIDI polyphony parsing belongs to `js/modules/importer/`
 - visual hand/chord rendering belongs to `js/modules/practice/`
 - core remains unchanged
 
 
-## V5.3 Training ownership
+## V5.5 Training ownership
 - `pages/training.html`：訓練頁
 - `js/pages/training.js`：音階 / 視奏 / 聽奏 / 星星 / 曲庫分類
 - `data/scales.json`：音階資料
 - `practice`：節拍器自動輔助、指法切換、星星評分
 
 
-## V5.3 New modules
+## V5.5 New modules
 - `js/modules/input/index.js` — MIDI / microphone / virtual input
 - `js/modules/scoring/index.js` — pitch + rhythm + stars
 - `js/modules/metronome/index.js` — audible Web Audio metronome
@@ -52,7 +52,7 @@
 Practice owns display only; Input owns hardware; Scoring owns judgment; Metronome owns click scheduling.
 
 
-## V5.3 Progression
+## V5.5 Progression
 - `data/curriculum.json` — 10級到1級課程資料
 - `js/modules/progression/index.js` — 星星 / 解鎖 / 每日分鐘
 - `pages/course.html` — 課程路線 UI
@@ -61,21 +61,21 @@ Practice owns display only; Input owns hardware; Scoring owns judgment; Metronom
 Practice / Training only award results; Progression owns unlock rules.
 
 
-## V5.3 Formal Pedagogy
+## V5.5 Formal Pedagogy
 - `data/pedagogy.json` — formal teaching domains and mastery semantics
 - `data/curriculum.json` — per-grade technique/rhythm/reading/aural/repertoire requirements
 - Progression uses domain gates, not total-stars-only unlocking
 - Training reads the selected grade specification to generate sight-reading and ear-training difficulty
 
 
-## V5.3 Lesson Content
+## V5.5 Lesson Content
 - `data/lesson-bank.json` — actual lesson content by grade
 - `js/modules/lesson-engine/index.js` — grade-based exercise generator
 - Course displays real content
 - Training generates sight-reading / ear-training from the lesson bank
 
 
-## V5.3 Formal Lesson Session
+## V5.5 Formal Lesson Session
 - `LessonEngine` owns lesson content.
 - `LessonSession` owns required class-step state and review queue.
 - `Progression` owns stars/unlocks.
@@ -83,7 +83,7 @@ Practice / Training only award results; Progression owns unlock rules.
 - Course routes into Formal Lesson before Practice/Test.
 
 
-## V5.3 Complete Academy Modules
+## V5.5 Complete Academy Modules
 - academy: global curriculum / daily progress
 - lesson-session: formal lesson steps
 - lesson-engine: lesson content generation
@@ -103,21 +103,21 @@ New pages:
 - teacher.html
 
 
-## V5.3 Large Score Library
+## V5.5 Large Score Library
 - `data/scores-1000.json`: 1000 complete original pedagogical scores
 - `data/scores-1000-index.json`: category manifest
 - Library lazy-ish in-memory merge with existing/imported scores
 - UI pagination: 30 scores per page
 
 
-## V5.3 Score Renderer
+## V5.5 Score Renderer
 - `ScoreRenderer` owns score-to-staff visualization and measure splitting.
 - `Library` owns score discovery.
 - `Practice` can now limit practice to selected measure ranges.
 - Score Detail owns favorites / recents and range launch.
 
 
-## V5.3 Time Architecture
+## V5.5 Time Architecture
 AudioContext.currentTime
 → TransportMaster beat
 → Practice visual position
@@ -127,9 +127,29 @@ AudioContext.currentTime
 
 No independent visual/performance timer is allowed to define musical time.
 
-## V5.3 Staff Geometry
+## V5.5 Staff Geometry
 StaffGeometry is the sole geometry source for:
 - practice grand staff
 - score viewer
 - note vertical position
 - ledger-line threshold
+
+
+## V5.5 Event Lock
+EventTimeline is the single event timing source:
+`{ index, startBeat, duration, endBeat, note }`
+
+Practice visual, DemoScheduler and ScoringEngine consume the same timeline.
+
+## V5.5 Audio Health
+AudioEngine preloads samples in parallel and exposes health().
+Synth fallback guarantees audible output if sample loading fails.
+
+
+## V5.5 Audio Mixer
+Audio routing:
+- Piano samples / synth fallback → pianoGain
+- Metronome click → metroGain
+- both buses → masterGain → destination
+
+Volume settings persist independently of tempo/transport state.
