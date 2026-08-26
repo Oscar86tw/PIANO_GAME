@@ -1,5 +1,12 @@
-
-const preview=document.getElementById('preview'),photoInput=document.getElementById('photos');
+const preview=document.getElementById('preview');
+const cameraInput=document.getElementById('cameraInput');
+const galleryInput=document.getElementById('galleryInput');
+const cameraBtn=document.getElementById('cameraBtn');
+const cameraNextBtn=document.getElementById('cameraNextBtn');
+const galleryBtn=document.getElementById('galleryBtn');
+const clearPhotosBtn=document.getElementById('clearPhotosBtn');
+const photoCountBadge=document.getElementById('photoCountBadge');
+const cameraHint=document.getElementById('cameraHint');
 const syncBuilderSection=document.getElementById('syncBuilderSection');
 const syncBuilderTitle=document.getElementById('syncBuilderTitle');
 const syncTemplate=document.getElementById('syncTemplate');
@@ -12,17 +19,60 @@ const syncSave=document.getElementById('syncSave');
 const syncCancel=document.getElementById('syncCancel');
 const syncBuilderStatus=document.getElementById('syncBuilderStatus');
 let activePhotoId='';
+let pendingPhotos=[];
 
-photoInput.onchange=()=>{
+function updatePhotoStatus(){
+  photoCountBadge.textContent=`${pendingPhotos.length} 頁`;
+  cameraHint.textContent=pendingPhotos.length?`已加入 ${pendingPhotos.length} 頁，可繼續拍下一頁或調整順序`:'尚未加入照片';
+  savePhoto.disabled=pendingPhotos.length===0;
+  cameraBtn.textContent=pendingPhotos.length?'📷 重新拍第一頁':'📷 拍第一頁';
+}
+function addFiles(files,replaceFirst=false){
+  const rows=[...files].filter(f=>f.type.startsWith('image/'));
+  if(!rows.length)return;
+  if(replaceFirst&&pendingPhotos.length)pendingPhotos[0]=rows[0];
+  else pendingPhotos.push(...rows);
+  renderPendingPhotos();
+}
+function movePhoto(index,delta){
+  const ni=index+delta;if(ni<0||ni>=pendingPhotos.length)return;
+  [pendingPhotos[index],pendingPhotos[ni]]=[pendingPhotos[ni],pendingPhotos[index]];
+  renderPendingPhotos();
+}
+function removePending(index){pendingPhotos.splice(index,1);renderPendingPhotos()}
+function renderPendingPhotos(){
   preview.innerHTML='';
-  [...photoInput.files].forEach((f,i)=>{
+  pendingPhotos.forEach((f,i)=>{
     const d=document.createElement('div');d.className='preview-card';
-    const img=document.createElement('img');img.src=URL.createObjectURL(f);
-    img.onload=()=>URL.revokeObjectURL(img.src);
-    d.append(img);
-    d.insertAdjacentHTML('beforeend',`<div>第 ${i+1} 頁 · ${f.name}</div>`);
+    const img=document.createElement('img'),url=URL.createObjectURL(f);img.src=url;img.onload=()=>URL.revokeObjectURL(url);d.append(img);
+    d.insertAdjacentHTML('beforeend',`<div class="preview-meta">第 ${i+1} 頁 · ${f.name||'相機照片'}</div><div class="preview-actions"><button class="up">← 前移</button><button class="down">後移 →</button><button class="bad remove">刪除</button></div>`);
+    d.querySelector('.up').onclick=()=>movePhoto(i,-1);
+    d.querySelector('.down').onclick=()=>movePhoto(i,1);
+    d.querySelector('.remove').onclick=()=>removePending(i);
     preview.append(d);
   });
+  updatePhotoStatus();
+}
+
+cameraBtn.onclick=()=>{cameraInput.dataset.mode=pendingPhotos.length?'replace-first':'append';cameraInput.click()};
+cameraNextBtn.onclick=()=>{cameraInput.dataset.mode='append';cameraInput.click()};
+galleryBtn.onclick=()=>galleryInput.click();
+cameraInput.onchange=()=>{if(cameraInput.files.length)addFiles(cameraInput.files,cameraInput.dataset.mode==='replace-first');cameraInput.value=''};
+galleryInput.onchange=()=>{if(galleryInput.files.length)addFiles(galleryInput.files,false);galleryInput.value=''};
+clearPhotosBtn.onclick=()=>{if(pendingPhotos.length&&confirm('清除這次尚未加入曲庫的所有照片？')){pendingPhotos=[];renderPendingPhotos()}};
+
+savePhoto.onclick=async()=>{
+  if(!pendingPhotos.length)return alert('請先拍照或從相簿加入樂譜');
+  savePhoto.disabled=true;
+  try{
+    const saved=await ScoreImporter.savePhotoToLibrary({title:title.value,author:author.value},pendingPhotos);
+    pendingPhotos=[];renderPendingPhotos();title.value='';author.value='';
+    renderPhotos();
+    alert(`已加入曲庫：${saved.title}。現在可以直接按「轉同步版」。`);
+  }catch(e){
+    alert('照片加入曲庫失敗：'+e.message);
+    ErrorClient.report('PhotoImport',e,{title:'照片加入曲庫失敗'});
+  }finally{updatePhotoStatus()}
 };
 
 function renderPhotos(){
@@ -71,20 +121,6 @@ function openBuilder(song){
 }
 function closeBuilder(){activePhotoId='';syncBuilderSection.style.display='none'}
 
-savePhoto.onclick=async()=>{
-  if(!photoInput.files.length)return alert('請先加入照片');
-  savePhoto.disabled=true;
-  try{
-    await ScoreImporter.savePhotoToLibrary({title:title.value,author:author.value},photoInput.files);
-    photoInput.value='';preview.innerHTML='';title.value='';author.value='';
-    renderPhotos();
-    alert('已拍照上傳，並加入曲庫。現在可以按「轉同步版」。');
-  }catch(e){
-    alert('照片加入曲庫失敗：'+e.message);
-    ErrorClient.report('PhotoImport',e,{title:'照片加入曲庫失敗'});
-  }finally{savePhoto.disabled=false}
-};
-
 syncSave.onclick=()=>{
   if(!activePhotoId)return;
   try{
@@ -124,3 +160,5 @@ digitalScoreFile.onchange=async()=>{
 };
 
 renderPhotos();renderDigital();
+
+updatePhotoStatus();

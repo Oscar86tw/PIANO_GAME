@@ -1,2 +1,24 @@
 
 .dropzone{border:2px dashed #d9deea;border-radius:16px;padding:22px;text-align:center;background:#fbfbfd}.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}.preview-card{border:1px solid #e2e6ef;border-radius:12px;overflow:hidden;background:#fff}.preview-card img{display:block;width:100%;height:180px;object-fit:contain;background:#f0f2f5}.preview-card div{padding:8px;font-size:.68rem;color:#727d92}
+
+/* V6.3 Mobile camera workflow */
+.mobile-camera-card{overflow:hidden}
+.camera-actions{display:flex;gap:8px;flex-wrap:wrap}
+.camera-main{min-width:150px}
+.camera-status{display:flex;gap:8px;align-items:center;margin-top:10px;color:#737e91;font-size:.72rem}
+#photoCountBadge{background:#f1efff;color:#6658c9;border-radius:999px;padding:5px 9px;font-weight:900}
+.camera-preview-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.preview-card{position:relative}
+.preview-card .preview-meta{padding:8px;font-size:.68rem;color:#727d92}
+.preview-card .preview-actions{display:flex;gap:5px;padding:0 8px 8px}
+.preview-card .preview-actions button{flex:1;padding:6px 5px;border:1px solid #dfe3ec;border-radius:8px;background:#fff;color:#59647a;font-size:.65rem;font-weight:800}
+.preview-card .preview-actions button.bad{color:#a44c56}
+.camera-save-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+.camera-save-row span{color:#818b9d;font-size:.72rem}
+@media(max-width:560px){
+ .camera-actions{display:grid;grid-template-columns:1fr 1fr}
+ .camera-main{grid-column:1/-1;font-size:1rem;padding:12px}
+ .camera-preview-grid{grid-template-columns:1fr 1fr}
+ .preview-card img{height:210px}
+ .camera-save-row .btn{width:100%;padding:12px}
+}

@@ -214,3 +214,10 @@ Photo-only scores are viewable immediately; playable EventTimeline data can be a
 - `Practice.updateBeatGradient()` computes note color from `startBeat - currentBeat`.
 - Cue is purely visual and derives from TransportMaster beat; it does not own time.
 - No animation pulses or flashes are used.
+
+
+## V6.3 Mobile Camera UX
+- cameraInput: capture=environment 單頁拍攝。
+- galleryInput: 多頁相簿選取。
+- pendingPhotos: 尚未存入曲庫的本次照片佇列，可排序與刪除。
+- savePhotoToLibrary() 繼續負責壓縮並寫入 photo-library-v61。

@@ -1,6 +1,6 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>匯入樂譜 · V6.1</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/import.css"></head><body data-page="import">
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>匯入樂譜 · V6.3</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/import.css"></head><body data-page="import">
 <header class="topbar">
-<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V6.1</span></div>
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V6.3</span></div>
 <nav class="nav">
 <a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
 <a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
@@ -8,7 +8,19 @@
 <a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
 </nav></header>
 <main class="page">
-<section class="card"><div class="kicker">PHOTO SCORE IMPORT</div><h1>拍照 / 匯入樂譜</h1><p>手機可以直接拍照上傳到曲庫。照片會先保存成教材頁面，再可一鍵轉成「同步練習版」。</p><div class="grid grid-2"><div class="field"><label>曲名</label><input id="title"></div><div class="field"><label>作者 / 來源</label><input id="author"></div></div><div class="dropzone" style="margin-top:12px"><input id="photos" type="file" accept="image/*" multiple capture="environment"><p>直接拍照或一次選多張圖片（手機可直接開相機）</p></div><div id="preview" class="preview-grid"></div><div style="margin-top:10px"><button id="savePhoto" class="btn primary">加入我的拍照樂譜</button></div></section>
+<section class="card mobile-camera-card"><div class="kicker">MOBILE PHOTO SCORE</div><h1>📷 手機拍照樂譜</h1><p>先拍第一頁，再用「拍下一頁」連續加入。確認頁面順序後，一鍵加入曲庫，再轉成同步練習版。</p>
+<div class="grid grid-2"><div class="field"><label>曲名</label><input id="title" placeholder="例如：月光奏鳴曲"></div><div class="field"><label>作者 / 來源</label><input id="author" placeholder="例如：學校教材 / 老師講義"></div></div>
+<input id="cameraInput" type="file" accept="image/*" capture="environment" hidden>
+<input id="galleryInput" type="file" accept="image/*" multiple hidden>
+<div class="camera-actions" style="margin-top:12px">
+<button id="cameraBtn" class="btn primary camera-main">📷 拍第一頁</button>
+<button id="cameraNextBtn" class="btn">＋ 拍下一頁</button>
+<button id="galleryBtn" class="btn">🖼️ 從相簿選多頁</button>
+<button id="clearPhotosBtn" class="btn bad">清除本次照片</button>
+</div>
+<div class="camera-status"><span id="photoCountBadge">0 頁</span><span id="cameraHint">尚未加入照片</span></div>
+<div id="preview" class="preview-grid camera-preview-grid"></div>
+<div class="camera-save-row"><button id="savePhoto" class="btn primary" disabled>加入曲庫</button><span>加入後可立即按「轉同步版」</span></div></section>
 <section class="card" style="margin-top:12px">
 <div class="kicker">MUSICXML / MIDI</div><h2>數位樂譜匯入 · 雙手 / 和弦</h2>
 <p>選擇 MusicXML / XML / MID / MIDI，解析成功後直接加入 V4 樂譜庫。MIDI 同時間多音會保留成和弦，並依中央 C 分成左右手。</p>
