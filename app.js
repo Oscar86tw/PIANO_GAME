@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V2.9: 216 built-in pedagogical scores ----------
+// ---------- V3.0: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V2.9: full-length repertoire collections ----------
+// ---------- V3.0: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -353,7 +353,7 @@ const SCHOOL_IMPORT_SLOTS=[
   '老師指定曲 01','老師指定曲 02','老師指定曲 03','老師指定曲 04'
 ];
 
-// ---------- V2.9: generated left-hand accompaniment ----------
+// ---------- V3.0: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -595,7 +595,7 @@ if(songCountEl) songCountEl.textContent=`${library.length} 份內建＋Disney �
 
 
 /* ==========================================================
-   V2.9 Photo Score Import
+   V3.0 Photo Score Import
    Photos/PDFs are persisted in IndexedDB because localStorage
    is too small for image blobs.
    ========================================================== */
@@ -1195,7 +1195,7 @@ let state = {
   speed:1,mode:'play',sessionMode:'practice',examLocked:false,lastExamResult:null,hand:'right',micStream:null,audioCtx:null,analyser:null,
   audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,metroScheduler:null,nextMetroBeat:0,assistTimer:null,assistBeat:0,
   judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,lastMasterBeat:-1,
-  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,eventTimeline:[],rightTimeline:[],leftTimeline:[],countInBeats:0,loopMeasure:false,demoSoundOn:false,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoScheduled:new Set(),demoVolume:0.45,pianoVoices:new Set(),inputMode:null,midiAccess:null,midiInputs:[],midiChordNotes:new Set(),midiChordStart:null,midiChordTimer:null,judgedMidiGroups:new Set()
+  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,eventTimeline:[],rightTimeline:[],leftTimeline:[],countInBeats:0,loopMeasure:false,demoSoundOn:false,pianoVoice:'studio',pianoQuality:'studio',sustainPedal:false,softPedal:false,resonanceOn:true,maxPolyphony:64,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoScheduled:new Set(),demoVolume:0.45,pianoVoices:new Set(),inputMode:null,midiAccess:null,midiInputs:[],midiChordNotes:new Set(),midiChordStart:null,midiChordTimer:null,judgedMidiGroups:new Set()
 };
 
 function showView(name){
@@ -1850,6 +1850,22 @@ $('sessionModeSelect').addEventListener('change',()=>{
   renderExamResult();
 });
 $('practiceMode').addEventListener('change',()=>{state.mode=$('practiceMode').value;});
+
+$('pianoVoiceSelect').addEventListener('change',()=>{
+  setPianoVoice($('pianoVoiceSelect').value);
+});
+$('pianoQualitySelect').addEventListener('change',()=>{
+  setPianoQuality($('pianoQualitySelect').value);
+});
+try{
+  setPianoVoice(localStorage.getItem('pianoVoiceV30')||'studio',false);
+  setPianoQuality(localStorage.getItem('pianoQualityV30')||'studio',false);
+}catch(e){
+  setPianoVoice('studio',false);
+  setPianoQuality('studio',false);
+}
+updatePianoEngineStatus();
+
 $('handSelect').addEventListener('change',()=>{
   state.hand=$('handSelect').value;
   state.demoScheduled=new Set();
@@ -2013,7 +2029,7 @@ function playLocalPiano(note,velocity=0.85,duration=1.1){
   src.buffer=buffer;
   src.playbackRate.value=Math.pow(2,(targetMidi-sample.midi)/12);
   gain.gain.value=Math.max(0,Math.min(1,state.demoVolume))*velocity;
-  src.connect(gain).connect(ctx.destination);
+  connectPianoVoiceChain(ctx,src,gain,now);
 
   const now=ctx.currentTime;
   src.start(now);
@@ -2026,9 +2042,10 @@ function playLocalPiano(note,velocity=0.85,duration=1.1){
   src.onended=()=>state.pianoVoices.delete(src);
 }
 
-function playLocalPianoAt(note,when,velocity=0.85,duration=1.1){
+function playLocalPianoAt(note,when,velocity=0.85,duration=1.1,midiVelocity=96){
   if(!state.demoSoundOn || !state.pianoReady) return;
   const ctx=ensureAudioContext();
+  const cfg=currentPianoVoice();
   const targetMidi=noteToMidi(note);
   const sample=nearestPianoSample(targetMidi);
   const buffer=state.pianoBuffers.get(sample.midi);
@@ -2037,15 +2054,90 @@ function playLocalPianoAt(note,when,velocity=0.85,duration=1.1){
   const gain=ctx.createGain();
   src.buffer=buffer;
   src.playbackRate.value=Math.pow(2,(targetMidi-sample.midi)/12);
-  gain.gain.value=Math.max(0,Math.min(1,state.demoVolume))*velocity;
-  src.connect(gain).connect(ctx.destination);
+
   const start=Math.max(ctx.currentTime,when);
+  const base=Math.max(0,Math.min(1,state.demoVolume));
+  const dyn=velocityCurve(midiVelocity);
+  const soft=state.softPedal?.78:1;
+  gain.gain.setValueAtTime(Math.max(.001,base*dyn*velocity*cfg.attack*soft),start);
+
+  connectPianoVoiceChain(ctx,src,gain,start);
   src.start(start);
   state.pianoVoices.add(src);
-  gain.gain.setValueAtTime(gain.gain.value,start+Math.max(.15,duration*.65));
-  gain.gain.exponentialRampToValueAtTime(.001,start+duration);
-  src.stop(start+Math.min(buffer.duration/playbackRateSafe(src.playbackRate.value),duration+.25));
+
+  const sustainBoost=state.sustainPedal?1.75:1;
+  const release=Math.max(.25,duration*cfg.release*sustainBoost);
+  const hold=Math.max(.12,release*.62);
+  gain.gain.setValueAtTime(Math.max(.001,gain.gain.value),start+hold);
+  gain.gain.exponentialRampToValueAtTime(.001,start+release);
+
+  const stopAfter=Math.min(buffer.duration/playbackRateSafe(src.playbackRate.value),release+.35);
+  src.stop(start+Math.max(.25,stopAfter));
   src.onended=()=>state.pianoVoices.delete(src);
+}
+
+
+const PIANO_VOICES={
+  lite:{label:'Lite Piano',quality:'lite',brightness:1.00,attack:1.00,release:.55,room:.00,resonance:.00,polyphony:48,dynamic:1.00},
+  studio:{label:'Studio Grand',quality:'studio',brightness:.98,attack:.98,release:.90,room:.08,resonance:.05,polyphony:64,dynamic:1.08},
+  concert:{label:'Concert Grand',quality:'grand',brightness:.96,attack:1.02,release:1.25,room:.14,resonance:.10,polyphony:96,dynamic:1.14},
+  warm:{label:'Warm Grand',quality:'studio',brightness:.78,attack:.94,release:1.05,room:.12,resonance:.07,polyphony:64,dynamic:1.02},
+  bright:{label:'Bright Grand',quality:'studio',brightness:1.22,attack:1.06,release:.72,room:.05,resonance:.03,polyphony:64,dynamic:1.10},
+  soft:{label:'Soft Piano',quality:'studio',brightness:.68,attack:.82,release:1.12,room:.10,resonance:.04,polyphony:48,dynamic:.90}
+};
+function currentPianoVoice(){
+  return PIANO_VOICES[state.pianoVoice]||PIANO_VOICES.studio;
+}
+function velocityCurve(midiVelocity=96){
+  const v=Math.max(1,Math.min(127,Number(midiVelocity)||96))/127;
+  const cfg=currentPianoVoice();
+  return Math.max(.08,Math.min(1.15,(.12+Math.pow(v,1.55)*.88)*cfg.dynamic));
+}
+function updatePianoEngineStatus(){
+  if(!$('pianoVoiceStatus'))return;
+  const cfg=currentPianoVoice();
+  $('pianoVoiceStatus').textContent=cfg.label;
+  $('pianoQualityStatus').textContent=state.pianoQuality==='grand'?'Grand':state.pianoQuality==='studio'?'Studio':'Lite';
+  $('velocityLayerStatus').textContent=state.pianoQuality==='grand'?'5-step dyn.':state.pianoQuality==='studio'?'3-step dyn.':'1-step dyn.';
+  $('pedalStatus').textContent=state.sustainPedal?'踩下':'未踩';
+  $('resonanceStatus').textContent=cfg.resonance>0?'模擬':'關';
+  $('polyphonyStatus').textContent=String(cfg.polyphony);
+}
+function setPianoVoice(id,save=true){
+  if(!PIANO_VOICES[id])id='studio';
+  state.pianoVoice=id;
+  state.maxPolyphony=PIANO_VOICES[id].polyphony;
+  if($('pianoVoiceSelect'))$('pianoVoiceSelect').value=id;
+  updatePianoEngineStatus();
+  if(save){try{localStorage.setItem('pianoVoiceV30',id)}catch(e){}}
+}
+function setPianoQuality(q,save=true){
+  if(!['lite','studio','grand'].includes(q))q='studio';
+  state.pianoQuality=q;
+  if($('pianoQualitySelect'))$('pianoQualitySelect').value=q;
+  updatePianoEngineStatus();
+  if(save){try{localStorage.setItem('pianoQualityV30',q)}catch(e){}}
+}
+function connectPianoVoiceChain(ctx,src,gain,start){
+  const cfg=currentPianoVoice();
+  const tone=ctx.createBiquadFilter();
+  tone.type='lowpass';
+  tone.frequency.setValueAtTime(Math.max(2600,Math.min(19000,10500*cfg.brightness)),start);
+  tone.Q.setValueAtTime(.2,start);
+  src.connect(tone);
+  tone.connect(gain);
+
+  // Lightweight room simulation, fully local and mobile-safe.
+  if(cfg.room>0){
+    const delay=ctx.createDelay(.12);
+    const wet=ctx.createGain();
+    delay.delayTime.setValueAtTime(.034,start);
+    wet.gain.setValueAtTime(cfg.room,start);
+    tone.connect(delay);
+    delay.connect(wet);
+    wet.connect(ctx.destination);
+  }
+  gain.connect(ctx.destination);
 }
 
 function playbackRateSafe(v){ return Math.max(.25,Math.min(4,v||1)); }
@@ -2482,7 +2574,7 @@ function gameLoop(){
 }
 
 function flash(kind){
-  // V2.9: intentionally disabled. No screen flash at beat/hit time.
+  // V3.0: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   if(state.sessionMode==='exam' || state.sessionMode==='performance') return;
@@ -2539,6 +2631,18 @@ function attachMidiInputs(){
 function handleMidiMessage(ev){
   const [status,note,velocity]=ev.data;
   const cmd=status&0xf0;
+  if(cmd===0xB0){
+    if(note===64){
+      state.sustainPedal=velocity>=64;
+      updatePianoEngineStatus();
+      return;
+    }
+    if(note===67){
+      state.softPedal=velocity>=64;
+      updatePianoEngineStatus();
+      return;
+    }
+  }
   if(cmd===0x90 && velocity>0){
     const name=midiToNote(note);
     state.inputMode='midi'; $('inputSource').textContent='MIDI'; updateBothHandsStatus();
@@ -2831,7 +2935,7 @@ function scheduleTransportAudio(){
         state.demoScheduled.add(key);
         const notes=Array.isArray(ev.note)?ev.note:[ev.note];
         const noteDuration=Math.max(.25,Math.min(3.5,ev.beats*beatSeconds()*.9));
-        notes.forEach(n=>playLocalPianoAt(n,Math.max(ctx.currentTime+.001,when),.86,noteDuration));
+        notes.forEach(n=>playLocalPianoAt(n,Math.max(ctx.currentTime+.001,when),.86,noteDuration,96));
       }
     }));
   }

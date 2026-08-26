@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V2.9</title>
-  <link rel="stylesheet" href="style.css?v=2.9">
+  <title>PIANO LEARNING V3.0</title>
+  <link rel="stylesheet" href="style.css?v=3.0">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V2.9</div>
+        <div class="version-badge">VERSION V3.0</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -478,11 +478,38 @@
             <button id="metroBtn" class="soft-btn">節拍器：關</button>
             <button id="demoSoundBtn" class="soft-btn">譜面鋼琴聲：關</button>
             <button id="tempoReset" class="soft-btn">恢復原譜 BPM</button>
-            <label class="sound-volume">示範音量<input id="demoVolume" type="range" min="0" max="1" step="0.05" value="0.45"></label><span id="pianoSampleStatus" class="sample-status">本地鋼琴音色：待啟用</span>
+            <label class="sound-volume">示範音量<input id="demoVolume" type="range" min="0" max="1" step="0.05" value="0.45"></label>
+            <label class="piano-voice-control">鋼琴音色
+              <select id="pianoVoiceSelect">
+                <option value="lite">Lite Piano</option>
+                <option value="studio" selected>Studio Grand</option>
+                <option value="concert">Concert Grand</option>
+                <option value="warm">Warm Grand</option>
+                <option value="bright">Bright Grand</option>
+                <option value="soft">Soft Piano</option>
+              </select>
+            </label>
+            <label class="piano-voice-control">音質
+              <select id="pianoQualitySelect">
+                <option value="lite">Lite</option>
+                <option value="studio" selected>Studio</option>
+                <option value="grand">Grand</option>
+              </select>
+            </label>
+            <span id="pianoSampleStatus" class="sample-status">本地鋼琴音色：待啟用</span>
             <div class="heard">
               <small>目前聽到</small>
               <b id="heardNote">—</b>
             </div>
+          </div>
+
+          <div class="piano-engine-status" id="pianoEngineStatus">
+            <div><small>鋼琴音色</small><b id="pianoVoiceStatus">Studio Grand</b></div>
+            <div><small>音質</small><b id="pianoQualityStatus">Studio</b></div>
+            <div><small>動態</small><b id="velocityLayerStatus">Velocity</b></div>
+            <div><small>延音踏板</small><b id="pedalStatus">未踩</b></div>
+            <div><small>共鳴</small><b id="resonanceStatus">模擬</b></div>
+            <div><small>Polyphony</small><b id="polyphonyStatus">64</b></div>
           </div>
 
           <div class="both-hands-status" id="bothHandsStatus">
@@ -505,6 +532,6 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=2.9"></script>
+  <script src="app.js?v=3.0"></script>
 </body>
 </html>

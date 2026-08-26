@@ -285,3 +285,35 @@ V2.9 已預留 Optical Music Recognition（OMR）流程，但不內建假辨識�
 因此不會把照片猜成錯誤的音高或節奏，也不會讓尚未辨識的圖片直接進入跟譜演奏。
 
 後續 OMR 成功輸出 MusicXML 後，可再送進目前既有 MusicXML importer，轉為 READY、雙手譜、示範聲、MIDI／麥克風判定、紀錄與分析。
+
+
+## V3.0 — Studio Grand Piano Engine
+
+新增可選鋼琴音色：
+- Lite Piano
+- Studio Grand
+- Concert Grand
+- Warm Grand
+- Bright Grand
+- Soft Piano
+
+新增音質選擇：
+- Lite
+- Studio
+- Grand
+
+本版已讓不同音色實際改變：
+- 音色亮度
+- Attack
+- Release
+- 動態曲線
+- 輕量 Room 模擬
+- Sustain Pedal（MIDI CC64）
+- Soft Pedal（MIDI CC67）
+- Polyphony 狀態
+- 音色設定保存
+
+重要說明：
+V3.0 使用現有本地鋼琴 sample 搭配音色引擎建立 6 種聲音。
+畫面上的 1-step / 3-step / 5-step dynamic 是目前動態映射模式，不代表專案已經內含 5 套不同力度錄音。
+真正大型多力度 Studio / Concert sample pack 後續可做成額外下載包，避免 GitHub Pages 初次載入過大。
