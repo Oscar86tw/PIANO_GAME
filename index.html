@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V3.1</title>
-  <link rel="stylesheet" href="style.css?v=3.1">
+  <title>PIANO LEARNING V3.2</title>
+  <link rel="stylesheet" href="style.css?v=3.2">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V3.1</div>
+        <div class="version-badge">VERSION V3.2</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -382,6 +382,24 @@
             </div>
             <p id="examResultText">完整演奏後才會產生成績。</p>
           </section>
+          
+          <section id="aiCoachCard" class="ai-coach-card">
+            <div class="ai-coach-head">
+              <div>
+                <small>AI PRACTICE COACH</small>
+                <strong>練習教練</strong>
+              </div>
+              <div class="ai-coach-actions">
+                <button id="speakAiCoachBtn" type="button">🔊 朗讀建議</button>
+                <button id="applyAiCoachBtn" type="button">開始建議練習</button>
+              </div>
+            </div>
+            <div id="aiCoachSummary" class="ai-coach-summary">
+              完成練習後，這裡會根據音高、節拍、左右手與弱小節自動整理下一步。
+            </div>
+            <div id="aiCoachPlan" class="ai-coach-plan"></div>
+          </section>
+
           <section id="practiceAnalytics" class="practice-analytics">
             <div class="analytics-grid">
               <div><small>音高正確率</small><b id="pitchAccuracyValue">—</b></div>
@@ -533,7 +551,7 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=3.1"></script>
+  <script src="app.js?v=3.2"></script>
 
   <div id="soundPackModal" class="sound-pack-modal" hidden>
     <div class="sound-pack-backdrop" data-close-sound-pack></div>

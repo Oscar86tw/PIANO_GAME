@@ -1115,3 +1115,99 @@ button{cursor:pointer}
   .sound-pack-actions{justify-content:flex-start}
   .sound-pack-import{align-items:flex-start;flex-direction:column}
 }
+
+
+/* V3.2 — AI Practice Coach */
+.ai-coach-card{
+  margin-top:10px;
+  border:1px solid #dddff0;
+  border-radius:14px;
+  background:#fbfaff;
+  padding:12px;
+}
+.ai-coach-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+.ai-coach-head small{
+  display:block;
+  color:#7569c7;
+  font-size:.61rem;
+  font-weight:900;
+  letter-spacing:.14em;
+}
+.ai-coach-head strong{
+  display:block;
+  color:#495571;
+  margin-top:2px;
+}
+.ai-coach-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.ai-coach-actions button{
+  border:1px solid #dfe2ec;
+  background:#fff;
+  color:#625aab;
+  border-radius:9px;
+  padding:7px 9px;
+  font-size:.68rem;
+}
+.ai-coach-summary{
+  margin-top:10px;
+  color:#69748c;
+  line-height:1.65;
+  font-size:.78rem;
+}
+.ai-coach-plan{
+  display:grid;
+  gap:7px;
+  margin-top:9px;
+}
+.ai-coach-step{
+  display:grid;
+  grid-template-columns:30px 1fr auto;
+  gap:9px;
+  align-items:center;
+  border-top:1px solid #eceef4;
+  padding-top:8px;
+}
+.ai-coach-step .step-no{
+  width:26px;height:26px;
+  display:grid;place-items:center;
+  border-radius:50%;
+  background:#eeeaff;
+  color:#6a5ec2;
+  font-weight:900;
+  font-size:.7rem;
+}
+.ai-coach-step strong{
+  display:block;
+  color:#4d5872;
+  font-size:.76rem;
+}
+.ai-coach-step span{
+  display:block;
+  color:#8a94a9;
+  font-size:.66rem;
+  margin-top:2px;
+}
+.ai-coach-step em{
+  font-style:normal;
+  color:#6f63bc;
+  background:#f3f0ff;
+  border-radius:999px;
+  padding:4px 7px;
+  font-size:.62rem;
+  white-space:nowrap;
+}
+@media(max-width:620px){
+  .ai-coach-head{align-items:flex-start;flex-direction:column}
+  .ai-coach-actions{width:100%}
+  .ai-coach-actions button{flex:1}
+  .ai-coach-step{grid-template-columns:30px 1fr}
+  .ai-coach-step em{grid-column:2;justify-self:start}
+}

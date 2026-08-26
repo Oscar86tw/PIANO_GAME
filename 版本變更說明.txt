@@ -1,0 +1,25 @@
+PIANO LEARNING V3.2
+主題：AI Practice Coach
+
+新增：
+- 練習後 AI 教練分析
+- 音高 / 節拍 / 左右手 / 和弦 / 弱小節判斷
+- 自動產生下一步練習建議
+- 建議 BPM
+- 建議單手練習
+- 建議弱小節循環
+- 朗讀建議
+- 一鍵套用 AI 建議回 READY
+
+說明：
+本版為本機智慧分析，不依賴雲端 AI API。
+未來可再接真正 AI API，使用相同介面擴充。
+
+修改檔案：
+index.html
+style.css
+app.js
+README.md
+
+新增檔案：無
+刪除檔案：無

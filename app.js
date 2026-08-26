@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V3.1: 216 built-in pedagogical scores ----------
+// ---------- V3.2: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V3.1: full-length repertoire collections ----------
+// ---------- V3.2: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -353,7 +353,7 @@ const SCHOOL_IMPORT_SLOTS=[
   '老師指定曲 01','老師指定曲 02','老師指定曲 03','老師指定曲 04'
 ];
 
-// ---------- V3.1: generated left-hand accompaniment ----------
+// ---------- V3.2: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -595,7 +595,7 @@ if(songCountEl) songCountEl.textContent=`${library.length} 份內建＋Disney �
 
 
 /* ==========================================================
-   V3.1 Photo Score Import
+   V3.2 Photo Score Import
    Photos/PDFs are persisted in IndexedDB because localStorage
    is too small for image blobs.
    ========================================================== */
@@ -1738,6 +1738,171 @@ function analyzePracticeLog(){
     weakest:ranked[0]||null
   };
 }
+
+let currentAiCoachPlan=null;
+
+function buildAiCoachPlan(){
+  const a=analyzePracticeLog();
+  const s=songs[state.song]||{};
+  if(!a.total){
+    return {
+      summary:'還沒有足夠的練習紀錄。先完整彈一次，AI 教練才有資料可以分析。',
+      steps:[],
+      targetMeasure:null,
+      targetHand:state.hand,
+      recommendedBpm:effectiveBpm()
+    };
+  }
+
+  const issues=[];
+  if(a.pitchAccuracy<80) issues.push({type:'pitch',score:80-a.pitchAccuracy});
+  if(a.rhythmAccuracy<80) issues.push({type:'rhythm',score:80-a.rhythmAccuracy});
+  if(a.avgTiming!=null && a.avgTiming>180) issues.push({type:'timing',score:Math.min(50,(a.avgTiming-180)/4)});
+  if(a.chordAvg!=null && a.chordAvg<85) issues.push({type:'chord',score:85-a.chordAvg});
+  if(a.rightCount && a.leftCount){
+    const gap=Math.abs(a.rightAccuracy-a.leftAccuracy);
+    if(gap>=12) issues.push({type:a.rightAccuracy<a.leftAccuracy?'right':'left',score:gap});
+  }
+  if(a.weakest) issues.push({type:'measure',score:35});
+
+  issues.sort((x,y)=>y.score-x.score);
+  const top=issues[0]?.type||'general';
+
+  let focusText='整體表現已經相當穩定，可以提高速度或挑戰下一首。';
+  if(top==='pitch') focusText='目前最大的問題是音高準確度，先把音符位置彈穩，再追求速度。';
+  if(top==='rhythm'||top==='timing') focusText='目前最大的問題是節拍穩定度，先降低 BPM，再把拍點對齊。';
+  if(top==='chord') focusText='目前和弦完整度較弱，建議先拆手練習，再回到雙手。';
+  if(top==='right') focusText='右手目前比左手不穩，先集中右手慢速練習。';
+  if(top==='left') focusText='左手目前比右手不穩，先集中左手慢速練習。';
+  if(top==='measure') focusText=`第 ${a.weakest.measure} 小節是目前最需要重練的地方。`;
+
+  const weak=a.weakest?.measure||null;
+  const weakerHand=(a.rightCount&&a.leftCount)
+    ? (a.rightAccuracy<a.leftAccuracy?'right':'left')
+    : state.hand;
+
+  const currentBpm=effectiveBpm();
+  const slower=Math.max(40,Math.round(currentBpm*.78));
+
+  const steps=[];
+  if(weak){
+    steps.push({
+      title:`先練第 ${weak} 小節`,
+      desc:'只循環這一小節，連續彈到穩定。',
+      tag:'弱小節',
+      action:'weak'
+    });
+  }
+
+  if(weakerHand==='right'||weakerHand==='left'){
+    steps.push({
+      title:`單獨練${weakerHand==='right'?'右手':'左手'}`,
+      desc:'先把較弱的一手彈穩，再恢復雙手。',
+      tag:weakerHand==='right'?'右手':'左手',
+      action:'hand'
+    });
+  }
+
+  if(a.rhythmAccuracy<88 || (a.avgTiming!=null&&a.avgTiming>150)){
+    steps.push({
+      title:`降到 ${slower} BPM`,
+      desc:'使用較慢速度重新對齊拍點。',
+      tag:`${slower} BPM`,
+      action:'tempo'
+    });
+  }
+
+  if(a.pitchAccuracy<88){
+    steps.push({
+      title:'先求音準，不求速度',
+      desc:'每顆音確認正確後再往下一拍。',
+      tag:`音高 ${a.pitchAccuracy}%`,
+      action:'pitch'
+    });
+  }
+
+  if(a.chordAvg!=null&&a.chordAvg<90){
+    steps.push({
+      title:'和弦拆開確認',
+      desc:'先檢查缺音與多按，再恢復完整和弦。',
+      tag:`和弦 ${a.chordAvg}%`,
+      action:'chord'
+    });
+  }
+
+  if(!steps.length){
+    steps.push({
+      title:'提高一點速度',
+      desc:'目前穩定，可以嘗試加快約 5 BPM。',
+      tag:'進階',
+      action:'advance'
+    });
+  }
+
+  return {
+    summary:`${s.title||'這首曲子'}：${focusText} 目前完全吻合 ${a.exactAccuracy}%，音高 ${a.pitchAccuracy}%，節拍 ${a.rhythmAccuracy}%。`,
+    steps,
+    targetMeasure:weak,
+    targetHand:weakerHand,
+    recommendedBpm:slower,
+    accuracy:a.exactAccuracy
+  };
+}
+
+function renderAiCoach(){
+  if(!$('aiCoachSummary'))return;
+  currentAiCoachPlan=buildAiCoachPlan();
+  $('aiCoachSummary').textContent=currentAiCoachPlan.summary;
+  const root=$('aiCoachPlan');root.innerHTML='';
+  currentAiCoachPlan.steps.forEach((st,i)=>{
+    const row=document.createElement('div');
+    row.className='ai-coach-step';
+    row.innerHTML=`<div class="step-no">${i+1}</div><div><strong>${st.title}</strong><span>${st.desc}</span></div><em>${st.tag}</em>`;
+    root.appendChild(row);
+  });
+  $('applyAiCoachBtn').disabled=!currentAiCoachPlan.steps.length;
+}
+
+function speakAiCoach(){
+  if(!('speechSynthesis' in window) || !currentAiCoachPlan)return;
+  speechSynthesis.cancel();
+  const text=[currentAiCoachPlan.summary,...currentAiCoachPlan.steps.map((x,i)=>`第 ${i+1} 步，${x.title}。${x.desc}`)].join(' ');
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='zh-TW';
+  u.rate=.95;
+  speechSynthesis.speak(u);
+}
+
+function applyAiCoachPlan(){
+  const p=currentAiCoachPlan||buildAiCoachPlan();
+  if(!p.steps.length)return;
+
+  if(p.targetMeasure){
+    seekTo(measureStartTime(p.targetMeasure));
+    state.loopMeasure=true;
+    $('measureLoopSelect').value='current';
+  }
+
+  if(p.targetHand==='right'||p.targetHand==='left'){
+    state.hand=p.targetHand;
+    $('handSelect').value=p.targetHand;
+    buildEventTimeline();
+    updateHandFocus();
+    renderStaticScore();
+  }
+
+  if(p.recommendedBpm && p.accuracy<90){
+    state.customBpm=p.recommendedBpm;
+    $('tempoInput').value=String(p.recommendedBpm);
+    updateTempoUI();
+  }
+
+  $('recordDrawer').hidden=true;
+  $('recordBtn').classList.remove('active');
+  enterReadyState();
+  $('transportStatus').textContent='AI 建議已套用，準備後按播放';
+}
+
 function renderPracticeAnalytics(){
   const a=analyzePracticeLog();
   const val=(id,text)=>{const el=$(id);if(el)el.textContent=text};
@@ -1784,6 +1949,7 @@ function renderPracticeAnalytics(){
 function renderRecordDrawer(){
   const log=state.performanceLog||[];
   renderPracticeAnalytics();
+  renderAiCoach();
   const exact=log.filter(x=>x.pitchCorrect&&x.rhythmCorrect).length;
   const pitch=log.filter(x=>x.pitchCorrect).length;
   const rhythm=log.filter(x=>x.rhythmCorrect).length;
@@ -1812,6 +1978,10 @@ $('recordBtn').addEventListener('click',()=>{
   $('recordDrawer').hidden=!$('recordDrawer').hidden;
   $('recordBtn').classList.toggle('active',!$('recordDrawer').hidden);
 });
+
+
+$('speakAiCoachBtn').addEventListener('click',speakAiCoach);
+$('applyAiCoachBtn').addEventListener('click',applyAiCoachPlan);
 
 $('practiceWeakestBtn').addEventListener('click',()=>{
   const a=analyzePracticeLog();
@@ -2819,7 +2989,7 @@ function gameLoop(){
 }
 
 function flash(kind){
-  // V3.1: intentionally disabled. No screen flash at beat/hit time.
+  // V3.2: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   if(state.sessionMode==='exam' || state.sessionMode==='performance') return;
