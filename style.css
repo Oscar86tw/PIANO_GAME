@@ -1211,3 +1211,109 @@ button{cursor:pointer}
   .ai-coach-step{grid-template-columns:30px 1fr}
   .ai-coach-step em{grid-column:2;justify-self:start}
 }
+
+
+/* V3.3 — AI Adaptive Learning */
+.adaptive-ready-card{
+  margin-top:12px;
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:15px;
+  padding:13px 14px;
+  background:rgba(255,255,255,.12);
+  color:#fff;
+}
+.adaptive-ready-card[hidden]{display:none}
+.adaptive-ready-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+.adaptive-ready-head small{
+  display:block;
+  font-size:.61rem;
+  letter-spacing:.13em;
+  opacity:.72;
+  font-weight:900;
+}
+.adaptive-ready-head strong{display:block;margin-top:2px}
+.adaptive-ready-head span{display:block;margin-top:3px;font-size:.72rem;opacity:.82}
+.adaptive-ready-head>b{
+  border-radius:999px;
+  padding:6px 9px;
+  background:rgba(255,255,255,.14);
+  font-size:.64rem;
+  white-space:nowrap;
+}
+.adaptive-ready-settings{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:10px;
+}
+.adaptive-ready-settings span{
+  border-radius:999px;
+  padding:6px 9px;
+  background:rgba(255,255,255,.12);
+  font-size:.68rem;
+}
+.adaptive-ready-actions{
+  display:flex;
+  gap:7px;
+  margin-top:10px;
+}
+.adaptive-ready-actions button{min-width:110px}
+
+.adaptive-progress-card{
+  margin-top:12px;
+  background:#fff;
+  border:1px solid #e2e6ef;
+  border-radius:15px;
+  padding:14px;
+}
+.adaptive-progress-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
+.adaptive-progress-head small{
+  display:block;
+  color:#7569c7;
+  font-size:.61rem;
+  letter-spacing:.13em;
+  font-weight:900;
+}
+.adaptive-progress-head strong{display:block;color:#4b5772;margin-top:2px}
+.adaptive-progress-head span{
+  border-radius:999px;
+  background:#f2efff;
+  color:#6d61bf;
+  padding:5px 8px;
+  font-size:.64rem;
+}
+.adaptive-progress-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.adaptive-progress-grid>div{
+  background:#f8f9fc;
+  border:1px solid #e7eaf1;
+  border-radius:10px;
+  padding:9px;
+  text-align:center;
+}
+.adaptive-progress-grid small{display:block;color:#8e97aa;font-size:.61rem}
+.adaptive-progress-grid b{display:block;margin-top:3px;color:#4d5974;font-size:.88rem}
+.adaptive-progress-card p{
+  margin:10px 0 0;
+  color:#7c879c;
+  line-height:1.55;
+  font-size:.73rem;
+}
+@media(max-width:620px){
+  .adaptive-progress-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .adaptive-ready-head{flex-direction:column}
+}

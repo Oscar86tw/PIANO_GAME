@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V3.2</title>
-  <link rel="stylesheet" href="style.css?v=3.2">
+  <title>PIANO LEARNING V3.3</title>
+  <link rel="stylesheet" href="style.css?v=3.3">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V3.2</div>
+        <div class="version-badge">VERSION V3.3</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -303,6 +303,21 @@
           <div class="daily-goal-bar"><span id="dailyGoalBar"></span></div>
         </div>
 
+        
+        <section class="adaptive-progress-card">
+          <div class="adaptive-progress-head">
+            <div><small>ADAPTIVE STATUS</small><strong>自適應學習狀態</strong></div>
+            <span id="adaptiveStatusBadge">建立資料中</span>
+          </div>
+          <div class="adaptive-progress-grid">
+            <div><small>近期穩定度</small><b id="adaptiveStabilityValue">—</b></div>
+            <div><small>建議速度</small><b id="adaptiveTempoValue">—</b></div>
+            <div><small>較弱手</small><b id="adaptiveWeakHandValue">—</b></div>
+            <div><small>學習趨勢</small><b id="adaptiveTrendValue">—</b></div>
+          </div>
+          <p id="adaptiveProgressText">完成幾次練習後，系統會開始依表現調整建議。</p>
+        </section>
+
         <div class="level-path" id="levelPath"></div>
       </section>
     </section>
@@ -428,6 +443,23 @@
           <div id="recordList" class="record-list"></div>
         </div>
 
+        
+        <section id="adaptiveReadyCard" class="adaptive-ready-card" hidden>
+          <div class="adaptive-ready-head">
+            <div>
+              <small>AI ADAPTIVE LEARNING</small>
+              <strong id="adaptiveReadyTitle">AI 建議設定</strong>
+              <span id="adaptiveReadyReason">根據最近練習紀錄產生。</span>
+            </div>
+            <b id="adaptiveReadyLevel">建議</b>
+          </div>
+          <div id="adaptiveReadySettings" class="adaptive-ready-settings"></div>
+          <div class="adaptive-ready-actions">
+            <button id="applyAdaptiveBtn" class="primary" type="button">套用建議</button>
+            <button id="ignoreAdaptiveBtn" class="soft-btn" type="button">這次忽略</button>
+          </div>
+        </section>
+
         <div id="sessionModeNotice" class="session-mode-notice">
           <div>
             <small>練習模式</small>
@@ -551,7 +583,7 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=3.2"></script>
+  <script src="app.js?v=3.3"></script>
 
   <div id="soundPackModal" class="sound-pack-modal" hidden>
     <div class="sound-pack-backdrop" data-close-sound-pack></div>

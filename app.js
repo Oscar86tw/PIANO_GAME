@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V3.2: 216 built-in pedagogical scores ----------
+// ---------- V3.3: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V3.2: full-length repertoire collections ----------
+// ---------- V3.3: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -353,7 +353,7 @@ const SCHOOL_IMPORT_SLOTS=[
   '老師指定曲 01','老師指定曲 02','老師指定曲 03','老師指定曲 04'
 ];
 
-// ---------- V3.2: generated left-hand accompaniment ----------
+// ---------- V3.3: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -595,7 +595,7 @@ if(songCountEl) songCountEl.textContent=`${library.length} 份內建＋Disney �
 
 
 /* ==========================================================
-   V3.2 Photo Score Import
+   V3.3 Photo Score Import
    Photos/PDFs are persisted in IndexedDB because localStorage
    is too small for image blobs.
    ========================================================== */
@@ -924,6 +924,230 @@ function openPhotoFromLibrary(id){
   openPhotoEditor(id);
 }
 
+
+const ADAPTIVE_HISTORY_KEY='pianoAdaptiveHistoryV33';
+let adaptiveHistory=[];
+
+function loadAdaptiveHistory(){
+  try{adaptiveHistory=JSON.parse(localStorage.getItem(ADAPTIVE_HISTORY_KEY)||'[]')}catch(e){adaptiveHistory=[]}
+}
+function saveAdaptiveHistory(){
+  try{localStorage.setItem(ADAPTIVE_HISTORY_KEY,JSON.stringify(adaptiveHistory.slice(-250)))}catch(e){}
+}
+function handName(h){
+  return h==='right'?'右手':h==='left'?'左手':h==='both'?'雙手':'—';
+}
+function recentSongAdaptiveRuns(songId,limit=5){
+  return adaptiveHistory.filter(x=>x.songId===songId).slice(-limit);
+}
+function weightedAverage(rows,key){
+  if(!rows.length)return null;
+  let w=0,total=0;
+  rows.forEach((r,i)=>{
+    const weight=i+1;
+    const v=Number(r[key]);
+    if(Number.isFinite(v)){total+=v*weight;w+=weight}
+  });
+  return w?total/w:null;
+}
+function buildAdaptiveSuggestion(songId=state.song){
+  const song=songs[songId]||{};
+  const rows=recentSongAdaptiveRuns(songId,5);
+  if(!rows.length)return null;
+
+  const exact=weightedAverage(rows,'exact');
+  const pitch=weightedAverage(rows,'pitch');
+  const rhythm=weightedAverage(rows,'rhythm');
+  const timing=weightedAverage(rows,'avgTiming');
+  const right=weightedAverage(rows,'right');
+  const left=weightedAverage(rows,'left');
+
+  let hand='both';
+  if(Number.isFinite(right)&&Number.isFinite(left)&&Math.abs(right-left)>=10){
+    hand=right<left?'right':'left';
+  }else if(state.hand==='right'||state.hand==='left'){
+    hand=state.hand;
+  }
+
+  const base=Number(song.bpm)||90;
+  let bpm=base;
+  let mode='maintain';
+  let reason='近期表現穩定，維持目前難度。';
+  let loopMeasure=null;
+
+  const latest=rows[rows.length-1];
+  const weak=latest?.weakMeasure||null;
+
+  if((exact??0)<55 || (pitch??0)<65){
+    bpm=Math.max(40,Math.round(base*.68));
+    mode='foundation';
+    reason='近期音高或完整吻合偏低，先大幅降速並拆手。';
+    if(weak)loopMeasure=weak;
+  }else if((exact??0)<72 || (rhythm??0)<72 || (timing??0)>220){
+    bpm=Math.max(45,Math.round(base*.80));
+    mode='stabilize';
+    reason='目前主要需要穩定節拍與弱小節，建議慢速重練。';
+    if(weak)loopMeasure=weak;
+  }else if((exact??0)>=90 && (rhythm??0)>=88 && (pitch??0)>=90){
+    bpm=Math.min(220,Math.round(base*1.05));
+    mode='advance';
+    hand='both';
+    reason='近期表現穩定，可以小幅提高速度或挑戰下一課。';
+  }else{
+    bpm=Math.max(45,Math.round(base*.92));
+    mode='maintain';
+    reason='整體已接近穩定，稍微降速確認細節。';
+    if(weak && (exact??100)<85)loopMeasure=weak;
+  }
+
+  return {
+    songId,mode,bpm,hand,loopMeasure,reason,
+    exact:exact==null?null:Math.round(exact),
+    pitch:pitch==null?null:Math.round(pitch),
+    rhythm:rhythm==null?null:Math.round(rhythm),
+    timing:timing==null?null:Math.round(timing),
+    sessions:rows.length
+  };
+}
+function adaptiveModeLabel(mode){
+  return ({
+    foundation:'基礎重建',
+    stabilize:'穩定練習',
+    maintain:'維持',
+    advance:'可以進階'
+  })[mode]||'建議';
+}
+function renderAdaptiveReady(){
+  if(!$('adaptiveReadyCard'))return;
+  if(state.adaptiveIgnoredForSong===state.song){
+    $('adaptiveReadyCard').hidden=true;
+    return;
+  }
+  const sug=buildAdaptiveSuggestion(state.song);
+  state.adaptiveSuggestion=sug;
+  if(!sug){
+    $('adaptiveReadyCard').hidden=true;
+    return;
+  }
+  $('adaptiveReadyCard').hidden=false;
+  $('adaptiveReadyLevel').textContent=adaptiveModeLabel(sug.mode);
+  $('adaptiveReadyTitle').textContent=`AI 建議：${sug.bpm} BPM · ${handName(sug.hand)}`;
+  $('adaptiveReadyReason').textContent=sug.reason;
+  const root=$('adaptiveReadySettings');root.innerHTML='';
+  [
+    `${sug.bpm} BPM`,
+    handName(sug.hand),
+    sug.loopMeasure?`循環第 ${sug.loopMeasure} 小節`:'整段練習',
+    `依 ${sug.sessions} 次紀錄`
+  ].forEach(t=>{
+    const s=document.createElement('span');s.textContent=t;root.appendChild(s);
+  });
+}
+function applyAdaptiveSuggestion(){
+  const sug=state.adaptiveSuggestion||buildAdaptiveSuggestion(state.song);
+  if(!sug)return;
+
+  state.customBpm=sug.bpm;
+  $('tempoInput').value=String(sug.bpm);
+  updateTempoUI();
+
+  if(sug.hand==='right'||sug.hand==='left'||sug.hand==='both'){
+    state.hand=sug.hand;
+    $('handSelect').value=sug.hand;
+    buildEventTimeline();
+    updateHandFocus();
+    renderStaticScore();
+  }
+
+  if(sug.loopMeasure){
+    seekTo(measureStartTime(sug.loopMeasure));
+    state.loopMeasure=true;
+    $('measureLoopSelect').value='current';
+  }else{
+    state.loopMeasure=false;
+    $('measureLoopSelect').value='off';
+  }
+
+  $('transportStatus').textContent='AI 自適應設定已套用';
+  $('adaptiveReadyCard').hidden=true;
+}
+function ignoreAdaptiveSuggestion(){
+  state.adaptiveIgnoredForSong=state.song;
+  $('adaptiveReadyCard').hidden=true;
+}
+function recordAdaptiveRun(){
+  const a=analyzePracticeLog();
+  if(!a.total)return;
+  adaptiveHistory.push({
+    at:Date.now(),
+    day:todayKey(),
+    songId:state.song,
+    exact:a.exactAccuracy,
+    pitch:a.pitchAccuracy,
+    rhythm:a.rhythmAccuracy,
+    avgTiming:a.avgTiming,
+    right:a.rightCount?a.rightAccuracy:null,
+    left:a.leftCount?a.leftAccuracy:null,
+    chord:a.chordAvg,
+    weakMeasure:a.weakest?.measure||null,
+    bpm:effectiveBpm(),
+    hand:state.hand
+  });
+  adaptiveHistory=adaptiveHistory.slice(-250);
+  saveAdaptiveHistory();
+}
+function globalAdaptiveStats(){
+  const rows=adaptiveHistory.slice(-12);
+  if(!rows.length)return null;
+  const exact=weightedAverage(rows,'exact');
+  const rhythm=weightedAverage(rows,'rhythm');
+  const right=weightedAverage(rows,'right');
+  const left=weightedAverage(rows,'left');
+  const bpm=weightedAverage(rows,'bpm');
+
+  let weakHand='—';
+  if(Number.isFinite(right)&&Number.isFinite(left))weakHand=right<left?'右手':'左手';
+
+  let trend='建立資料中';
+  if(rows.length>=4){
+    const half=Math.floor(rows.length/2);
+    const older=rows.slice(0,half).reduce((s,x)=>s+(x.exact||0),0)/half;
+    const newer=rows.slice(half).reduce((s,x)=>s+(x.exact||0),0)/(rows.length-half);
+    if(newer-older>=5)trend='進步中 ↑';
+    else if(older-newer>=5)trend='需要穩定';
+    else trend='穩定 →';
+  }
+
+  return {
+    exact:Math.round(exact||0),
+    rhythm:Math.round(rhythm||0),
+    weakHand,
+    bpm:Math.round(bpm||0),
+    trend,
+    sessions:rows.length
+  };
+}
+function renderAdaptiveProgress(){
+  if(!$('adaptiveStabilityValue'))return;
+  const a=globalAdaptiveStats();
+  if(!a){
+    $('adaptiveStatusBadge').textContent='建立資料中';
+    $('adaptiveStabilityValue').textContent='—';
+    $('adaptiveTempoValue').textContent='—';
+    $('adaptiveWeakHandValue').textContent='—';
+    $('adaptiveTrendValue').textContent='—';
+    $('adaptiveProgressText').textContent='完成幾次練習後，系統會開始依表現調整建議。';
+    return;
+  }
+  $('adaptiveStatusBadge').textContent=a.sessions>=6?'已啟用':'學習中';
+  $('adaptiveStabilityValue').textContent=a.exact+'%';
+  $('adaptiveTempoValue').textContent=a.bpm?a.bpm+' BPM':'—';
+  $('adaptiveWeakHandValue').textContent=a.weakHand;
+  $('adaptiveTrendValue').textContent=a.trend;
+  $('adaptiveProgressText').textContent=`最近 ${a.sessions} 次練習的加權完全吻合約 ${a.exact}%，節拍約 ${a.rhythm}%。系統會優先使用最近的紀錄產生 READY 建議。`;
+}
+loadAdaptiveHistory();
+
 const PROGRESS_KEY='pianoLearningProgressV26';
 const DAILY_GOAL_MINUTES=15;
 
@@ -1021,6 +1245,7 @@ function findNextLesson(){
 function renderProgressPath(){
   if(!$('levelPath')) return;
   refreshUnlocks();
+  renderAdaptiveProgress();
 
   $('totalStarsValue').textContent=`${learningProgress.stars||0} ★`;
   $('completedLessonsValue').textContent=String(learningProgress.completedLessons.length);
@@ -1192,7 +1417,7 @@ function renderCurriculum(){
 
 let state = {
   song:'twinkle',running:false,paused:false,startAt:0,pauseStart:0,pauseTotal:0,audioStartTime:0,pausedElapsed:0,
-  speed:1,mode:'play',sessionMode:'practice',examLocked:false,lastExamResult:null,hand:'right',micStream:null,audioCtx:null,analyser:null,
+  speed:1,mode:'play',sessionMode:'practice',examLocked:false,lastExamResult:null,adaptiveSuggestion:null,adaptiveIgnoredForSong:null,hand:'right',micStream:null,audioCtx:null,analyser:null,
   audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,metroScheduler:null,nextMetroBeat:0,assistTimer:null,assistBeat:0,
   judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,lastMasterBeat:-1,
   performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,eventTimeline:[],rightTimeline:[],leftTimeline:[],countInBeats:0,loopMeasure:false,demoSoundOn:false,pianoVoice:'studio',pianoQuality:'studio',sustainPedal:false,softPedal:false,resonanceOn:true,maxPolyphony:64,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoScheduled:new Set(),demoVolume:0.45,pianoVoices:new Set(),inputMode:null,midiAccess:null,midiInputs:[],midiChordNotes:new Set(),midiChordStart:null,midiChordTimer:null,judgedMidiGroups:new Set()
@@ -1455,7 +1680,7 @@ $('clearImportedBtn').addEventListener('click',()=>{
 function openPractice(songId,label='PLAY'){
   rememberRecentScore(songId);
   state.song=songId; state.running=false; state.paused=false; state.pauseTotal=0; state.judged=new Set(); state.goodStreak=0;
-  state.lastExamResult=null; updateSessionModeUI(); setExamLock(false);
+  state.lastExamResult=null; state.adaptiveIgnoredForSong=null; updateSessionModeUI(); setExamLock(false);
   state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set(); state.judgedMidiGroups=new Set(); state.midiChordNotes.clear(); state.midiChordStart=null; clearTimeout(state.midiChordTimer);
   state.tempoManual=false; state.tempoBpm=songs[songId].bpm; state.speed=1; state.lastMasterBeat=-1;
   $('tempoInput').value=state.tempoBpm;
@@ -1588,7 +1813,8 @@ function fmtTime(sec){
 }
 function enterReadyState(){
   state.running=false;
-  setExamLock(false); state.paused=false; state.pauseTotal=0; state.pausedElapsed=0; state.audioStartTime=0; state.lastMasterBeat=-1; state.demoScheduled=new Set();
+  setExamLock(false);
+  setTimeout(renderAdaptiveReady,0); state.paused=false; state.pauseTotal=0; state.pausedElapsed=0; state.audioStartTime=0; state.lastMasterBeat=-1; state.demoScheduled=new Set();
   $('prepareBanner').classList.remove('running');
   $('topProgressBar').style.width='0%';
   $('transportTime').textContent='00:00';
@@ -1980,6 +2206,8 @@ $('recordBtn').addEventListener('click',()=>{
 });
 
 
+$('applyAdaptiveBtn').addEventListener('click',applyAdaptiveSuggestion);
+$('ignoreAdaptiveBtn').addEventListener('click',ignoreAdaptiveSuggestion);
 $('speakAiCoachBtn').addEventListener('click',speakAiCoach);
 $('applyAiCoachBtn').addEventListener('click',applyAiCoachPlan);
 
@@ -2970,6 +3198,7 @@ function gameLoop(){
   }
 
   if(e>=effectiveDuration()){
+    recordAdaptiveRun();
     savePracticeSummary();
     if(state.sessionMode==='exam') buildExamResult();
     stopPractice();
@@ -2989,7 +3218,7 @@ function gameLoop(){
 }
 
 function flash(kind){
-  // V3.2: intentionally disabled. No screen flash at beat/hit time.
+  // V3.3: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   if(state.sessionMode==='exam' || state.sessionMode==='performance') return;
