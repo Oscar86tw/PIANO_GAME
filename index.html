@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V3.3</title>
-  <link rel="stylesheet" href="style.css?v=3.3">
+  <title>PIANO LEARNING V3.0</title>
+  <link rel="stylesheet" href="style.css?v=3.0">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V3.3</div>
+        <div class="version-badge">VERSION V3.0</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -303,21 +303,6 @@
           <div class="daily-goal-bar"><span id="dailyGoalBar"></span></div>
         </div>
 
-        
-        <section class="adaptive-progress-card">
-          <div class="adaptive-progress-head">
-            <div><small>ADAPTIVE STATUS</small><strong>自適應學習狀態</strong></div>
-            <span id="adaptiveStatusBadge">建立資料中</span>
-          </div>
-          <div class="adaptive-progress-grid">
-            <div><small>近期穩定度</small><b id="adaptiveStabilityValue">—</b></div>
-            <div><small>建議速度</small><b id="adaptiveTempoValue">—</b></div>
-            <div><small>較弱手</small><b id="adaptiveWeakHandValue">—</b></div>
-            <div><small>學習趨勢</small><b id="adaptiveTrendValue">—</b></div>
-          </div>
-          <p id="adaptiveProgressText">完成幾次練習後，系統會開始依表現調整建議。</p>
-        </section>
-
         <div class="level-path" id="levelPath"></div>
       </section>
     </section>
@@ -397,24 +382,6 @@
             </div>
             <p id="examResultText">完整演奏後才會產生成績。</p>
           </section>
-          
-          <section id="aiCoachCard" class="ai-coach-card">
-            <div class="ai-coach-head">
-              <div>
-                <small>AI PRACTICE COACH</small>
-                <strong>練習教練</strong>
-              </div>
-              <div class="ai-coach-actions">
-                <button id="speakAiCoachBtn" type="button">🔊 朗讀建議</button>
-                <button id="applyAiCoachBtn" type="button">開始建議練習</button>
-              </div>
-            </div>
-            <div id="aiCoachSummary" class="ai-coach-summary">
-              完成練習後，這裡會根據音高、節拍、左右手與弱小節自動整理下一步。
-            </div>
-            <div id="aiCoachPlan" class="ai-coach-plan"></div>
-          </section>
-
           <section id="practiceAnalytics" class="practice-analytics">
             <div class="analytics-grid">
               <div><small>音高正確率</small><b id="pitchAccuracyValue">—</b></div>
@@ -442,23 +409,6 @@
           </section>
           <div id="recordList" class="record-list"></div>
         </div>
-
-        
-        <section id="adaptiveReadyCard" class="adaptive-ready-card" hidden>
-          <div class="adaptive-ready-head">
-            <div>
-              <small>AI ADAPTIVE LEARNING</small>
-              <strong id="adaptiveReadyTitle">AI 建議設定</strong>
-              <span id="adaptiveReadyReason">根據最近練習紀錄產生。</span>
-            </div>
-            <b id="adaptiveReadyLevel">建議</b>
-          </div>
-          <div id="adaptiveReadySettings" class="adaptive-ready-settings"></div>
-          <div class="adaptive-ready-actions">
-            <button id="applyAdaptiveBtn" class="primary" type="button">套用建議</button>
-            <button id="ignoreAdaptiveBtn" class="soft-btn" type="button">這次忽略</button>
-          </div>
-        </section>
 
         <div id="sessionModeNotice" class="session-mode-notice">
           <div>
@@ -546,7 +496,6 @@
                 <option value="grand">Grand</option>
               </select>
             </label>
-            <button id="soundPackManagerBtn" class="soft-btn sound-pack-open" type="button">🎹 音色包管理</button>
             <span id="pianoSampleStatus" class="sample-status">本地鋼琴音色：待啟用</span>
             <div class="heard">
               <small>目前聽到</small>
@@ -583,56 +532,6 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=3.3"></script>
-
-  <div id="soundPackModal" class="sound-pack-modal" hidden>
-    <div class="sound-pack-backdrop" data-close-sound-pack></div>
-    <section class="sound-pack-dialog" role="dialog" aria-modal="true" aria-labelledby="soundPackTitle">
-      <div class="sound-pack-dialog-head">
-        <div>
-          <small>PIANO SOUND PACKS</small>
-          <h2 id="soundPackTitle">鋼琴音色包管理</h2>
-          <p>Lite 音色隨網站內建；其他音色包可從本機匯入 WAV / MP3，並保存在這台裝置。</p>
-        </div>
-        <button id="closeSoundPackBtn" class="icon-btn" type="button">×</button>
-      </div>
-
-      <div class="sound-pack-summary">
-        <div><small>目前音色</small><b id="currentPackLabel">Studio Grand</b></div>
-        <div><small>已安裝</small><b id="installedPackCount">1 / 6</b></div>
-        <div><small>額外容量</small><b id="installedPackBytes">0 MB</b></div>
-        <div><small>Sample 數</small><b id="installedSampleCount">30</b></div>
-      </div>
-
-      <div id="soundPackList" class="sound-pack-list"></div>
-
-      <section class="sound-pack-import">
-        <div>
-          <small>IMPORT LOCAL SAMPLE PACK</small>
-          <strong>匯入自己的鋼琴樣本</strong>
-          <p>檔名可用 <code>C4.mp3</code>、<code>Cs4.wav</code>、<code>F#3.mp3</code>。缺少某些琴鍵時會自動以最近 sample 補足。</p>
-        </div>
-        <input id="soundPackFilesInput" class="visually-hidden" type="file" accept="audio/mpeg,audio/wav,audio/x-wav,.mp3,.wav" multiple>
-        <button id="importSoundPackBtn" class="primary" type="button">選擇 WAV / MP3</button>
-      </section>
-
-      <div id="soundPackImportStatus" class="import-status">尚未匯入新的音色包。</div>
-
-      <section class="sound-pack-test">
-        <div>
-          <small>SOUND CHECK</small>
-          <strong>音色測試</strong>
-        </div>
-        <div class="sound-pack-test-actions">
-          <button data-test-note="C4" type="button">C4</button>
-          <button data-test-note="E4" type="button">E4</button>
-          <button data-test-note="G4" type="button">G4</button>
-          <button id="testChordBtn" type="button">C Major 和弦</button>
-          <button id="testPedalBtn" type="button">延音踏板測試</button>
-        </div>
-      </section>
-    </section>
-  </div>
-
+  <script src="app.js?v=3.0"></script>
 </body>
 </html>

@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V3.3: 216 built-in pedagogical scores ----------
+// ---------- V3.0: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V3.3: full-length repertoire collections ----------
+// ---------- V3.0: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -353,7 +353,7 @@ const SCHOOL_IMPORT_SLOTS=[
   '老師指定曲 01','老師指定曲 02','老師指定曲 03','老師指定曲 04'
 ];
 
-// ---------- V3.3: generated left-hand accompaniment ----------
+// ---------- V3.0: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -595,7 +595,7 @@ if(songCountEl) songCountEl.textContent=`${library.length} 份內建＋Disney �
 
 
 /* ==========================================================
-   V3.3 Photo Score Import
+   V3.0 Photo Score Import
    Photos/PDFs are persisted in IndexedDB because localStorage
    is too small for image blobs.
    ========================================================== */
@@ -924,230 +924,6 @@ function openPhotoFromLibrary(id){
   openPhotoEditor(id);
 }
 
-
-const ADAPTIVE_HISTORY_KEY='pianoAdaptiveHistoryV33';
-let adaptiveHistory=[];
-
-function loadAdaptiveHistory(){
-  try{adaptiveHistory=JSON.parse(localStorage.getItem(ADAPTIVE_HISTORY_KEY)||'[]')}catch(e){adaptiveHistory=[]}
-}
-function saveAdaptiveHistory(){
-  try{localStorage.setItem(ADAPTIVE_HISTORY_KEY,JSON.stringify(adaptiveHistory.slice(-250)))}catch(e){}
-}
-function handName(h){
-  return h==='right'?'右手':h==='left'?'左手':h==='both'?'雙手':'—';
-}
-function recentSongAdaptiveRuns(songId,limit=5){
-  return adaptiveHistory.filter(x=>x.songId===songId).slice(-limit);
-}
-function weightedAverage(rows,key){
-  if(!rows.length)return null;
-  let w=0,total=0;
-  rows.forEach((r,i)=>{
-    const weight=i+1;
-    const v=Number(r[key]);
-    if(Number.isFinite(v)){total+=v*weight;w+=weight}
-  });
-  return w?total/w:null;
-}
-function buildAdaptiveSuggestion(songId=state.song){
-  const song=songs[songId]||{};
-  const rows=recentSongAdaptiveRuns(songId,5);
-  if(!rows.length)return null;
-
-  const exact=weightedAverage(rows,'exact');
-  const pitch=weightedAverage(rows,'pitch');
-  const rhythm=weightedAverage(rows,'rhythm');
-  const timing=weightedAverage(rows,'avgTiming');
-  const right=weightedAverage(rows,'right');
-  const left=weightedAverage(rows,'left');
-
-  let hand='both';
-  if(Number.isFinite(right)&&Number.isFinite(left)&&Math.abs(right-left)>=10){
-    hand=right<left?'right':'left';
-  }else if(state.hand==='right'||state.hand==='left'){
-    hand=state.hand;
-  }
-
-  const base=Number(song.bpm)||90;
-  let bpm=base;
-  let mode='maintain';
-  let reason='近期表現穩定，維持目前難度。';
-  let loopMeasure=null;
-
-  const latest=rows[rows.length-1];
-  const weak=latest?.weakMeasure||null;
-
-  if((exact??0)<55 || (pitch??0)<65){
-    bpm=Math.max(40,Math.round(base*.68));
-    mode='foundation';
-    reason='近期音高或完整吻合偏低，先大幅降速並拆手。';
-    if(weak)loopMeasure=weak;
-  }else if((exact??0)<72 || (rhythm??0)<72 || (timing??0)>220){
-    bpm=Math.max(45,Math.round(base*.80));
-    mode='stabilize';
-    reason='目前主要需要穩定節拍與弱小節，建議慢速重練。';
-    if(weak)loopMeasure=weak;
-  }else if((exact??0)>=90 && (rhythm??0)>=88 && (pitch??0)>=90){
-    bpm=Math.min(220,Math.round(base*1.05));
-    mode='advance';
-    hand='both';
-    reason='近期表現穩定，可以小幅提高速度或挑戰下一課。';
-  }else{
-    bpm=Math.max(45,Math.round(base*.92));
-    mode='maintain';
-    reason='整體已接近穩定，稍微降速確認細節。';
-    if(weak && (exact??100)<85)loopMeasure=weak;
-  }
-
-  return {
-    songId,mode,bpm,hand,loopMeasure,reason,
-    exact:exact==null?null:Math.round(exact),
-    pitch:pitch==null?null:Math.round(pitch),
-    rhythm:rhythm==null?null:Math.round(rhythm),
-    timing:timing==null?null:Math.round(timing),
-    sessions:rows.length
-  };
-}
-function adaptiveModeLabel(mode){
-  return ({
-    foundation:'基礎重建',
-    stabilize:'穩定練習',
-    maintain:'維持',
-    advance:'可以進階'
-  })[mode]||'建議';
-}
-function renderAdaptiveReady(){
-  if(!$('adaptiveReadyCard'))return;
-  if(state.adaptiveIgnoredForSong===state.song){
-    $('adaptiveReadyCard').hidden=true;
-    return;
-  }
-  const sug=buildAdaptiveSuggestion(state.song);
-  state.adaptiveSuggestion=sug;
-  if(!sug){
-    $('adaptiveReadyCard').hidden=true;
-    return;
-  }
-  $('adaptiveReadyCard').hidden=false;
-  $('adaptiveReadyLevel').textContent=adaptiveModeLabel(sug.mode);
-  $('adaptiveReadyTitle').textContent=`AI 建議：${sug.bpm} BPM · ${handName(sug.hand)}`;
-  $('adaptiveReadyReason').textContent=sug.reason;
-  const root=$('adaptiveReadySettings');root.innerHTML='';
-  [
-    `${sug.bpm} BPM`,
-    handName(sug.hand),
-    sug.loopMeasure?`循環第 ${sug.loopMeasure} 小節`:'整段練習',
-    `依 ${sug.sessions} 次紀錄`
-  ].forEach(t=>{
-    const s=document.createElement('span');s.textContent=t;root.appendChild(s);
-  });
-}
-function applyAdaptiveSuggestion(){
-  const sug=state.adaptiveSuggestion||buildAdaptiveSuggestion(state.song);
-  if(!sug)return;
-
-  state.customBpm=sug.bpm;
-  $('tempoInput').value=String(sug.bpm);
-  updateTempoUI();
-
-  if(sug.hand==='right'||sug.hand==='left'||sug.hand==='both'){
-    state.hand=sug.hand;
-    $('handSelect').value=sug.hand;
-    buildEventTimeline();
-    updateHandFocus();
-    renderStaticScore();
-  }
-
-  if(sug.loopMeasure){
-    seekTo(measureStartTime(sug.loopMeasure));
-    state.loopMeasure=true;
-    $('measureLoopSelect').value='current';
-  }else{
-    state.loopMeasure=false;
-    $('measureLoopSelect').value='off';
-  }
-
-  $('transportStatus').textContent='AI 自適應設定已套用';
-  $('adaptiveReadyCard').hidden=true;
-}
-function ignoreAdaptiveSuggestion(){
-  state.adaptiveIgnoredForSong=state.song;
-  $('adaptiveReadyCard').hidden=true;
-}
-function recordAdaptiveRun(){
-  const a=analyzePracticeLog();
-  if(!a.total)return;
-  adaptiveHistory.push({
-    at:Date.now(),
-    day:todayKey(),
-    songId:state.song,
-    exact:a.exactAccuracy,
-    pitch:a.pitchAccuracy,
-    rhythm:a.rhythmAccuracy,
-    avgTiming:a.avgTiming,
-    right:a.rightCount?a.rightAccuracy:null,
-    left:a.leftCount?a.leftAccuracy:null,
-    chord:a.chordAvg,
-    weakMeasure:a.weakest?.measure||null,
-    bpm:effectiveBpm(),
-    hand:state.hand
-  });
-  adaptiveHistory=adaptiveHistory.slice(-250);
-  saveAdaptiveHistory();
-}
-function globalAdaptiveStats(){
-  const rows=adaptiveHistory.slice(-12);
-  if(!rows.length)return null;
-  const exact=weightedAverage(rows,'exact');
-  const rhythm=weightedAverage(rows,'rhythm');
-  const right=weightedAverage(rows,'right');
-  const left=weightedAverage(rows,'left');
-  const bpm=weightedAverage(rows,'bpm');
-
-  let weakHand='—';
-  if(Number.isFinite(right)&&Number.isFinite(left))weakHand=right<left?'右手':'左手';
-
-  let trend='建立資料中';
-  if(rows.length>=4){
-    const half=Math.floor(rows.length/2);
-    const older=rows.slice(0,half).reduce((s,x)=>s+(x.exact||0),0)/half;
-    const newer=rows.slice(half).reduce((s,x)=>s+(x.exact||0),0)/(rows.length-half);
-    if(newer-older>=5)trend='進步中 ↑';
-    else if(older-newer>=5)trend='需要穩定';
-    else trend='穩定 →';
-  }
-
-  return {
-    exact:Math.round(exact||0),
-    rhythm:Math.round(rhythm||0),
-    weakHand,
-    bpm:Math.round(bpm||0),
-    trend,
-    sessions:rows.length
-  };
-}
-function renderAdaptiveProgress(){
-  if(!$('adaptiveStabilityValue'))return;
-  const a=globalAdaptiveStats();
-  if(!a){
-    $('adaptiveStatusBadge').textContent='建立資料中';
-    $('adaptiveStabilityValue').textContent='—';
-    $('adaptiveTempoValue').textContent='—';
-    $('adaptiveWeakHandValue').textContent='—';
-    $('adaptiveTrendValue').textContent='—';
-    $('adaptiveProgressText').textContent='完成幾次練習後，系統會開始依表現調整建議。';
-    return;
-  }
-  $('adaptiveStatusBadge').textContent=a.sessions>=6?'已啟用':'學習中';
-  $('adaptiveStabilityValue').textContent=a.exact+'%';
-  $('adaptiveTempoValue').textContent=a.bpm?a.bpm+' BPM':'—';
-  $('adaptiveWeakHandValue').textContent=a.weakHand;
-  $('adaptiveTrendValue').textContent=a.trend;
-  $('adaptiveProgressText').textContent=`最近 ${a.sessions} 次練習的加權完全吻合約 ${a.exact}%，節拍約 ${a.rhythm}%。系統會優先使用最近的紀錄產生 READY 建議。`;
-}
-loadAdaptiveHistory();
-
 const PROGRESS_KEY='pianoLearningProgressV26';
 const DAILY_GOAL_MINUTES=15;
 
@@ -1245,7 +1021,6 @@ function findNextLesson(){
 function renderProgressPath(){
   if(!$('levelPath')) return;
   refreshUnlocks();
-  renderAdaptiveProgress();
 
   $('totalStarsValue').textContent=`${learningProgress.stars||0} ★`;
   $('completedLessonsValue').textContent=String(learningProgress.completedLessons.length);
@@ -1417,7 +1192,7 @@ function renderCurriculum(){
 
 let state = {
   song:'twinkle',running:false,paused:false,startAt:0,pauseStart:0,pauseTotal:0,audioStartTime:0,pausedElapsed:0,
-  speed:1,mode:'play',sessionMode:'practice',examLocked:false,lastExamResult:null,adaptiveSuggestion:null,adaptiveIgnoredForSong:null,hand:'right',micStream:null,audioCtx:null,analyser:null,
+  speed:1,mode:'play',sessionMode:'practice',examLocked:false,lastExamResult:null,hand:'right',micStream:null,audioCtx:null,analyser:null,
   audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,metroScheduler:null,nextMetroBeat:0,assistTimer:null,assistBeat:0,
   judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,lastMasterBeat:-1,
   performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,eventTimeline:[],rightTimeline:[],leftTimeline:[],countInBeats:0,loopMeasure:false,demoSoundOn:false,pianoVoice:'studio',pianoQuality:'studio',sustainPedal:false,softPedal:false,resonanceOn:true,maxPolyphony:64,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoScheduled:new Set(),demoVolume:0.45,pianoVoices:new Set(),inputMode:null,midiAccess:null,midiInputs:[],midiChordNotes:new Set(),midiChordStart:null,midiChordTimer:null,judgedMidiGroups:new Set()
@@ -1680,7 +1455,7 @@ $('clearImportedBtn').addEventListener('click',()=>{
 function openPractice(songId,label='PLAY'){
   rememberRecentScore(songId);
   state.song=songId; state.running=false; state.paused=false; state.pauseTotal=0; state.judged=new Set(); state.goodStreak=0;
-  state.lastExamResult=null; state.adaptiveIgnoredForSong=null; updateSessionModeUI(); setExamLock(false);
+  state.lastExamResult=null; updateSessionModeUI(); setExamLock(false);
   state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set(); state.judgedMidiGroups=new Set(); state.midiChordNotes.clear(); state.midiChordStart=null; clearTimeout(state.midiChordTimer);
   state.tempoManual=false; state.tempoBpm=songs[songId].bpm; state.speed=1; state.lastMasterBeat=-1;
   $('tempoInput').value=state.tempoBpm;
@@ -1813,8 +1588,7 @@ function fmtTime(sec){
 }
 function enterReadyState(){
   state.running=false;
-  setExamLock(false);
-  setTimeout(renderAdaptiveReady,0); state.paused=false; state.pauseTotal=0; state.pausedElapsed=0; state.audioStartTime=0; state.lastMasterBeat=-1; state.demoScheduled=new Set();
+  setExamLock(false); state.paused=false; state.pauseTotal=0; state.pausedElapsed=0; state.audioStartTime=0; state.lastMasterBeat=-1; state.demoScheduled=new Set();
   $('prepareBanner').classList.remove('running');
   $('topProgressBar').style.width='0%';
   $('transportTime').textContent='00:00';
@@ -1964,171 +1738,6 @@ function analyzePracticeLog(){
     weakest:ranked[0]||null
   };
 }
-
-let currentAiCoachPlan=null;
-
-function buildAiCoachPlan(){
-  const a=analyzePracticeLog();
-  const s=songs[state.song]||{};
-  if(!a.total){
-    return {
-      summary:'還沒有足夠的練習紀錄。先完整彈一次，AI 教練才有資料可以分析。',
-      steps:[],
-      targetMeasure:null,
-      targetHand:state.hand,
-      recommendedBpm:effectiveBpm()
-    };
-  }
-
-  const issues=[];
-  if(a.pitchAccuracy<80) issues.push({type:'pitch',score:80-a.pitchAccuracy});
-  if(a.rhythmAccuracy<80) issues.push({type:'rhythm',score:80-a.rhythmAccuracy});
-  if(a.avgTiming!=null && a.avgTiming>180) issues.push({type:'timing',score:Math.min(50,(a.avgTiming-180)/4)});
-  if(a.chordAvg!=null && a.chordAvg<85) issues.push({type:'chord',score:85-a.chordAvg});
-  if(a.rightCount && a.leftCount){
-    const gap=Math.abs(a.rightAccuracy-a.leftAccuracy);
-    if(gap>=12) issues.push({type:a.rightAccuracy<a.leftAccuracy?'right':'left',score:gap});
-  }
-  if(a.weakest) issues.push({type:'measure',score:35});
-
-  issues.sort((x,y)=>y.score-x.score);
-  const top=issues[0]?.type||'general';
-
-  let focusText='整體表現已經相當穩定，可以提高速度或挑戰下一首。';
-  if(top==='pitch') focusText='目前最大的問題是音高準確度，先把音符位置彈穩，再追求速度。';
-  if(top==='rhythm'||top==='timing') focusText='目前最大的問題是節拍穩定度，先降低 BPM，再把拍點對齊。';
-  if(top==='chord') focusText='目前和弦完整度較弱，建議先拆手練習，再回到雙手。';
-  if(top==='right') focusText='右手目前比左手不穩，先集中右手慢速練習。';
-  if(top==='left') focusText='左手目前比右手不穩，先集中左手慢速練習。';
-  if(top==='measure') focusText=`第 ${a.weakest.measure} 小節是目前最需要重練的地方。`;
-
-  const weak=a.weakest?.measure||null;
-  const weakerHand=(a.rightCount&&a.leftCount)
-    ? (a.rightAccuracy<a.leftAccuracy?'right':'left')
-    : state.hand;
-
-  const currentBpm=effectiveBpm();
-  const slower=Math.max(40,Math.round(currentBpm*.78));
-
-  const steps=[];
-  if(weak){
-    steps.push({
-      title:`先練第 ${weak} 小節`,
-      desc:'只循環這一小節，連續彈到穩定。',
-      tag:'弱小節',
-      action:'weak'
-    });
-  }
-
-  if(weakerHand==='right'||weakerHand==='left'){
-    steps.push({
-      title:`單獨練${weakerHand==='right'?'右手':'左手'}`,
-      desc:'先把較弱的一手彈穩，再恢復雙手。',
-      tag:weakerHand==='right'?'右手':'左手',
-      action:'hand'
-    });
-  }
-
-  if(a.rhythmAccuracy<88 || (a.avgTiming!=null&&a.avgTiming>150)){
-    steps.push({
-      title:`降到 ${slower} BPM`,
-      desc:'使用較慢速度重新對齊拍點。',
-      tag:`${slower} BPM`,
-      action:'tempo'
-    });
-  }
-
-  if(a.pitchAccuracy<88){
-    steps.push({
-      title:'先求音準，不求速度',
-      desc:'每顆音確認正確後再往下一拍。',
-      tag:`音高 ${a.pitchAccuracy}%`,
-      action:'pitch'
-    });
-  }
-
-  if(a.chordAvg!=null&&a.chordAvg<90){
-    steps.push({
-      title:'和弦拆開確認',
-      desc:'先檢查缺音與多按，再恢復完整和弦。',
-      tag:`和弦 ${a.chordAvg}%`,
-      action:'chord'
-    });
-  }
-
-  if(!steps.length){
-    steps.push({
-      title:'提高一點速度',
-      desc:'目前穩定，可以嘗試加快約 5 BPM。',
-      tag:'進階',
-      action:'advance'
-    });
-  }
-
-  return {
-    summary:`${s.title||'這首曲子'}：${focusText} 目前完全吻合 ${a.exactAccuracy}%，音高 ${a.pitchAccuracy}%，節拍 ${a.rhythmAccuracy}%。`,
-    steps,
-    targetMeasure:weak,
-    targetHand:weakerHand,
-    recommendedBpm:slower,
-    accuracy:a.exactAccuracy
-  };
-}
-
-function renderAiCoach(){
-  if(!$('aiCoachSummary'))return;
-  currentAiCoachPlan=buildAiCoachPlan();
-  $('aiCoachSummary').textContent=currentAiCoachPlan.summary;
-  const root=$('aiCoachPlan');root.innerHTML='';
-  currentAiCoachPlan.steps.forEach((st,i)=>{
-    const row=document.createElement('div');
-    row.className='ai-coach-step';
-    row.innerHTML=`<div class="step-no">${i+1}</div><div><strong>${st.title}</strong><span>${st.desc}</span></div><em>${st.tag}</em>`;
-    root.appendChild(row);
-  });
-  $('applyAiCoachBtn').disabled=!currentAiCoachPlan.steps.length;
-}
-
-function speakAiCoach(){
-  if(!('speechSynthesis' in window) || !currentAiCoachPlan)return;
-  speechSynthesis.cancel();
-  const text=[currentAiCoachPlan.summary,...currentAiCoachPlan.steps.map((x,i)=>`第 ${i+1} 步，${x.title}。${x.desc}`)].join(' ');
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang='zh-TW';
-  u.rate=.95;
-  speechSynthesis.speak(u);
-}
-
-function applyAiCoachPlan(){
-  const p=currentAiCoachPlan||buildAiCoachPlan();
-  if(!p.steps.length)return;
-
-  if(p.targetMeasure){
-    seekTo(measureStartTime(p.targetMeasure));
-    state.loopMeasure=true;
-    $('measureLoopSelect').value='current';
-  }
-
-  if(p.targetHand==='right'||p.targetHand==='left'){
-    state.hand=p.targetHand;
-    $('handSelect').value=p.targetHand;
-    buildEventTimeline();
-    updateHandFocus();
-    renderStaticScore();
-  }
-
-  if(p.recommendedBpm && p.accuracy<90){
-    state.customBpm=p.recommendedBpm;
-    $('tempoInput').value=String(p.recommendedBpm);
-    updateTempoUI();
-  }
-
-  $('recordDrawer').hidden=true;
-  $('recordBtn').classList.remove('active');
-  enterReadyState();
-  $('transportStatus').textContent='AI 建議已套用，準備後按播放';
-}
-
 function renderPracticeAnalytics(){
   const a=analyzePracticeLog();
   const val=(id,text)=>{const el=$(id);if(el)el.textContent=text};
@@ -2175,7 +1784,6 @@ function renderPracticeAnalytics(){
 function renderRecordDrawer(){
   const log=state.performanceLog||[];
   renderPracticeAnalytics();
-  renderAiCoach();
   const exact=log.filter(x=>x.pitchCorrect&&x.rhythmCorrect).length;
   const pitch=log.filter(x=>x.pitchCorrect).length;
   const rhythm=log.filter(x=>x.rhythmCorrect).length;
@@ -2204,12 +1812,6 @@ $('recordBtn').addEventListener('click',()=>{
   $('recordDrawer').hidden=!$('recordDrawer').hidden;
   $('recordBtn').classList.toggle('active',!$('recordDrawer').hidden);
 });
-
-
-$('applyAdaptiveBtn').addEventListener('click',applyAdaptiveSuggestion);
-$('ignoreAdaptiveBtn').addEventListener('click',ignoreAdaptiveSuggestion);
-$('speakAiCoachBtn').addEventListener('click',speakAiCoach);
-$('applyAiCoachBtn').addEventListener('click',applyAiCoachPlan);
 
 $('practiceWeakestBtn').addEventListener('click',()=>{
   const a=analyzePracticeLog();
@@ -2263,55 +1865,6 @@ try{
   setPianoQuality('studio',false);
 }
 updatePianoEngineStatus();
-
-
-$('soundPackManagerBtn').addEventListener('click',()=>{
-  $('soundPackModal').hidden=false;renderSoundPackManager();
-});
-$('closeSoundPackBtn').addEventListener('click',()=>{$('soundPackModal').hidden=true});
-document.querySelectorAll('[data-close-sound-pack]').forEach(x=>x.addEventListener('click',()=>{$('soundPackModal').hidden=true}));
-$('importSoundPackBtn').addEventListener('click',()=>{
-  const id=state.pianoVoice==='lite'?'studio':state.pianoVoice;
-  $('soundPackFilesInput').dataset.targetPack=id;
-  $('soundPackFilesInput').click();
-});
-$('soundPackFilesInput').addEventListener('change',async e=>{
-  const id=e.target.dataset.targetPack||'studio';
-  $('soundPackImportStatus').textContent=`正在匯入 ${PIANO_VOICES[id]?.label||id}…`;
-  try{
-    await importSoundPackFiles(id,e.target.files);
-    setPianoVoice(id);
-    await activateSoundPack(id);
-  }catch(err){
-    $('soundPackImportStatus').textContent='匯入失敗：'+err.message;
-  }
-  e.target.value='';
-});
-document.querySelectorAll('[data-test-note]').forEach(btn=>{
-  btn.addEventListener('click',async()=>{
-    if(!state.pianoReady)await loadLocalPianoSamples();
-    const oldDemo=state.demoSoundOn;state.demoSoundOn=true;
-    playLocalPianoAt(btn.dataset.testNote,ensureAudioContext().currentTime+.03,.9,1.1,96);
-    state.demoSoundOn=oldDemo;
-  });
-});
-$('testChordBtn').addEventListener('click',async()=>{
-  if(!state.pianoReady)await loadLocalPianoSamples();
-  const oldDemo=state.demoSoundOn;state.demoSoundOn=true;
-  const t=ensureAudioContext().currentTime+.03;
-  ['C4','E4','G4'].forEach((n,i)=>playLocalPianoAt(n,t,.85,1.4,82+i*12));
-  state.demoSoundOn=oldDemo;
-});
-$('testPedalBtn').addEventListener('click',async()=>{
-  if(!state.pianoReady)await loadLocalPianoSamples();
-  const oldDemo=state.demoSoundOn,oldPedal=state.sustainPedal;
-  state.demoSoundOn=true;state.sustainPedal=true;updatePianoEngineStatus();
-  const t=ensureAudioContext().currentTime+.03;
-  ['C3','G3','C4','E4','G4'].forEach((n,i)=>playLocalPianoAt(n,t,.78,1.8,75+i*7));
-  setTimeout(()=>{state.sustainPedal=oldPedal;updatePianoEngineStatus()},1700);
-  state.demoSoundOn=oldDemo;
-});
-loadInstalledSoundPacks();
 
 $('handSelect').addEventListener('change',()=>{
   state.hand=$('handSelect').value;
@@ -2412,9 +1965,6 @@ function sampleFileFor(noteName){
 }
 
 async function loadLocalPianoSamples(){
-  if(state.pianoVoice!=='lite' && installedSoundPacks[state.pianoVoice]){
-    return activateSoundPack(state.pianoVoice);
-  }
   if(state.pianoReady) return true;
   if(state.pianoLoading) return false;
 
@@ -2451,14 +2001,12 @@ async function loadLocalPianoSamples(){
 }
 
 function nearestPianoSample(targetMidi){
-  const keys=state.pianoBuffers&&state.pianoBuffers.size?[...state.pianoBuffers.keys()]:LOCAL_PIANO_SAMPLES.map(x=>x[1]);
-  let bestMidi=keys[0]??60,bestDist=999;
-  for(const midi of keys){
+  let best=null,bestDist=999;
+  for(const [noteName,midi] of LOCAL_PIANO_SAMPLES){
     const d=Math.abs(targetMidi-midi);
-    if(d<bestDist){bestMidi=midi;bestDist=d}
+    if(d<bestDist){ best={noteName,midi}; bestDist=d; }
   }
-  const builtIn=LOCAL_PIANO_SAMPLES.find(x=>x[1]===bestMidi);
-  return {noteName:builtIn?.[0]||null,midi:bestMidi};
+  return best;
 }
 
 function stopAllPianoVoices(){
@@ -2480,9 +2028,10 @@ function playLocalPiano(note,velocity=0.85,duration=1.1){
   const gain=ctx.createGain();
   src.buffer=buffer;
   src.playbackRate.value=Math.pow(2,(targetMidi-sample.midi)/12);
-  const now=ctx.currentTime;
   gain.gain.value=Math.max(0,Math.min(1,state.demoVolume))*velocity;
   connectPianoVoiceChain(ctx,src,gain,now);
+
+  const now=ctx.currentTime;
   src.start(now);
   state.pianoVoices.add(src);
 
@@ -2527,198 +2076,6 @@ function playLocalPianoAt(note,when,velocity=0.85,duration=1.1,midiVelocity=96){
   src.onended=()=>state.pianoVoices.delete(src);
 }
 
-
-
-const SOUND_PACK_DB='PianoLearningSoundPacksV31';
-const SOUND_PACK_STORE='packs';
-let installedSoundPacks={};
-
-function openSoundPackDB(){
-  return new Promise((resolve,reject)=>{
-    if(!('indexedDB' in window))return reject(new Error('瀏覽器不支援 IndexedDB'));
-    const req=indexedDB.open(SOUND_PACK_DB,1);
-    req.onupgradeneeded=()=>{
-      const db=req.result;
-      if(!db.objectStoreNames.contains(SOUND_PACK_STORE))db.createObjectStore(SOUND_PACK_STORE,{keyPath:'id'});
-    };
-    req.onsuccess=()=>resolve(req.result);
-    req.onerror=()=>reject(req.error||new Error('音色包資料庫開啟失敗'));
-  });
-}
-async function soundPackPut(rec){
-  const db=await openSoundPackDB();
-  return new Promise((resolve,reject)=>{
-    const tx=db.transaction(SOUND_PACK_STORE,'readwrite');
-    tx.objectStore(SOUND_PACK_STORE).put(rec);
-    tx.oncomplete=()=>{db.close();resolve()};
-    tx.onerror=()=>{db.close();reject(tx.error)};
-  });
-}
-async function soundPackDelete(id){
-  const db=await openSoundPackDB();
-  return new Promise((resolve,reject)=>{
-    const tx=db.transaction(SOUND_PACK_STORE,'readwrite');
-    tx.objectStore(SOUND_PACK_STORE).delete(id);
-    tx.oncomplete=()=>{db.close();resolve()};
-    tx.onerror=()=>{db.close();reject(tx.error)};
-  });
-}
-async function soundPackGetAll(){
-  const db=await openSoundPackDB();
-  return new Promise((resolve,reject)=>{
-    const tx=db.transaction(SOUND_PACK_STORE,'readonly');
-    const req=tx.objectStore(SOUND_PACK_STORE).getAll();
-    req.onsuccess=()=>{const rows=req.result||[];db.close();resolve(rows)};
-    req.onerror=()=>{db.close();reject(req.error)};
-  });
-}
-function bytesLabel(n){
-  n=Number(n)||0;
-  if(n<1024)return n+' B';
-  if(n<1048576)return (n/1024).toFixed(1)+' KB';
-  return (n/1048576).toFixed(1)+' MB';
-}
-function normalizeSampleNoteName(name){
-  let base=String(name||'').replace(/\.[^.]+$/,'').replace(/♯/g,'#').replace(/♭/g,'b').trim();
-  base=base.replace(/([A-Ga-g])s(-?\d)/g,'$1#$2');
-  const m=base.match(/(?:^|[_\-\s])([A-Ga-g])([#b]?)(-?\d)(?:$|[_\-\s])/)
-    || base.match(/^([A-Ga-g])([#b]?)(-?\d)$/);
-  if(!m)return null;
-  const letter=m[1].toUpperCase(),acc=m[2]||'',oct=Number(m[3]);
-  if(acc!=='b')return letter+(acc==='#'?'#':'')+oct;
-  const semis={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
-  let midi=(oct+1)*12+semis[letter]-1;
-  const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-  return names[(midi%12+12)%12]+(Math.floor(midi/12)-1);
-}
-function packMeta(id){
-  const cfg=PIANO_VOICES[id],rec=installedSoundPacks[id];
-  return {
-    id,label:cfg?.label||id,
-    installed:id==='lite'||!!rec,
-    current:state.pianoVoice===id,
-    sampleCount:id==='lite'?LOCAL_PIANO_SAMPLES.length:(rec?.samples?.length||0),
-    bytes:id==='lite'?0:(rec?.bytes||0),
-    source:id==='lite'?'內建':'本機匯入'
-  };
-}
-async function loadInstalledSoundPacks(){
-  try{
-    const rows=await soundPackGetAll();
-    installedSoundPacks=Object.fromEntries(rows.map(x=>[x.id,x]));
-  }catch(e){installedSoundPacks={}}
-  renderSoundPackManager();
-}
-function renderSoundPackManager(){
-  if(!$('soundPackList'))return;
-  const ids=['lite','studio','concert','warm','bright','soft'];
-  const root=$('soundPackList');root.innerHTML='';
-  let installed=0,totalBytes=0,totalSamples=0;
-  ids.forEach(id=>{
-    const meta=packMeta(id),cfg=PIANO_VOICES[id];
-    if(meta.installed){installed++;totalBytes+=meta.bytes;totalSamples+=meta.sampleCount}
-    const row=document.createElement('div');
-    row.className='sound-pack-row'+(meta.current?' active':'');
-    row.innerHTML=`
-      <div class="sound-pack-main">
-        <strong>${cfg.label}</strong>
-        <span>${cfg.quality.toUpperCase()} · ${cfg.polyphony} polyphony</span>
-        <div class="sound-pack-tags">
-          <em class="${meta.installed?'installed':''}">${meta.installed?'已安裝':'未安裝'}</em>
-          ${meta.current?'<em class="current">目前使用</em>':''}
-          <em>${meta.sampleCount} samples</em>
-        </div>
-      </div>
-      <div class="sound-pack-info"><b>${meta.source}</b><span>${meta.bytes?bytesLabel(meta.bytes):'隨網站內建'}</span></div>
-      <div class="sound-pack-actions"></div>`;
-    const actions=row.querySelector('.sound-pack-actions');
-
-    const use=document.createElement('button');
-    use.type='button';use.className='primary';use.textContent='使用';
-    use.disabled=meta.current;
-    use.addEventListener('click',async()=>{
-      if(id!=='lite'&&!meta.installed){
-        $('soundPackImportStatus').textContent=`${cfg.label} 尚未安裝，請先匯入 WAV / MP3。`;
-        return;
-      }
-      setPianoVoice(id);
-      await activateSoundPack(id);
-      renderSoundPackManager();
-    });
-    actions.appendChild(use);
-
-    if(id!=='lite'){
-      const ib=document.createElement('button');
-      ib.type='button';ib.textContent=meta.installed?'重新匯入':'安裝';
-      ib.addEventListener('click',()=>{
-        $('soundPackFilesInput').dataset.targetPack=id;
-        $('soundPackFilesInput').click();
-      });
-      actions.appendChild(ib);
-      if(meta.installed){
-        const del=document.createElement('button');
-        del.type='button';del.className='danger';del.textContent='移除';
-        del.addEventListener('click',async()=>{
-          if(!confirm(`移除 ${cfg.label} 音色包？`))return;
-          await soundPackDelete(id);delete installedSoundPacks[id];
-          if(state.pianoVoice===id){setPianoVoice('lite');await activateSoundPack('lite')}
-          renderSoundPackManager();
-        });
-        actions.appendChild(del);
-      }
-    }
-    root.appendChild(row);
-  });
-  $('installedPackCount').textContent=`${installed} / ${ids.length}`;
-  $('installedPackBytes').textContent=totalBytes?bytesLabel(totalBytes):'0 MB';
-  $('installedSampleCount').textContent=String(totalSamples);
-  $('currentPackLabel').textContent=currentPianoVoice().label;
-}
-async function importSoundPackFiles(id,files){
-  const cfg=PIANO_VOICES[id];if(!cfg)throw new Error('未知音色包');
-  const list=[...(files||[])],samples=[];
-  for(const file of list){
-    const note=normalizeSampleNoteName(file.name);
-    if(note)samples.push({note,name:file.name,blob:file,size:file.size||0,type:file.type||''});
-  }
-  if(!samples.length)throw new Error('沒有找到可辨識檔名，例如 C4.mp3、Cs4.wav 或 F#3.mp3');
-  const rec={id,label:cfg.label,updatedAt:Date.now(),bytes:samples.reduce((s,x)=>s+x.size,0),samples};
-  await soundPackPut(rec);
-  installedSoundPacks[id]=rec;
-  $('soundPackImportStatus').textContent=`${cfg.label} 已安裝：${samples.length} samples，${bytesLabel(rec.bytes)}。`;
-  renderSoundPackManager();
-}
-async function activateSoundPack(id){
-  if(id==='lite'){
-    state.pianoReady=false;state.pianoBuffers=new Map();
-    return loadLocalPianoSamples();
-  }
-  const rec=installedSoundPacks[id];
-  if(!rec){
-    setPianoVoice('lite');
-    return activateSoundPack('lite');
-  }
-  const ctx=ensureAudioContext(),map=new Map();
-  setSampleStatus(`${PIANO_VOICES[id].label}：載入中…`,'loading');
-  let ok=0;
-  for(const s of rec.samples){
-    try{
-      const arr=await s.blob.arrayBuffer();
-      const buffer=await ctx.decodeAudioData(arr.slice(0));
-      const midi=noteToMidi(s.note);
-      if(Number.isFinite(midi)){map.set(midi,buffer);ok++}
-    }catch(e){}
-  }
-  if(!ok){
-    setSampleStatus(`${PIANO_VOICES[id].label} 無可用 sample，改回 Lite`,'error');
-    setPianoVoice('lite');
-    return activateSoundPack('lite');
-  }
-  state.pianoBuffers=map;state.pianoReady=true;
-  setSampleStatus(`${PIANO_VOICES[id].label}：${ok} samples 已就緒`,'ready');
-  updatePianoEngineStatus();
-  return true;
-}
 
 const PIANO_VOICES={
   lite:{label:'Lite Piano',quality:'lite',brightness:1.00,attack:1.00,release:.55,room:.00,resonance:.00,polyphony:48,dynamic:1.00},
@@ -3198,7 +2555,6 @@ function gameLoop(){
   }
 
   if(e>=effectiveDuration()){
-    recordAdaptiveRun();
     savePracticeSummary();
     if(state.sessionMode==='exam') buildExamResult();
     stopPractice();
@@ -3218,7 +2574,7 @@ function gameLoop(){
 }
 
 function flash(kind){
-  // V3.3: intentionally disabled. No screen flash at beat/hit time.
+  // V3.0: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   if(state.sessionMode==='exam' || state.sessionMode==='performance') return;
