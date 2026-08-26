@@ -380,3 +380,45 @@ button{cursor:pointer}
 .music-note.chord-complete .note-head,.music-note.chord-complete .note-stem{background:#61c891}
 .music-note.chord-partial .note-head,.music-note.chord-partial .note-stem{background:#d9a760}
 @media(max-width:760px){.match-status{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* V2.2.2 — 雙手功能狀態與穩定顯示 */
+.both-hands-status{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:8px;
+  margin-top:12px;
+}
+.both-hands-status>div{
+  background:#f7f8fc;
+  border:1px solid #e2e6f0;
+  border-radius:12px;
+  padding:9px 10px;
+  text-align:center;
+  min-width:0;
+}
+.both-hands-status small{
+  display:block;
+  color:#8993a9;
+  font-size:.64rem;
+}
+.both-hands-status b{
+  display:block;
+  color:#4b5874;
+  font-size:.82rem;
+  margin-top:3px;
+  overflow-wrap:anywhere;
+}
+.both-hands-status b.on{color:#398760}
+.both-hands-status b.warn{color:#a26d39}
+.grand-staff.hand-both .treble-staff,
+.grand-staff.hand-both .bass-staff{
+  opacity:1;
+  filter:none;
+}
+@media(max-width:900px){
+  .both-hands-status{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:540px){
+  .both-hands-status{grid-template-columns:repeat(2,minmax(0,1fr))}
+}

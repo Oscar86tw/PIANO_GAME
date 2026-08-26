@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V2.2.1: 216 built-in pedagogical scores ----------
+// ---------- V2.2.2: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V2.2.1: full-length repertoire collections ----------
+// ---------- V2.2.2: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -249,7 +249,7 @@ const DISNEY_IMPORT_SLOTS=[
   'Disney Piano Song 09','Disney Piano Song 10','Disney Piano Song 11','Disney Piano Song 12'
 ];
 
-// ---------- V2.2.1: generated left-hand accompaniment ----------
+// ---------- V2.2.2: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -723,6 +723,7 @@ function openPractice(songId,label='PLAY'){
   $('practiceModeLabel').textContent=label;
   showView('practice');
   renderStaticScore();
+  updateBothHandsStatus();
   enterReadyState();
 }
 
@@ -739,6 +740,7 @@ function enterReadyState(){
   $('transportStatus').textContent='準備中';
   $('inputSource').textContent=state.inputMode==='midi'?'MIDI':state.inputMode==='mic'?'麥克風':'—';
   renderStaticScore();
+  updateBothHandsStatus();
   $('playBtn').classList.remove('active');
   $('pauseTransportBtn').classList.remove('active');
   if(state.metroOn) stopMetronome(false);
@@ -810,7 +812,8 @@ function renderRecordDrawer(){
   log.slice(-40).reverse().forEach(x=>{
     const row=document.createElement('div'); row.className='record-row';
     const exactOk=x.pitchCorrect&&x.rhythmCorrect;
-    row.innerHTML=`<b>#${x.index+1}</b><span>譜 ${x.expectedNote||'—'} → 彈 ${x.playedNote||'—'}</span>
+    const handLabel=x.hand==='left'?'左手':x.hand==='right'?'右手':x.hand?.includes('+')?'雙手':'';
+    row.innerHTML=`<b>#${x.index+1}</b><span>${handLabel?handLabel+'｜':''}譜 ${x.expectedNote||'—'} → 彈 ${x.playedNote||'—'}</span>
       <span class="${exactOk?'ok':'bad'}">${exactOk?'吻合':'需練習'}</span>
       <span>${x.timingErrorMs==null?'MISS':(x.timingErrorMs>0?'+':'')+x.timingErrorMs+' ms'}｜${x.durationBeats||1}拍</span>`;
     root.appendChild(row);
@@ -845,11 +848,22 @@ $('speedSelect').addEventListener('change',()=>{
   if(state.running) restartPractice();
 });
 $('practiceMode').addEventListener('change',()=>{state.mode=$('practiceMode').value;});
-$('handSelect').addEventListener('change',()=>{state.hand=$('handSelect').value;updateHandFocus();renderStaticScore();});
+$('handSelect').addEventListener('change',()=>{
+  state.hand=$('handSelect').value;
+  state.demoScheduled=new Set();
+  state.judged=new Set();
+  state.judgedMidiGroups=new Set();
+  buildEventTimeline();
+  updateHandFocus();
+  renderStaticScore();
+  updateBothHandsStatus();
+  if(state.running && !state.paused) startMetronome();
+});
 function updateHandFocus(){
   const g=$('grandStaff'); if(!g)return;
   g.classList.remove('hand-right','hand-left','hand-both');
   g.classList.add('hand-'+state.hand);
+  updateBothHandsStatus();
 }
 $('countInSelect').addEventListener('change',()=>{
   const measures=parseInt($('countInSelect').value)||0;
@@ -1055,6 +1069,7 @@ async function toggleDemoSound(){
     if(state.running && !state.paused) startMetronome();
     btn.textContent='譜面鋼琴聲：開';
     btn.classList.add('is-on');
+    updateBothHandsStatus();
 
     // Immediate test note, so the user knows audio is working.
     playLocalPiano('C4',0.9,1.0);
@@ -1064,6 +1079,7 @@ async function toggleDemoSound(){
     btn.textContent='譜面鋼琴聲：關';
     btn.classList.remove('is-on');
     state.demoPlayed=new Set();
+    updateBothHandsStatus();
     stopAllPianoVoices();
   }
 }
@@ -1149,6 +1165,52 @@ function bassNoteY(note){
 }
 
 
+
+function visualKey(hand,eventIndex,chordIndex=0){
+  return `${hand}_${eventIndex}_${chordIndex}`;
+}
+function eventVisualKey(ev){
+  return visualKey(ev.hand,ev.eventIndex,ev.chordIndex||0);
+}
+function findEventVisual(ev){
+  const root=ev.hand==='left'?$('scrollingBassScore'):$('scrollingScore');
+  return root?.querySelector(`.music-note[data-vkey="${eventVisualKey(ev)}"]`)||null;
+}
+function updateBothHandsStatus(){
+  if(!$('rightStaffStatus')) return;
+  const hand=state.hand;
+  $('rightStaffStatus').textContent=hand==='left'?'淡化':'顯示';
+  $('leftStaffStatus').textContent=hand==='right'?'淡化':'顯示';
+
+  const demo=$('demoHandStatus');
+  if(!state.demoSoundOn){
+    demo.textContent='關';
+    demo.className='';
+  }else{
+    demo.textContent=hand==='both'?'右手＋左手':hand==='left'?'左手':'右手';
+    demo.className='on';
+  }
+
+  const cap=$('judgeCapability');
+  if(state.inputMode==='midi'){
+    cap.textContent=hand==='both'?'MIDI：雙手多音':'MIDI：多音';
+    cap.className='on';
+  }else{
+    cap.textContent=hand==='both'?'麥克風：雙手以單音追蹤':'麥克風：單音';
+    cap.className=hand==='both'?'warn':'';
+  }
+}
+function currentHandTarget(timeline,e){
+  let best=null,bestDelta=Infinity;
+  timeline.filter(x=>!x.isRest).forEach(ev=>{
+    const d=Math.abs(e-ev.startTime);
+    if(d<bestDelta){bestDelta=d;best=ev;}
+  });
+  if(!best) return '—';
+  const notes=Array.isArray(best.note)?best.note:[best.note];
+  return notes.join(' + ');
+}
+
 function renderStaffTimeline(root,timeline,hand){
   root.innerHTML='';
   const song=songs[state.song];
@@ -1174,6 +1236,7 @@ function renderStaffTimeline(root,timeline,hand){
         const n=document.createElement('div');
         n.className='music-note '+durationClass(ev.beats)+(hand==='left'?' bass-note':'')+(notes.length>1?' chord-note':'');
         n.dataset.i=noteIndex; n.dataset.event=ev.eventIndex; n.dataset.hand=hand;
+        n.dataset.chord=chordIndex; n.dataset.vkey=visualKey(hand,ev.eventIndex,chordIndex);
         n.style.left=x+'px'; n.style.top=(hand==='left'?bassNoteY(note):noteY(note))+'px';
         n.innerHTML='<span class="note-head"></span><span class="note-stem"></span><span class="note-flag"></span>';
         root.appendChild(n); noteIndex++;
@@ -1341,6 +1404,9 @@ function gameLoop(){
   if(bassRoot) bassRoot.style.transform=`translateX(${x}px)`;
   $('topProgressBar').style.width=Math.min(100,e/effectiveDuration()*100)+'%';
   $('transportTime').textContent=fmtTime(e);
+  if($('rightTargetNote')) $('rightTargetNote').textContent=currentHandTarget(state.rightTimeline,e);
+  if($('leftTargetNote')) $('leftTargetNote').textContent=currentHandTarget(state.leftTimeline,e);
+
 
   let nearest=-1,delta=99;
   const nEvents=noteEvents();
@@ -1348,8 +1414,7 @@ function gameLoop(){
   nEvents.forEach((ev,i)=>{
     const expected=ev.startTime;
     const d=Math.abs(e-expected);
-    const targetRoot=ev.hand==='left'?bassRoot:root;
-    const el=targetRoot?.querySelector(`.music-note[data-i="${i}"]`);
+    const el=findEventVisual(ev);
     const timeUntilHit=expected-e;
     if(el){
       applyNoteApproachVisual(el,timeUntilHit,state.judged.has(i));
@@ -1394,7 +1459,7 @@ function gameLoop(){
 }
 
 function flash(kind){
-  // V2.2.1: intentionally disabled. No screen flash at beat/hit time.
+  // V2.2.2: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   const r=$('rhythmAssist');
@@ -1428,7 +1493,7 @@ async function connectMIDI(){
     state.midiAccess=access;
     attachMidiInputs();
     access.onstatechange=attachMidiInputs;
-    state.inputMode='midi'; $('inputSource').textContent='MIDI';
+    state.inputMode='midi'; $('inputSource').textContent='MIDI'; updateBothHandsStatus();
   }catch(err){
     console.error(err); setMidiStatus('MIDI：連接失敗','error');
   }
@@ -1441,7 +1506,7 @@ function attachMidiInputs(){
     const names=state.midiInputs.map(x=>x.name||'MIDI').join(' / ');
     setMidiStatus('MIDI：'+names,'ready');
     $('midiBtn').textContent='MIDI 已連接';
-    state.inputMode='midi'; $('inputSource').textContent='MIDI';
+    state.inputMode='midi'; $('inputSource').textContent='MIDI'; updateBothHandsStatus();
   }else{
     setMidiStatus('MIDI：找不到裝置','waiting');
     $('midiBtn').textContent='重新掃描 MIDI';
@@ -1452,7 +1517,7 @@ function handleMidiMessage(ev){
   const cmd=status&0xf0;
   if(cmd===0x90 && velocity>0){
     const name=midiToNote(note);
-    state.inputMode='midi'; $('inputSource').textContent='MIDI';
+    state.inputMode='midi'; $('inputSource').textContent='MIDI'; updateBothHandsStatus();
     state.midiChordNotes.add(name);
     const held=[...state.midiChordNotes].sort((a,b)=>noteToMidi(a)-noteToMidi(b));
     $('heardNote').textContent=held.join(' + ');
@@ -1522,12 +1587,17 @@ function evaluateMidiChord(){
   state.judgedMidiGroups.add(g.key);
   $('scoreNote').textContent=expected.join(' + ');
   $('playedNote').textContent=played.join(' + ');
+  const rightExpected=g.entries.filter(x=>x.hand==='right').flatMap(x=>x.notes);
+  const leftExpected=g.entries.filter(x=>x.hand==='left').flatMap(x=>x.notes);
+  if($('rightTargetNote')) $('rightTargetNote').textContent=rightExpected.length?rightExpected.join(' + '):'—';
+  if($('leftTargetNote')) $('leftTargetNote').textContent=leftExpected.length?leftExpected.join(' + '):'—';
   $('timingDelta').textContent=(timingErrorMs>0?'+':'')+timingErrorMs+' ms';
   logPerformance({
     index:state.performanceLog.length,expectedNote:expected.join('+'),playedNote:played.join('+'),
     expectedTime:+g.startTime.toFixed(3),playedTime:+at.toFixed(3),timingErrorMs,
     pitchCorrect,rhythmCorrect,result:(pitchCorrect&&rhythmCorrect)?'exact_chord':pitchCorrect?'timing_error':'chord_error',
-    durationBeats:1,input:'midi',chordCompleteness:Math.round(completeness*100)
+    durationBeats:1,input:'midi',chordCompleteness:Math.round(completeness*100),
+    hand:[...new Set(g.entries.map(x=>x.hand))].sort().join('+')
   });
   if(pitchCorrect&&rhythmCorrect){ markMidiGroup(g,'chord-complete'); state.goodStreak++; if(state.goodStreak>=4)hideAssist(); }
   else{ markMidiGroup(g,'chord-partial'); state.goodStreak=0; if(!rhythmCorrect)showAssist(); }
@@ -1552,7 +1622,7 @@ async function startMicrophone(){
     const analyser=ctx.createAnalyser(); analyser.fftSize=4096; analyser.smoothingTimeConstant=.05;
     ctx.createMediaStreamSource(stream).connect(analyser); state.analyser=analyser;
     $('micBtn').textContent='麥克風已連線';
-    state.inputMode='mic'; $('inputSource').textContent='麥克風';
+    state.inputMode='mic'; $('inputSource').textContent='麥克風'; updateBothHandsStatus();
     micLoop();
   }catch(e){
     $('micBtn').textContent='麥克風未授權';
@@ -1640,8 +1710,7 @@ function judgeInput(note){
   $('playedNote').textContent=note;
   $('timingDelta').textContent=(timingErrorMs>0?'+':'')+timingErrorMs+' ms';
 
-  const targetRoot=targetEvent.hand==='left'?$('scrollingBassScore'):$('scrollingScore');
-  const el=targetRoot?.querySelector(`.music-note[data-i="${best}"]`);
+  const el=findEventVisual(targetEvent);
 
   if(Math.abs(timingError)<=0.42){
     state.judged.add(best);
@@ -1655,7 +1724,7 @@ function judgeInput(note){
       pitchCorrect,
       rhythmCorrect,
       result:(pitchCorrect&&rhythmCorrect)?'exact':pitchCorrect?'timing_error':'pitch_error',
-      durationBeats:targetEvent.beats,input:'mic'
+      durationBeats:targetEvent.beats,input:'mic',hand:targetEvent.hand
     });
 
     if(pitchCorrect && rhythmCorrect){
@@ -1730,7 +1799,8 @@ function scheduleTransportAudio(){
       if(when<=endTime && when>=ctx.currentTime-.02){
         state.demoScheduled.add(key);
         const notes=Array.isArray(ev.note)?ev.note:[ev.note];
-        notes.forEach(n=>playLocalPianoAt(n,Math.max(ctx.currentTime+.001,when),.86,1.0));
+        const noteDuration=Math.max(.25,Math.min(3.5,ev.beats*beatSeconds()*.9));
+        notes.forEach(n=>playLocalPianoAt(n,Math.max(ctx.currentTime+.001,when),.86,noteDuration));
       }
     }));
   }
@@ -1753,3 +1823,5 @@ function stopMetronome(update=true){
 }
 
 window.addEventListener('resize',()=>{ if($('practiceView').classList.contains('active')) renderStaticScore(); });
+
+try{updateBothHandsStatus()}catch(e){}

@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V2.2.1</title>
-  <link rel="stylesheet" href="style.css?v=2.2.1">
+  <title>PIANO LEARNING V2.2.2</title>
+  <link rel="stylesheet" href="style.css?v=2.2.2">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V2.2.1</div>
+        <div class="version-badge">VERSION V2.2.2</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -265,6 +265,15 @@
             </div>
           </div>
 
+          <div class="both-hands-status" id="bothHandsStatus">
+            <div><small>右手譜</small><b id="rightStaffStatus">顯示</b></div>
+            <div><small>左手譜</small><b id="leftStaffStatus">淡化</b></div>
+            <div><small>示範鋼琴聲</small><b id="demoHandStatus">關</b></div>
+            <div><small>目前右手目標</small><b id="rightTargetNote">—</b></div>
+            <div><small>目前左手目標</small><b id="leftTargetNote">—</b></div>
+            <div><small>判定能力</small><b id="judgeCapability">麥克風：單音</b></div>
+          </div>
+
           <div class="match-status">
             <div><small>譜面音符</small><b id="scoreNote">—</b></div>
             <div><small>實際彈奏</small><b id="playedNote">—</b></div>
@@ -276,6 +285,6 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=2.2.1"></script>
+  <script src="app.js?v=2.2.2"></script>
 </body>
 </html>
