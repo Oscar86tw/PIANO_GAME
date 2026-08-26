@@ -512,3 +512,95 @@ button{cursor:pointer}
 .collection-filter[data-collection="movie"]{
   font-weight:900;
 }
+
+
+/* V2.5 — 樂譜庫管理 */
+.library-tools{
+  display:grid;
+  grid-template-columns:minmax(260px,1.6fr) repeat(2,minmax(150px,.7fr));
+  gap:10px;
+  margin:12px 0 10px;
+}
+.library-tools label{
+  min-width:0;
+  font-size:.7rem;
+  color:#7b859b;
+  font-weight:800;
+}
+.library-tools label>span{display:block;margin-bottom:5px}
+.library-tools input,
+.library-tools select{
+  width:100%;
+  min-height:43px;
+  border:1px solid #dde2ed;
+  border-radius:11px;
+  background:#fff;
+  color:#39445f;
+  padding:9px 11px;
+  font-size:.9rem;
+}
+.library-summary{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:8px;
+  color:#7e879c;
+  font-size:.75rem;
+}
+.library-summary button{
+  border:1px solid #e0e4ed;
+  background:#f8f9fc;
+  color:#68738c;
+  border-radius:9px;
+  padding:7px 10px;
+  font-size:.72rem;
+}
+.song-row{
+  position:relative;
+  padding-right:58px;
+}
+.song-favorite{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:1px solid #e0e4ee;
+  background:#fff;
+  color:#a0a8ba;
+  font-size:1.15rem;
+  z-index:2;
+}
+.song-favorite.active{
+  color:#806ecf;
+  background:#f4f1ff;
+  border-color:#d7d0f4;
+}
+.song-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  margin-top:5px;
+}
+.song-tags em{
+  font-style:normal;
+  font-size:.62rem;
+  padding:2px 6px;
+  border-radius:999px;
+  background:#f0f2f7;
+  color:#778198;
+}
+.song-tags em.full{background:#eef7f2;color:#4f7e64}
+.song-tags em.recent{background:#f6f1ff;color:#715fc2}
+
+@media(max-width:760px){
+  .library-tools{grid-template-columns:1fr 1fr}
+  .library-search{grid-column:1/-1}
+}
+@media(max-width:520px){
+  .library-tools{grid-template-columns:1fr}
+  .library-search{grid-column:auto}
+}

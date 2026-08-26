@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V2.4</title>
-  <link rel="stylesheet" href="style.css?v=2.4">
+  <title>PIANO LEARNING V2.5</title>
+  <link rel="stylesheet" href="style.css?v=2.5">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V2.4</div>
+        <div class="version-badge">VERSION V2.5</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -80,6 +80,38 @@
           <button class="collection-filter" data-collection="disney">迪士尼</button>
           <button class="collection-filter" data-collection="practice">短練習</button>
         </div>
+        <div class="library-tools">
+          <label class="library-search">
+            <span>搜尋樂譜</span>
+            <input id="songSearch" type="search" placeholder="輸入曲名、分類、調性…" autocomplete="off">
+          </label>
+          <label>
+            <span>排序</span>
+            <select id="songSort">
+              <option value="default">預設</option>
+              <option value="title">曲名 A–Z</option>
+              <option value="level">程度</option>
+              <option value="bpm">BPM</option>
+              <option value="duration">長度</option>
+              <option value="recent">最近練習</option>
+            </select>
+          </label>
+          <label>
+            <span>顯示</span>
+            <select id="songViewFilter">
+              <option value="all">全部</option>
+              <option value="full">只看完整曲</option>
+              <option value="favorite">只看收藏</option>
+              <option value="recent">最近練習</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="library-summary">
+          <span id="visibleSongCount">0 首</span>
+          <button id="clearLibraryFilters" type="button">清除篩選</button>
+        </div>
+
         <div class="filter-row">
           <button class="filter active" data-level="all">全部程度</button>
           <button class="filter" data-level="prep">預備級</button>
@@ -311,6 +343,6 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=2.4"></script>
+  <script src="app.js?v=2.5"></script>
 </body>
 </html>

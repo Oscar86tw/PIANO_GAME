@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V2.4: 216 built-in pedagogical scores ----------
+// ---------- V2.5: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V2.4: full-length repertoire collections ----------
+// ---------- V2.5: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -286,7 +286,7 @@ const MOVIE_IMPORT_SLOTS=[
   'Movie Licensed Score 13','Movie Licensed Score 14','Movie Licensed Score 15','Movie Licensed Score 16'
 ];
 
-// ---------- V2.4: generated left-hand accompaniment ----------
+// ---------- V2.5: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -671,28 +671,113 @@ document.querySelectorAll('.tab').forEach(btn=>{
   });
 });
 
+
+const FAVORITES_KEY='pianoLearningFavoritesV25';
+const RECENTS_KEY='pianoLearningRecentScoresV25';
+
+function loadFavoriteIds(){
+  try{return new Set(JSON.parse(localStorage.getItem(FAVORITES_KEY)||'[]'))}catch(e){return new Set()}
+}
+function saveFavoriteIds(){
+  try{localStorage.setItem(FAVORITES_KEY,JSON.stringify([...favoriteIds]))}catch(e){}
+}
+function loadRecentIds(){
+  try{return JSON.parse(localStorage.getItem(RECENTS_KEY)||'[]')}catch(e){return []}
+}
+function saveRecentIds(){
+  try{localStorage.setItem(RECENTS_KEY,JSON.stringify(recentIds.slice(0,30)))}catch(e){}
+}
+let favoriteIds=loadFavoriteIds();
+let recentIds=loadRecentIds();
+let librarySearch='';
+let librarySort='default';
+let libraryView='all';
+
+function rememberRecentScore(id){
+  recentIds=[id,...recentIds.filter(x=>x!==id)].slice(0,30);
+  saveRecentIds();
+}
+function durationSecondsFromLibrary(row){
+  const s=songs[row[0]];
+  return Number(s?.duration)||0;
+}
+function rowSearchText(row){
+  const [id,title,lvl,duration,category,collection]=row;
+  const s=songs[id]||{};
+  return [
+    title,lvl,duration,category,collection,
+    s.categoryLabel,s.key,s.bpm,
+    s.fullScore?'完整曲':'練習'
+  ].filter(Boolean).join(' ').toLowerCase();
+}
+function levelRank(row){
+  const s=songs[row[0]]||{};
+  if(s.levelKey==='prep') return 0;
+  const n=Number(s.levelKey);
+  return Number.isFinite(n)?n:99;
+}
+
 let activeCollection='all';
 let activeLevel='all';
 function renderSongList(){
   const root=$('songList'); root.innerHTML='';
-  let rows=library;
+  let rows=[...library];
+
   if(activeCollection!=='all') rows=rows.filter(x=>String(x[5]||'practice')===activeCollection);
+
   if(activeLevel!=='all'){
     rows=rows.filter(x=>{
       const s=songs[x[0]];
       return String(s?.levelKey??'').toLowerCase()===String(activeLevel).toLowerCase();
     });
   }
+
+  if(librarySearch.trim()){
+    const q=librarySearch.trim().toLowerCase();
+    rows=rows.filter(row=>rowSearchText(row).includes(q));
+  }
+
+  if(libraryView==='full') rows=rows.filter(row=>!!songs[row[0]]?.fullScore);
+  if(libraryView==='favorite') rows=rows.filter(row=>favoriteIds.has(row[0]));
+  if(libraryView==='recent') rows=rows.filter(row=>recentIds.includes(row[0]));
+
+  if(librarySort==='title') rows.sort((a,b)=>String(a[1]).localeCompare(String(b[1]),'zh-Hant'));
+  else if(librarySort==='level') rows.sort((a,b)=>levelRank(a)-levelRank(b)||String(a[1]).localeCompare(String(b[1]),'zh-Hant'));
+  else if(librarySort==='bpm') rows.sort((a,b)=>(songs[a[0]]?.bpm||0)-(songs[b[0]]?.bpm||0));
+  else if(librarySort==='duration') rows.sort((a,b)=>durationSecondsFromLibrary(a)-durationSecondsFromLibrary(b));
+  else if(librarySort==='recent') rows.sort((a,b)=>{
+    const ai=recentIds.indexOf(a[0]), bi=recentIds.indexOf(b[0]);
+    return (ai<0?999:ai)-(bi<0?999:bi);
+  });
+
   rows.forEach(([id,title,lvl,duration,category,collection])=>{
     const s=songs[id]; if(!s)return;
-    const b=document.createElement('button'); b.className='song-row'; b.type='button';
+    const row=document.createElement('div'); row.className='song-row';
+    const main=document.createElement('button');
+    main.type='button'; main.className='song-main';
     const tag=s.fullScore?'整首':'練習';
-    b.innerHTML=`<span><strong>${title}</strong><small>${s.bpm} BPM · ${(s.timeSig||[4,4]).join('/')} · ${s.categoryLabel||'曲目'} · ${tag}</small></span><span class="level">${lvl}</span><span class="duration">${duration}</span>`;
-    b.addEventListener('click',()=>openPractice(id,'PLAY'));
-    root.appendChild(b);
+    const isRecent=recentIds.includes(id);
+    main.innerHTML=`<span><strong>${title}</strong><small>${s.bpm} BPM · ${(s.timeSig||[4,4]).join('/')} · ${s.categoryLabel||'曲目'}</small><span class="song-tags"><em class="${s.fullScore?'full':''}">${tag}</em>${isRecent?'<em class="recent">最近練習</em>':''}${collection?`<em>${collection}</em>`:''}</span></span><span class="level">${lvl}</span><span class="duration">${duration}</span>`;
+    main.addEventListener('click',()=>openPractice(id,'PLAY'));
+
+    const fav=document.createElement('button');
+    fav.type='button'; fav.className='song-favorite'+(favoriteIds.has(id)?' active':'');
+    fav.setAttribute('aria-label',favoriteIds.has(id)?'取消收藏':'加入收藏');
+    fav.textContent=favoriteIds.has(id)?'★':'☆';
+    fav.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(favoriteIds.has(id))favoriteIds.delete(id); else favoriteIds.add(id);
+      saveFavoriteIds();
+      renderSongList();
+    });
+
+    row.appendChild(main); row.appendChild(fav); root.appendChild(row);
   });
+
+  let slotCount=0;
   if(activeCollection==='disney' || activeCollection==='all'){
     DISNEY_IMPORT_SLOTS.forEach((title,i)=>{
+      if(libraryView!=='all' || librarySearch.trim()) return;
       const b=document.createElement('button'); b.className='song-row licensed-slot'; b.type='button';
       b.innerHTML=`<span><strong>${title}</strong><small>Disney 授權樂譜匯入槽 · MusicXML / MIDI</small></span><span class="level">授權匯入</span><span class="duration">＋</span>`;
       b.addEventListener('click',()=>{
@@ -700,11 +785,12 @@ function renderSongList(){
         document.querySelectorAll('.tab-panel').forEach(x=>x.classList.toggle('active',x.id==='importPanel'));
         $('importStatus').textContent='請選擇你合法取得的 Disney MusicXML / MIDI 樂譜；匯入後即可完整播放與對譜。';
       });
-      root.appendChild(b);
+      root.appendChild(b); slotCount++;
     });
   }
   if(activeCollection==='movie'){
     MOVIE_IMPORT_SLOTS.forEach((title,i)=>{
+      if(libraryView!=='all' || librarySearch.trim()) return;
       const b=document.createElement('button'); b.className='song-row licensed-slot'; b.type='button';
       b.innerHTML=`<span><strong>${title}</strong><small>受版權保護電影正式樂譜匯入槽 · MusicXML / MIDI · 完整曲</small></span><span class="level">完整匯入</span><span class="duration">＋</span>`;
       b.addEventListener('click',()=>{
@@ -712,8 +798,15 @@ function renderSongList(){
         document.querySelectorAll('.tab-panel').forEach(x=>x.classList.toggle('active',x.id==='importPanel'));
         $('importStatus').textContent='請選擇你合法取得的電影完整 MusicXML / MIDI 樂譜；匯入後會保留完整曲流程並使用 READY、雙手譜、示範聲、對譜及紀錄。';
       });
-      root.appendChild(b);
+      root.appendChild(b); slotCount++;
     });
+  }
+
+  if($('visibleSongCount')) $('visibleSongCount').textContent=`${rows.length} 首樂譜${slotCount?`＋${slotCount} 匯入槽`:''}`;
+  if(!rows.length && !slotCount){
+    const empty=document.createElement('div'); empty.className='curriculum-summary';
+    empty.textContent='目前篩選條件沒有符合的樂譜。';
+    root.appendChild(empty);
   }
 }
 renderSongList();
@@ -734,6 +827,28 @@ document.querySelectorAll('.collection-filter').forEach(btn=>{
     btn.classList.add('active'); activeCollection=btn.dataset.collection; renderSongList();
   });
 });
+$('songSearch').addEventListener('input',()=>{
+  librarySearch=$('songSearch').value||'';
+  renderSongList();
+});
+$('songSort').addEventListener('change',()=>{
+  librarySort=$('songSort').value||'default';
+  renderSongList();
+});
+$('songViewFilter').addEventListener('change',()=>{
+  libraryView=$('songViewFilter').value||'all';
+  renderSongList();
+});
+$('clearLibraryFilters').addEventListener('click',()=>{
+  activeCollection='all'; activeLevel='all'; librarySearch=''; librarySort='default'; libraryView='all';
+  $('songSearch').value='';
+  $('songSort').value='default';
+  $('songViewFilter').value='all';
+  document.querySelectorAll('.collection-filter').forEach(b=>b.classList.toggle('active',b.dataset.collection==='all'));
+  document.querySelectorAll('.filter').forEach(b=>b.classList.toggle('active',b.dataset.level==='all'));
+  renderSongList();
+});
+
 $('quickStart').addEventListener('click',()=>openPractice('sight','5 MIN'));
 $('chooseScoreBtn').addEventListener('click',()=>$('scoreFileInput').click());
 $('scoreFileInput').addEventListener('change',async()=>{
@@ -755,6 +870,7 @@ $('clearImportedBtn').addEventListener('click',()=>{
 
 
 function openPractice(songId,label='PLAY'){
+  rememberRecentScore(songId);
   state.song=songId; state.running=false; state.paused=false; state.pauseTotal=0; state.judged=new Set(); state.goodStreak=0;
   state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1; state.demoPlayed=new Set(); state.judgedMidiGroups=new Set(); state.midiChordNotes.clear(); state.midiChordStart=null; clearTimeout(state.midiChordTimer);
   state.tempoManual=false; state.tempoBpm=songs[songId].bpm; state.speed=1; state.lastMasterBeat=-1;
@@ -1653,7 +1769,7 @@ function gameLoop(){
 }
 
 function flash(kind){
-  // V2.4: intentionally disabled. No screen flash at beat/hit time.
+  // V2.5: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   const r=$('rhythmAssist');
