@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V2.1.1</title>
-  <link rel="stylesheet" href="style.css?v=2.1.1">
+  <title>PIANO LEARNING V2.2</title>
+  <link rel="stylesheet" href="style.css?v=2.2">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V2.1.1</div>
+        <div class="version-badge">VERSION V2.2</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -253,6 +253,8 @@
 
           <div class="audio-row">
             <button id="micBtn" class="soft-btn">啟動麥克風</button>
+            <button id="midiBtn" class="soft-btn">連接 MIDI</button>
+            <span id="midiStatus" class="sample-status">MIDI：未連接</span>
             <button id="metroBtn" class="soft-btn">節拍器：關</button>
             <button id="demoSoundBtn" class="soft-btn">譜面鋼琴聲：關</button>
             <button id="tempoReset" class="soft-btn">恢復原譜 BPM</button>
@@ -268,11 +270,12 @@
             <div><small>實際彈奏</small><b id="playedNote">—</b></div>
             <div><small>節拍誤差</small><b id="timingDelta">—</b></div>
             <div><small>已記錄</small><b id="recordCount">0</b></div>
+            <div><small>輸入來源</small><b id="inputSource">—</b></div>
           </div>
         </div>
       </section>
     </section>
   </main>
-  <script src="app.js?v=2.1.1"></script>
+  <script src="app.js?v=2.2"></script>
 </body>
 </html>

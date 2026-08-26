@@ -370,3 +370,13 @@ button{cursor:pointer}
  .bass-staff .staff-lines,.bass-staff .measure-line,.bass-staff .beat-guide{top:38px;height:92px}
  .bass-clef{font-size:4rem}
 }
+
+
+/* V2.2 — MIDI / chord recognition */
+#midiStatus.ready{color:#3d8f65;background:#edf9f2;border-color:#caead8}
+#midiStatus.error{color:#a95c5c;background:#fff2f2;border-color:#f1d0d0}
+#midiStatus.waiting{color:#7b6cab;background:#f4f1ff;border-color:#ddd5fa}
+.match-status{grid-template-columns:repeat(5,minmax(0,1fr))}
+.music-note.chord-complete .note-head,.music-note.chord-complete .note-stem{background:#61c891}
+.music-note.chord-partial .note-head,.music-note.chord-partial .note-stem{background:#d9a760}
+@media(max-width:760px){.match-status{grid-template-columns:repeat(2,minmax(0,1fr))}}
