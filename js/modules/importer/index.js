@@ -230,8 +230,66 @@
     return rows[idx];
   }
 
+
+  function getPhoto(id){return listPhotos().find(x=>x.id===id)||null}
+
+  function updatePhotoMeta(id,patch={}){
+    const rows=listPhotos(),idx=rows.findIndex(x=>x.id===id);
+    if(idx<0)throw new Error('找不到這份拍照樂譜');
+    const row=rows[idx];
+    const beats=clamp(Number(patch.timeSig?.[0]||row.timeSig?.[0]||4),2,12);
+    const unit=clamp(Number(patch.timeSig?.[1]||row.timeSig?.[1]||4),2,16);
+    rows[idx]={...row,
+      title:String(patch.title??row.title??'未命名拍照樂譜').trim()||'未命名拍照樂譜',
+      composer:String(patch.author??row.composer??'').trim(),
+      author:String(patch.author??row.author??'').trim(),
+      category:String(patch.category??row.category??'我的拍照樂譜').trim()||'我的拍照樂譜',
+      bpm:clamp(Number(patch.bpm??row.bpm??88),30,240),
+      timeSig:[beats,unit],
+      measures:Math.max(0,Number(patch.measures??row.measures??0)||0),
+      updatedAt:Date.now()
+    };
+    savePhotos(rows);return rows[idx];
+  }
+
+  async function appendPhotoPages(id,files){
+    const rows=listPhotos(),idx=rows.findIndex(x=>x.id===id);
+    if(idx<0)throw new Error('找不到這份拍照樂譜');
+    const refs=[];
+    for(const f of [...files]){
+      const blob=await fileToBlob(f.file||f,f.rotation||0);
+      const ref=await PhotoStore.put(blob,{name:(f.file||f).name||'camera.jpg'}); refs.push(ref);
+    }
+    rows[idx].pageImages=[...(rows[idx].pageImages||[]),...refs.map(x=>'idb:'+x)];
+    rows[idx].pageCount=rows[idx].pageImages.length;
+    rows[idx].visibleMeasures=`${rows[idx].pageCount} 頁教材`;
+    rows[idx].updatedAt=Date.now(); savePhotos(rows); return rows[idx];
+  }
+
+  async function removePhotoPage(id,pageIndex){
+    const rows=listPhotos(),idx=rows.findIndex(x=>x.id===id);
+    if(idx<0)throw new Error('找不到這份拍照樂譜');
+    const imgs=[...(rows[idx].pageImages||[])];
+    if(pageIndex<0||pageIndex>=imgs.length)throw new Error('找不到這一頁');
+    const ref=imgs.splice(pageIndex,1)[0];
+    if(String(ref).startsWith('idb:'))await PhotoStore.remove(String(ref).slice(4));
+    rows[idx].pageImages=imgs; rows[idx].pageCount=imgs.length; rows[idx].visibleMeasures=`${imgs.length} 頁教材`; rows[idx].updatedAt=Date.now();
+    if(!imgs.length){savePhotos(rows.filter((_,i)=>i!==idx)); return null}
+    savePhotos(rows); return rows[idx];
+  }
+
+  function movePhotoPage(id,pageIndex,delta){
+    const rows=listPhotos(),idx=rows.findIndex(x=>x.id===id);
+    if(idx<0)throw new Error('找不到這份拍照樂譜');
+    const imgs=[...(rows[idx].pageImages||[])],to=pageIndex+delta;
+    if(to<0||to>=imgs.length)return rows[idx];
+    [imgs[pageIndex],imgs[to]]=[imgs[to],imgs[pageIndex]];
+    rows[idx].pageImages=imgs; rows[idx].updatedAt=Date.now(); savePhotos(rows); return rows[idx];
+  }
+
   window.ScoreImporter={
     parseMusicXML,parseMIDI,importFile,listImported,removeImported,
-    savePhotoToLibrary,listPhotos,removePhoto,convertPhotoToSync
+    savePhotoToLibrary,listPhotos,getPhoto,removePhoto,convertPhotoToSync,
+    updatePhotoMeta,appendPhotoPages,removePhotoPage,movePhotoPage
   };
 })();

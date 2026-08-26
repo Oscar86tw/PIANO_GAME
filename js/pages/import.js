@@ -18,6 +18,25 @@ const syncCategory=document.getElementById('syncCategory');
 const syncSave=document.getElementById('syncSave');
 const syncCancel=document.getElementById('syncCancel');
 const syncBuilderStatus=document.getElementById('syncBuilderStatus');
+const editPhotoSection=document.getElementById('editPhotoSection');
+const editPhotoTitle=document.getElementById('editPhotoTitle');
+const editTitle=document.getElementById('editTitle');
+const editAuthor=document.getElementById('editAuthor');
+const editCategory=document.getElementById('editCategory');
+const editBpm=document.getElementById('editBpm');
+const editBeats=document.getElementById('editBeats');
+const editBeatUnit=document.getElementById('editBeatUnit');
+const editMeasures=document.getElementById('editMeasures');
+const editCameraInput=document.getElementById('editCameraInput');
+const editGalleryInput=document.getElementById('editGalleryInput');
+const editCameraBtn=document.getElementById('editCameraBtn');
+const editGalleryBtn=document.getElementById('editGalleryBtn');
+const editSaveBtn=document.getElementById('editSaveBtn');
+const editCancelBtn=document.getElementById('editCancelBtn');
+const editPageList=document.getElementById('editPageList');
+const editPhotoStatus=document.getElementById('editPhotoStatus');
+let editingPhotoId='';
+let editObjectUrls=[];
 let activePhotoId='';
 let pendingPhotos=[];
 async function refreshStorage(){try{const x=await PhotoStore.estimate();const mb=n=>n?Math.round(n/1024/1024):0;storageBadge.textContent=x.quota?`儲存空間：${mb(x.usage)} / ${mb(x.quota)} MB`:`儲存空間：可用`; }catch(e){storageBadge.textContent=`儲存空間：可用`}}
@@ -86,10 +105,12 @@ function renderPhotos(){
     d.innerHTML=`<div><strong>${x.title}</strong><small>${x.pageCount||x.pageImages?.length||0} 頁 · ${x.syncReady?'已轉同步練習版':'已上傳曲庫，待轉同步版'} · ${x.bpm||'—'} BPM</small></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end">
       <a class="btn" href="score-detail.html?song=${encodeURIComponent(x.id)}">查看</a>
+      <button class="btn edit">編輯</button>
       <button class="btn primary build">${x.syncReady?'更新同步版':'轉同步版'}</button>
       ${x.syncReady?`<a class="btn primary" href="practice.html?song=${encodeURIComponent(x.id)}">練習</a>`:''}
       <button class="btn bad del">刪除</button>
     </div>`;
+    d.querySelector('.edit').onclick=()=>openEditor(x);
     d.querySelector('.build').onclick=()=>openBuilder(x);
     d.querySelector('.del').onclick=async()=>{if(confirm(`刪除「${x.title}」？`)){await ScoreImporter.removePhoto(x.id);renderPhotos();refreshStorage();if(activePhotoId===x.id)closeBuilder()}};
     root.append(d);
@@ -161,6 +182,47 @@ digitalScoreFile.onchange=async()=>{
     ErrorClient.report('Importer',e,{title:'MusicXML / MIDI 匯入失敗'});
   }
 };
+
+
+async function renderEditPages(){
+  editObjectUrls.forEach(u=>URL.revokeObjectURL(u)); editObjectUrls=[]; editPageList.innerHTML='';
+  const song=ScoreImporter.getPhoto(editingPhotoId); if(!song)return;
+  const pages=song.pageImages||[];
+  for(let i=0;i<pages.length;i++){
+    const ref=pages[i],card=document.createElement('div');card.className='preview-card';
+    const img=document.createElement('img'); let src='';
+    if(String(ref).startsWith('idb:')){src=await PhotoStore.url(String(ref).slice(4)); if(src)editObjectUrls.push(src)} else src=ref;
+    img.src=src||''; card.append(img);
+    card.insertAdjacentHTML('beforeend',`<div class="preview-meta">第 ${i+1} 頁</div><div class="preview-actions"><button class="up">← 前移</button><button class="down">後移 →</button><button class="bad remove">刪除此頁</button></div>`);
+    card.querySelector('.up').onclick=()=>{ScoreImporter.movePhotoPage(editingPhotoId,i,-1);renderEditPages();renderPhotos()};
+    card.querySelector('.down').onclick=()=>{ScoreImporter.movePhotoPage(editingPhotoId,i,1);renderEditPages();renderPhotos()};
+    card.querySelector('.remove').onclick=async()=>{if(confirm(`刪除第 ${i+1} 頁？`)){const result=await ScoreImporter.removePhotoPage(editingPhotoId,i);renderPhotos();refreshStorage();if(!result){closeEditor();return}renderEditPages()}};
+    editPageList.append(card);
+  }
+}
+function openEditor(song){
+  editingPhotoId=song.id; editPhotoSection.style.display='block'; editPhotoTitle.textContent=`編輯｜${song.title}`;
+  editTitle.value=song.title||''; editAuthor.value=song.author||song.composer||''; editCategory.value=song.category||'我的拍照樂譜'; editBpm.value=song.bpm||88;
+  editBeats.value=song.timeSig?.[0]||4; editBeatUnit.value=song.timeSig?.[1]||4; editMeasures.value=song.measures||0;
+  editPhotoStatus.textContent=`目前 ${song.pageImages?.length||0} 頁，可修改資料、補拍或刪頁。`; editPhotoStatus.className='status'; renderEditPages(); editPhotoSection.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function closeEditor(){editingPhotoId='';editPhotoSection.style.display='none';editObjectUrls.forEach(u=>URL.revokeObjectURL(u));editObjectUrls=[]}
+editSaveBtn.onclick=()=>{
+  if(!editingPhotoId)return;
+  try{
+    const song=ScoreImporter.updatePhotoMeta(editingPhotoId,{title:editTitle.value,author:editAuthor.value,category:editCategory.value,bpm:Number(editBpm.value),timeSig:[Number(editBeats.value),Number(editBeatUnit.value)],measures:Number(editMeasures.value)});
+    editPhotoTitle.textContent=`編輯｜${song.title}`; editPhotoStatus.textContent='✓ 修改已儲存'; editPhotoStatus.className='status ok'; renderPhotos();
+  }catch(e){editPhotoStatus.textContent='修改失敗：'+e.message;editPhotoStatus.className='status bad'}
+};
+editCancelBtn.onclick=closeEditor;
+editCameraBtn.onclick=()=>editCameraInput.click(); editGalleryBtn.onclick=()=>editGalleryInput.click();
+async function addEditFiles(files){
+  if(!editingPhotoId||!files?.length)return; editPhotoStatus.textContent='正在加入新頁面…'; editPhotoStatus.className='status warn';
+  try{await ScoreImporter.appendPhotoPages(editingPhotoId,[...files].filter(f=>f.type.startsWith('image/')).map(file=>({file,rotation:0}))); editPhotoStatus.textContent='✓ 新頁面已加入';editPhotoStatus.className='status ok'; await renderEditPages();renderPhotos();refreshStorage()}
+  catch(e){editPhotoStatus.textContent='加入頁面失敗：'+e.message;editPhotoStatus.className='status bad'}
+}
+editCameraInput.onchange=async()=>{await addEditFiles(editCameraInput.files);editCameraInput.value=''};
+editGalleryInput.onchange=async()=>{await addEditFiles(editGalleryInput.files);editGalleryInput.value=''};
 
 renderPhotos();renderDigital();refreshStorage();
 

@@ -1,6 +1,6 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>手機拍照樂譜管理器 · V6.4.1</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/import.css"></head><body data-page="import">
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>手機拍照樂譜管理器 · V6.4.2</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/import.css"></head><body data-page="import">
 <header class="topbar">
-<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V6.4.1</span></div>
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V6.4.2</span></div>
 <nav class="nav">
 <a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
 <a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
@@ -29,6 +29,16 @@
 <div id="digitalImportDetail" class="status" style="margin-top:7px;display:none"></div>
 </section><section class="card" style="margin-top:12px"><h2>我的 MusicXML / MIDI 樂譜</h2><div id="digitalScoreList" class="table-list"></div></section>
 <section class="card" style="margin-top:12px"><h2>我的拍照樂譜</h2><div id="photoList" class="table-list"></div></section>
+<section id="editPhotoSection" class="card" style="margin-top:12px;display:none"><div class="kicker">PHOTO SCORE EDITOR</div><h2 id="editPhotoTitle">編輯拍照樂譜</h2><p>可修改樂譜資料，也可補拍、刪頁與調整頁面順序。</p>
+<div class="grid grid-2">
+<div class="field"><label>曲名</label><input id="editTitle"></div><div class="field"><label>作者 / 來源</label><input id="editAuthor"></div>
+<div class="field"><label>分類</label><input id="editCategory"></div><div class="field"><label>BPM</label><input id="editBpm" type="number" min="30" max="240"></div>
+<div class="field"><label>拍號分子</label><input id="editBeats" type="number" min="2" max="12"></div><div class="field"><label>拍號分母</label><input id="editBeatUnit" type="number" min="2" max="16"></div>
+<div class="field"><label>小節數</label><input id="editMeasures" type="number" min="0" max="999"></div>
+</div>
+<input id="editCameraInput" type="file" accept="image/*" capture="environment" hidden><input id="editGalleryInput" type="file" accept="image/*" multiple hidden>
+<div class="camera-actions" style="margin-top:12px"><button id="editCameraBtn" class="btn">📷 補拍一頁</button><button id="editGalleryBtn" class="btn">🖼️ 補選多頁</button><button id="editSaveBtn" class="btn primary">儲存修改</button><button id="editCancelBtn" class="btn">取消</button></div>
+<div id="editPageList" class="preview-grid camera-preview-grid" style="margin-top:12px"></div><div id="editPhotoStatus" class="status" style="margin-top:10px">尚未編輯。</div></section>
 <section id="syncBuilderSection" class="card" style="margin-top:12px;display:none"><div class="kicker">SYNC PRACTICE BUILDER</div><h2 id="syncBuilderTitle">轉成同步練習版</h2><p>這一步會保留原始照片頁面，並補上可練習的同步事件資料。之後還能再逐首細修。</p>
 <div class="grid grid-2">
 <div class="field"><label>同步模板</label><select id="syncTemplate"><option value="single-right">右手單音</option><option value="single-left">左手單音</option><option value="both-hands-broken">雙手分解</option><option value="both-hands-chords">雙手和弦</option><option value="scale">音階練習</option><option value="etude">技巧練習曲</option></select></div>
