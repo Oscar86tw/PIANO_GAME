@@ -23,7 +23,8 @@ let state = {
   song:'twinkle',running:false,paused:false,startAt:0,pauseStart:0,pauseTotal:0,
   speed:1,mode:'play',hand:'right',micStream:null,audioCtx:null,analyser:null,
   audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,assistTimer:null,assistBeat:0,
-  judged:new Set(),goodStreak:0
+  judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,
+  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1
 };
 
 function showView(name){
@@ -65,6 +66,9 @@ $('quickStart').addEventListener('click',()=>openPractice('sight','5 MIN'));
 
 function openPractice(songId,label='PLAY'){
   state.song=songId; state.running=false; state.paused=false; state.pauseTotal=0; state.judged=new Set(); state.goodStreak=0;
+  state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1;
+  state.tempoManual=false; state.tempoBpm=songs[songId].bpm;
+  $('tempoInput').value=state.tempoBpm;
   $('practiceTitle').textContent=songs[songId].title;
   $('practiceModeLabel').textContent=label;
   showView('practice');
@@ -86,7 +90,11 @@ $('pauseBtn').addEventListener('click',()=>{
   }
 });
 
-$('speedSelect').addEventListener('change',()=>{state.speed=parseFloat($('speedSelect').value)||1; renderStaticScore(); restartPractice();});
+$('speedSelect').addEventListener('change',()=>{
+  state.speed=parseFloat($('speedSelect').value)||1;
+  if(!state.tempoManual){ state.tempoBpm=songs[state.song].bpm; $('tempoInput').value=state.tempoBpm; }
+  renderStaticScore(); restartPractice();
+});
 $('practiceMode').addEventListener('change',()=>{state.mode=$('practiceMode').value;});
 $('handSelect').addEventListener('change',()=>{state.hand=$('handSelect').value;});
 $('micBtn').addEventListener('click',startMicrophone);
@@ -96,7 +104,23 @@ $('metroBtn').addEventListener('click',()=>{
   if(state.metroOn && state.running && !state.paused) startMetronome(); else stopMetronome(false);
 });
 
-function effectiveBpm(){ return Math.max(30,Math.round(songs[state.song].bpm*state.speed)); }
+function setTempo(v,manual=true){
+  const bpm=Math.max(30,Math.min(240,Math.round(Number(v)||songs[state.song].bpm)));
+  state.tempoBpm=bpm; state.tempoManual=manual;
+  $('tempoInput').value=bpm;
+  if(state.metroOn && state.running && !state.paused) startMetronome();
+  if(!$('rhythmAssist').hidden) $('assistBpm').textContent=effectiveBpm()+' BPM';
+}
+$('tempoInput').addEventListener('change',()=>setTempo($('tempoInput').value,true));
+$('tempoMinus').addEventListener('click',()=>setTempo((state.tempoBpm||songs[state.song].bpm)-1,true));
+$('tempoPlus').addEventListener('click',()=>setTempo((state.tempoBpm||songs[state.song].bpm)+1,true));
+$('tempoReset').addEventListener('click',()=>setTempo(songs[state.song].bpm,false));
+
+function scoreBpm(){ return Math.max(30,Math.round(songs[state.song].bpm*state.speed)); }
+function effectiveBpm(){
+  const base=state.tempoManual ? state.tempoBpm : songs[state.song].bpm;
+  return Math.max(30,Math.round(base*state.speed));
+}
 function effectiveDuration(){ return songs[state.song].duration/state.speed; }
 function elapsed(){
   if(!state.running) return 0;
@@ -137,11 +161,11 @@ function renderStaticScore(){
     f.className='finger'; f.style.left=n.style.left; f.textContent=fingerFor(i);
     root.appendChild(f);
   });
-  const bars=Math.ceil(effectiveDuration()/(60/effectiveBpm()*4));
+  const bars=Math.ceil(effectiveDuration()/(60/scoreBpm()*4));
   for(let i=1;i<=bars;i++){
     const line=document.createElement('div');
     line.className='measure-line';
-    line.style.left=(lead+i*(60/effectiveBpm()*4)*pxPerSec)+'px';
+    line.style.left=(lead+i*(60/scoreBpm()*4)*pxPerSec)+'px';
     root.appendChild(line);
   }
 }
@@ -149,7 +173,8 @@ function renderStaticScore(){
 function startPractice(){
   stopAnimationOnly();
   state.running=true; state.paused=false; state.pauseTotal=0; state.startAt=performance.now();
-  state.judged=new Set(); state.goodStreak=0;
+  state.judged=new Set(); state.goodStreak=0; state.performanceLog=[]; state.lastCapturedAt=0; state.currentTargetIndex=-1;
+  $('recordCount').textContent='0'; $('playedNote').textContent='—'; $('timingDelta').textContent='—'; $('scoreNote').textContent='—';
   if(state.metroOn) startMetronome();
   gameLoop();
 }
@@ -170,13 +195,28 @@ function gameLoop(){
 
   let nearest=-1,delta=99;
   s.notes.forEach((note,i)=>{
-    const d=Math.abs(e-noteTime(i));
+    const expected=noteTime(i);
+    const d=Math.abs(e-expected);
     const el=root.querySelector(`.music-note[data-i="${i}"]`);
     if(el) el.classList.toggle('current',d<0.22);
     if(d<delta){delta=d;nearest=i}
-    if(el && e-noteTime(i)>0.35) el.classList.add('passed');
+    if(el && e-expected>0.35) el.classList.add('passed');
+
+    if(e-expected>0.42 && !state.judged.has(i)){
+      state.judged.add(i);
+      logPerformance({
+        index:i, expectedNote:note, playedNote:null,
+        expectedTime:expected, playedTime:null,
+        timingErrorMs:null, pitchCorrect:false, rhythmCorrect:false,
+        result:'miss'
+      });
+      if(el) el.classList.add('timing-error');
+      flash('miss'); showAssist(); state.goodStreak=0;
+    }
   });
-  if(e>=effectiveDuration()){stopPractice();return}
+  state.currentTargetIndex=nearest;
+  if(nearest>=0) $('scoreNote').textContent=s.notes[nearest];
+  if(e>=effectiveDuration()){savePracticeSummary();stopPractice();return}
   state.gameRaf=requestAnimationFrame(gameLoop);
 }
 
@@ -230,22 +270,99 @@ function micLoop(){
   state.audioRaf=requestAnimationFrame(micLoop);
 }
 
+function logPerformance(entry){
+  state.performanceLog.push({
+    songId:state.song,
+    songTitle:songs[state.song].title,
+    bpm:songs[state.song].bpm,
+    metronomeBpm:effectiveBpm(),
+    speed:state.speed,
+    hand:state.hand,
+    mode:state.mode,
+    ...entry
+  });
+  $('recordCount').textContent=state.performanceLog.length;
+}
+function savePracticeSummary(){
+  const completed=state.performanceLog.length;
+  const pitchOk=state.performanceLog.filter(x=>x.pitchCorrect).length;
+  const rhythmOk=state.performanceLog.filter(x=>x.rhythmCorrect).length;
+  const exact=state.performanceLog.filter(x=>x.pitchCorrect&&x.rhythmCorrect).length;
+  const summary={
+    date:new Date().toISOString(),
+    songId:state.song,
+    songTitle:songs[state.song].title,
+    scoreBpm:songs[state.song].bpm,
+    metronomeBpm:effectiveBpm(),
+    speed:state.speed,
+    totalRecords:completed,
+    pitchAccuracy:completed?Math.round(pitchOk/completed*100):0,
+    rhythmAccuracy:completed?Math.round(rhythmOk/completed*100):0,
+    exactAccuracy:completed?Math.round(exact/completed*100):0,
+    events:state.performanceLog
+  };
+  try{
+    const key='pianoLearningPracticeHistory';
+    const old=JSON.parse(localStorage.getItem(key)||'[]');
+    old.push(summary);
+    localStorage.setItem(key,JSON.stringify(old.slice(-100)));
+  }catch(e){}
+}
 function judgeInput(note){
   if(!state.running||state.paused) return;
+  const now=performance.now();
+  if(now-state.lastCapturedAt<90) return; // avoid duplicate frames from one keystroke
+  state.lastCapturedAt=now;
+
   const s=songs[state.song], e=elapsed();
   let best=-1,bestDelta=999;
   s.notes.forEach((n,i)=>{
-    if(state.judged.has(i))return;
+    if(state.judged.has(i)) return;
     const d=Math.abs(e-noteTime(i));
     if(d<bestDelta){bestDelta=d;best=i}
   });
-  if(best<0)return;
-  if(bestDelta<=0.24 && note===s.notes[best]){
-    state.judged.add(best); flash('ok'); state.goodStreak++;
-    if(state.goodStreak>=4) hideAssist();
-  }else if(bestDelta<=0.45){
-    state.goodStreak=0;
-    flash(e<noteTime(best)?'early':'late'); showAssist();
+  if(best<0) return;
+
+  const expected=s.notes[best];
+  const expectedTime=noteTime(best);
+  const timingError=e-expectedTime;
+  const timingErrorMs=Math.round(timingError*1000);
+  const pitchCorrect=note===expected;
+  // rhythm window: ±180 ms. Exact score matching requires BOTH pitch and timing.
+  const rhythmCorrect=Math.abs(timingError)<=0.18;
+
+  $('scoreNote').textContent=expected;
+  $('playedNote').textContent=note;
+  $('timingDelta').textContent=(timingErrorMs>0?'+':'')+timingErrorMs+' ms';
+
+  const el=$('scrollingScore').querySelector(`.music-note[data-i="${best}"]`);
+
+  if(Math.abs(timingError)<=0.42){
+    state.judged.add(best);
+    logPerformance({
+      index:best,
+      expectedNote:expected,
+      playedNote:note,
+      expectedTime:+expectedTime.toFixed(3),
+      playedTime:+e.toFixed(3),
+      timingErrorMs,
+      pitchCorrect,
+      rhythmCorrect,
+      result:(pitchCorrect&&rhythmCorrect)?'exact':pitchCorrect?'timing_error':'pitch_error'
+    });
+
+    if(pitchCorrect && rhythmCorrect){
+      if(el) el.classList.add('matched');
+      flash('ok'); state.goodStreak++;
+      if(state.goodStreak>=4) hideAssist();
+    }else if(pitchCorrect){
+      if(el) el.classList.add('timing-error');
+      flash(timingError<0?'early':'late'); showAssist(); state.goodStreak=0;
+    }else{
+      if(el) el.classList.add('pitch-error');
+      // Wrong pitch: keep feedback quiet; only color the note / background lightly.
+      flash('early'); state.goodStreak=0;
+    }
   }
 }
 

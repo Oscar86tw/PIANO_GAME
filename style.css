@@ -150,3 +150,28 @@ button{cursor:pointer}
   .audio-row{flex-wrap:wrap}
   .heard{margin-left:0;width:100%;text-align:left}
 }
+
+
+/* V1.1 tempo control + performance recording */
+.compact-controls{grid-template-columns:repeat(4,minmax(0,1fr))}
+.tempo-control{display:grid;grid-template-columns:42px 1fr 42px;gap:6px;margin-top:5px}
+.tempo-control button,.tempo-control input{
+  min-height:42px;border:1px solid #dfe3ee;background:white;color:#35405a;border-radius:10px;text-align:center;font-weight:900
+}
+.tempo-control button{font-size:1.25rem}
+.tempo-control input{width:100%;font-size:1rem}
+.tempo-note{display:block;margin-top:4px;color:#99a1b4;font-size:.64rem}
+.match-status{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
+.match-status>div{background:#f7f8fc;border:1px solid #e2e6f0;border-radius:12px;padding:9px 10px;text-align:center}
+.match-status small{display:block;color:#8993a9;font-size:.65rem}
+.match-status b{display:block;color:#4b5874;font-size:1rem;margin-top:2px}
+.music-note.matched .note-head,.music-note.matched .note-stem{background:#62c990}
+.music-note.pitch-error .note-head,.music-note.pitch-error .note-stem{background:#f0a35b}
+.music-note.timing-error .note-head,.music-note.timing-error .note-stem{background:#d899b3}
+@media(max-width:850px){
+  .compact-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:540px){
+  .match-status{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .audio-row .soft-btn{flex:1 1 calc(50% - 5px)}
+}

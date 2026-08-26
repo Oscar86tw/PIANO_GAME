@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V1.0</title>
+  <title>PIANO LEARNING V1.1</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V1.0</div>
+        <div class="version-badge">VERSION V1.1</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -119,7 +119,7 @@
 
         <div class="practice-footer">
           <div class="compact-controls">
-            <label>速度
+            <label>練習速度
               <select id="speedSelect">
                 <option value="0.5">50%</option>
                 <option value="0.75">75%</option>
@@ -139,15 +139,31 @@
                 <option value="learn">學習</option>
               </select>
             </label>
+            <label>節拍器 BPM
+              <div class="tempo-control">
+                <button id="tempoMinus" type="button" aria-label="降低 BPM">−</button>
+                <input id="tempoInput" type="number" min="30" max="240" step="1" value="84" inputmode="numeric">
+                <button id="tempoPlus" type="button" aria-label="提高 BPM">＋</button>
+              </div>
+              <small class="tempo-note">預設跟隨樂譜速度</small>
+            </label>
           </div>
 
           <div class="audio-row">
             <button id="micBtn" class="soft-btn">啟動麥克風</button>
             <button id="metroBtn" class="soft-btn">節拍器：關</button>
+            <button id="tempoReset" class="soft-btn">恢復譜面 BPM</button>
             <div class="heard">
               <small>目前聽到</small>
               <b id="heardNote">—</b>
             </div>
+          </div>
+
+          <div class="match-status">
+            <div><small>譜面音符</small><b id="scoreNote">—</b></div>
+            <div><small>實際彈奏</small><b id="playedNote">—</b></div>
+            <div><small>節拍誤差</small><b id="timingDelta">—</b></div>
+            <div><small>已記錄</small><b id="recordCount">0</b></div>
           </div>
         </div>
       </section>
