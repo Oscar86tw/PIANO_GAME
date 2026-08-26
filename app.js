@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V2.3: 216 built-in pedagogical scores ----------
+// ---------- V2.4: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V2.3: full-length repertoire collections ----------
+// ---------- V2.4: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -151,7 +151,8 @@ function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrica
     lyrical:[0,2,4,3,2,1,0,1,2,4,5,4,2,1],
     classical:[0,1,2,4,3,2,1,0,2,3,5,4,3,1],
     exam:[0,2,1,3,2,4,3,1,0,3,5,2,4,1],
-    fashion:[0,4,2,5,3,1,4,2,6,4,1,3,5,2]
+    fashion:[0,4,2,5,3,1,4,2,6,4,1,3,5,2],
+    cinematic:[0,2,5,4,2,6,5,3,1,4,7,5,2,0,3,6]
   };
   const motif=motifs[style]||motifs.lyrical;
   let beatInBar=0;
@@ -161,6 +162,7 @@ function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrica
     let dur;
     if(style==='fashion') dur=[.5,.5,1,1,1.5,.5][(i+variant)%6];
     else if(style==='exam') dur=[.5,1,.5,1,1,1][(i+variant)%6];
+    else if(style==='cinematic') dur=[.5,1,.5,1.5,1,2,.5,.5][(i+variant)%8];
     else dur=[1,1,1,1,2][(i+variant)%5];
     if(used+dur>totalBeats) dur=totalBeats-used;
     if(beatInBar+dur>beatsPerBar) dur=beatsPerBar-beatInBar;
@@ -216,7 +218,33 @@ const FULL_REPERTOIRE_DEFS=[
   ['fashion','Weekend Drive','5',110,[4,4],'D Major','fashion'],
   ['fashion','Soft Focus','6',78,[6,8],'B minor','lyrical'],
   ['fashion','Blue Sneakers','3',104,[4,4],'G Major','fashion'],
-  ['fashion','Last Train Home','7',96,[4,4],'E minor','fashion']
+  ['fashion','Last Train Home','7',96,[4,4],'E minor','fashion'],
+
+  // Original full-length cinematic piano pieces.
+  ['movie','The Last Lantern｜最後的燈火','2',76,[4,4],'C Major','cinematic'],
+  ['movie','Castle Beyond the Clouds｜雲端城堡','3',88,[6,8],'G Major','cinematic'],
+  ['movie','Midnight Detective｜午夜偵探','4',96,[4,4],'A minor','cinematic'],
+  ['movie','Starlight Voyage｜星光航行','4',84,[4,4],'D Major','cinematic'],
+  ['movie','The Hidden Door｜隱藏之門','3',78,[3,4],'E minor','cinematic'],
+  ['movie','Hero at Dawn｜黎明英雄','5',108,[4,4],'D Major','cinematic'],
+  ['movie','Rain on the Silver Screen｜銀幕之雨','4',72,[6,8],'A minor','lyrical'],
+  ['movie','Forest of Magic｜魔法森林','2',90,[3,4],'F Major','cinematic'],
+  ['movie','Chasing the Horizon｜追逐地平線','5',116,[4,4],'G Major','cinematic'],
+  ['movie','A Letter Never Sent｜未寄出的信','3',70,[4,4],'C Major','lyrical'],
+  ['movie','The Clockwork City｜發條城市','6',112,[4,4],'E minor','cinematic'],
+  ['movie','Ocean Between Us｜我們之間的海','4',80,[6,8],'D minor','lyrical'],
+  ['movie','Fireflies in Winter｜冬夜螢火','3',74,[3,4],'G Major','cinematic'],
+  ['movie','Beyond the Moon Gate｜月門之外','5',92,[4,4],'B minor','cinematic'],
+  ['movie','Run Through the Stars｜奔向星辰','6',120,[4,4],'D Major','cinematic'],
+  ['movie','The Quiet Kingdom｜寂靜王國','4',68,[4,4],'F Major','lyrical'],
+  ['movie','Shadow Train｜暗影列車','6',104,[4,4],'A minor','cinematic'],
+  ['movie','Dreams of the Sky Whale｜天空鯨之夢','3',82,[6,8],'C Major','cinematic'],
+  ['movie','The Final Map｜最後的地圖','5',98,[4,4],'E minor','cinematic'],
+  ['movie','Before the Snow Falls｜雪落之前','4',72,[3,4],'D Major','lyrical'],
+  ['movie','City of Glass｜玻璃之城','7',110,[4,4],'F# minor','cinematic'],
+  ['movie','Into the Blue Planet｜進入藍色星球','6',86,[6,8],'E Major','cinematic'],
+  ['movie','The Forgotten Crown｜被遺忘的王冠','7',100,[4,4],'D minor','cinematic'],
+  ['movie','End Credits: Home｜片尾：回家','5',78,[4,4],'G Major','lyrical']
 ];
 
 function addFullRepertoire(){
@@ -230,7 +258,10 @@ function addFullRepertoire(){
   };
   FULL_REPERTOIRE_DEFS.forEach((d,i)=>{
     const [collection,title,levelKey,bpm,timeSig,key,style]=d;
-    const bars=collection==='classic'?24:(collection==='exam'?20:24);
+    const bars=collection==='classic'?24:
+      collection==='exam'?20:
+      collection==='movie'?(Number(levelKey)>=6?36:32):
+      24;
     const events=buildFullPiecePattern(ranges[levelKey]||ranges[4],i+1,bars,timeSig,style);
     const id=`full_${collection}_${String(i+1).padStart(2,'0')}`;
     songs[id]={title,level:`Level ${levelKey}`,levelKey,category:'repertoire',categoryLabel:'整首樂譜',collection,fullScore:true,bpm,timeSig,key,events,builtIn:true};
@@ -248,8 +279,14 @@ const DISNEY_IMPORT_SLOTS=[
   'Disney Piano Song 05','Disney Piano Song 06','Disney Piano Song 07','Disney Piano Song 08',
   'Disney Piano Song 09','Disney Piano Song 10','Disney Piano Song 11','Disney Piano Song 12'
 ];
+const MOVIE_IMPORT_SLOTS=[
+  'Movie Licensed Score 01','Movie Licensed Score 02','Movie Licensed Score 03','Movie Licensed Score 04',
+  'Movie Licensed Score 05','Movie Licensed Score 06','Movie Licensed Score 07','Movie Licensed Score 08',
+  'Movie Licensed Score 09','Movie Licensed Score 10','Movie Licensed Score 11','Movie Licensed Score 12',
+  'Movie Licensed Score 13','Movie Licensed Score 14','Movie Licensed Score 15','Movie Licensed Score 16'
+];
 
-// ---------- V2.3: generated left-hand accompaniment ----------
+// ---------- V2.4: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -662,6 +699,18 @@ function renderSongList(){
         document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='import'));
         document.querySelectorAll('.tab-panel').forEach(x=>x.classList.toggle('active',x.id==='importPanel'));
         $('importStatus').textContent='請選擇你合法取得的 Disney MusicXML / MIDI 樂譜；匯入後即可完整播放與對譜。';
+      });
+      root.appendChild(b);
+    });
+  }
+  if(activeCollection==='movie'){
+    MOVIE_IMPORT_SLOTS.forEach((title,i)=>{
+      const b=document.createElement('button'); b.className='song-row licensed-slot'; b.type='button';
+      b.innerHTML=`<span><strong>${title}</strong><small>受版權保護電影正式樂譜匯入槽 · MusicXML / MIDI · 完整曲</small></span><span class="level">完整匯入</span><span class="duration">＋</span>`;
+      b.addEventListener('click',()=>{
+        document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab==='import'));
+        document.querySelectorAll('.tab-panel').forEach(x=>x.classList.toggle('active',x.id==='importPanel'));
+        $('importStatus').textContent='請選擇你合法取得的電影完整 MusicXML / MIDI 樂譜；匯入後會保留完整曲流程並使用 READY、雙手譜、示範聲、對譜及紀錄。';
       });
       root.appendChild(b);
     });
@@ -1604,7 +1653,7 @@ function gameLoop(){
 }
 
 function flash(kind){
-  // V2.3: intentionally disabled. No screen flash at beat/hit time.
+  // V2.4: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   const r=$('rhythmAssist');

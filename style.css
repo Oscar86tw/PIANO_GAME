@@ -506,3 +506,9 @@ button{cursor:pointer}
   background:#f4f2ff;
   color:#6258b4;
 }
+
+
+/* V2.4 — 電影完整樂譜分類 */
+.collection-filter[data-collection="movie"]{
+  font-weight:900;
+}
