@@ -317,3 +317,25 @@ V2.9 已預留 Optical Music Recognition（OMR）流程，但不內建假辨識�
 V3.0 使用現有本地鋼琴 sample 搭配音色引擎建立 6 種聲音。
 畫面上的 1-step / 3-step / 5-step dynamic 是目前動態映射模式，不代表專案已經內含 5 套不同力度錄音。
 真正大型多力度 Studio / Concert sample pack 後續可做成額外下載包，避免 GitHub Pages 初次載入過大。
+
+
+## V3.1 — Sound Pack Manager
+
+新增音色包管理：
+- Lite Piano 內建
+- Studio Grand / Concert Grand / Warm Grand / Bright Grand / Soft Piano 可安裝本機 samples
+- WAV / MP3 多檔匯入
+- IndexedDB 保存
+- 已安裝 / 未安裝 / 目前使用中
+- 顯示 sample 數與本機容量
+- 重新匯入 / 移除
+- C4.mp3、Cs4.wav、F#3.mp3 等檔名自動辨識
+- 缺少個別琴鍵時自動使用最近 sample 做 pitch shifting
+- 單音測試
+- C Major 和弦測試
+- 延音踏板測試
+
+另外修正 V3.0 `playLocalPiano()` 測試聲音中 `now` 建立順序問題。
+
+本版不附第三方大型 sample pack，以避免授權與 GitHub Pages 容量問題。
+可以匯入自己合法取得或有權使用的 WAV / MP3 鋼琴 samples。

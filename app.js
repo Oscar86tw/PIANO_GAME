@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V3.0: 216 built-in pedagogical scores ----------
+// ---------- V3.1: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V3.0: full-length repertoire collections ----------
+// ---------- V3.1: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -353,7 +353,7 @@ const SCHOOL_IMPORT_SLOTS=[
   '老師指定曲 01','老師指定曲 02','老師指定曲 03','老師指定曲 04'
 ];
 
-// ---------- V3.0: generated left-hand accompaniment ----------
+// ---------- V3.1: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -595,7 +595,7 @@ if(songCountEl) songCountEl.textContent=`${library.length} 份內建＋Disney �
 
 
 /* ==========================================================
-   V3.0 Photo Score Import
+   V3.1 Photo Score Import
    Photos/PDFs are persisted in IndexedDB because localStorage
    is too small for image blobs.
    ========================================================== */
@@ -1866,6 +1866,55 @@ try{
 }
 updatePianoEngineStatus();
 
+
+$('soundPackManagerBtn').addEventListener('click',()=>{
+  $('soundPackModal').hidden=false;renderSoundPackManager();
+});
+$('closeSoundPackBtn').addEventListener('click',()=>{$('soundPackModal').hidden=true});
+document.querySelectorAll('[data-close-sound-pack]').forEach(x=>x.addEventListener('click',()=>{$('soundPackModal').hidden=true}));
+$('importSoundPackBtn').addEventListener('click',()=>{
+  const id=state.pianoVoice==='lite'?'studio':state.pianoVoice;
+  $('soundPackFilesInput').dataset.targetPack=id;
+  $('soundPackFilesInput').click();
+});
+$('soundPackFilesInput').addEventListener('change',async e=>{
+  const id=e.target.dataset.targetPack||'studio';
+  $('soundPackImportStatus').textContent=`正在匯入 ${PIANO_VOICES[id]?.label||id}…`;
+  try{
+    await importSoundPackFiles(id,e.target.files);
+    setPianoVoice(id);
+    await activateSoundPack(id);
+  }catch(err){
+    $('soundPackImportStatus').textContent='匯入失敗：'+err.message;
+  }
+  e.target.value='';
+});
+document.querySelectorAll('[data-test-note]').forEach(btn=>{
+  btn.addEventListener('click',async()=>{
+    if(!state.pianoReady)await loadLocalPianoSamples();
+    const oldDemo=state.demoSoundOn;state.demoSoundOn=true;
+    playLocalPianoAt(btn.dataset.testNote,ensureAudioContext().currentTime+.03,.9,1.1,96);
+    state.demoSoundOn=oldDemo;
+  });
+});
+$('testChordBtn').addEventListener('click',async()=>{
+  if(!state.pianoReady)await loadLocalPianoSamples();
+  const oldDemo=state.demoSoundOn;state.demoSoundOn=true;
+  const t=ensureAudioContext().currentTime+.03;
+  ['C4','E4','G4'].forEach((n,i)=>playLocalPianoAt(n,t,.85,1.4,82+i*12));
+  state.demoSoundOn=oldDemo;
+});
+$('testPedalBtn').addEventListener('click',async()=>{
+  if(!state.pianoReady)await loadLocalPianoSamples();
+  const oldDemo=state.demoSoundOn,oldPedal=state.sustainPedal;
+  state.demoSoundOn=true;state.sustainPedal=true;updatePianoEngineStatus();
+  const t=ensureAudioContext().currentTime+.03;
+  ['C3','G3','C4','E4','G4'].forEach((n,i)=>playLocalPianoAt(n,t,.78,1.8,75+i*7));
+  setTimeout(()=>{state.sustainPedal=oldPedal;updatePianoEngineStatus()},1700);
+  state.demoSoundOn=oldDemo;
+});
+loadInstalledSoundPacks();
+
 $('handSelect').addEventListener('change',()=>{
   state.hand=$('handSelect').value;
   state.demoScheduled=new Set();
@@ -1965,6 +2014,9 @@ function sampleFileFor(noteName){
 }
 
 async function loadLocalPianoSamples(){
+  if(state.pianoVoice!=='lite' && installedSoundPacks[state.pianoVoice]){
+    return activateSoundPack(state.pianoVoice);
+  }
   if(state.pianoReady) return true;
   if(state.pianoLoading) return false;
 
@@ -2001,12 +2053,14 @@ async function loadLocalPianoSamples(){
 }
 
 function nearestPianoSample(targetMidi){
-  let best=null,bestDist=999;
-  for(const [noteName,midi] of LOCAL_PIANO_SAMPLES){
+  const keys=state.pianoBuffers&&state.pianoBuffers.size?[...state.pianoBuffers.keys()]:LOCAL_PIANO_SAMPLES.map(x=>x[1]);
+  let bestMidi=keys[0]??60,bestDist=999;
+  for(const midi of keys){
     const d=Math.abs(targetMidi-midi);
-    if(d<bestDist){ best={noteName,midi}; bestDist=d; }
+    if(d<bestDist){bestMidi=midi;bestDist=d}
   }
-  return best;
+  const builtIn=LOCAL_PIANO_SAMPLES.find(x=>x[1]===bestMidi);
+  return {noteName:builtIn?.[0]||null,midi:bestMidi};
 }
 
 function stopAllPianoVoices(){
@@ -2028,10 +2082,9 @@ function playLocalPiano(note,velocity=0.85,duration=1.1){
   const gain=ctx.createGain();
   src.buffer=buffer;
   src.playbackRate.value=Math.pow(2,(targetMidi-sample.midi)/12);
+  const now=ctx.currentTime;
   gain.gain.value=Math.max(0,Math.min(1,state.demoVolume))*velocity;
   connectPianoVoiceChain(ctx,src,gain,now);
-
-  const now=ctx.currentTime;
   src.start(now);
   state.pianoVoices.add(src);
 
@@ -2076,6 +2129,198 @@ function playLocalPianoAt(note,when,velocity=0.85,duration=1.1,midiVelocity=96){
   src.onended=()=>state.pianoVoices.delete(src);
 }
 
+
+
+const SOUND_PACK_DB='PianoLearningSoundPacksV31';
+const SOUND_PACK_STORE='packs';
+let installedSoundPacks={};
+
+function openSoundPackDB(){
+  return new Promise((resolve,reject)=>{
+    if(!('indexedDB' in window))return reject(new Error('瀏覽器不支援 IndexedDB'));
+    const req=indexedDB.open(SOUND_PACK_DB,1);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      if(!db.objectStoreNames.contains(SOUND_PACK_STORE))db.createObjectStore(SOUND_PACK_STORE,{keyPath:'id'});
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error||new Error('音色包資料庫開啟失敗'));
+  });
+}
+async function soundPackPut(rec){
+  const db=await openSoundPackDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(SOUND_PACK_STORE,'readwrite');
+    tx.objectStore(SOUND_PACK_STORE).put(rec);
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+async function soundPackDelete(id){
+  const db=await openSoundPackDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(SOUND_PACK_STORE,'readwrite');
+    tx.objectStore(SOUND_PACK_STORE).delete(id);
+    tx.oncomplete=()=>{db.close();resolve()};
+    tx.onerror=()=>{db.close();reject(tx.error)};
+  });
+}
+async function soundPackGetAll(){
+  const db=await openSoundPackDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(SOUND_PACK_STORE,'readonly');
+    const req=tx.objectStore(SOUND_PACK_STORE).getAll();
+    req.onsuccess=()=>{const rows=req.result||[];db.close();resolve(rows)};
+    req.onerror=()=>{db.close();reject(req.error)};
+  });
+}
+function bytesLabel(n){
+  n=Number(n)||0;
+  if(n<1024)return n+' B';
+  if(n<1048576)return (n/1024).toFixed(1)+' KB';
+  return (n/1048576).toFixed(1)+' MB';
+}
+function normalizeSampleNoteName(name){
+  let base=String(name||'').replace(/\.[^.]+$/,'').replace(/♯/g,'#').replace(/♭/g,'b').trim();
+  base=base.replace(/([A-Ga-g])s(-?\d)/g,'$1#$2');
+  const m=base.match(/(?:^|[_\-\s])([A-Ga-g])([#b]?)(-?\d)(?:$|[_\-\s])/)
+    || base.match(/^([A-Ga-g])([#b]?)(-?\d)$/);
+  if(!m)return null;
+  const letter=m[1].toUpperCase(),acc=m[2]||'',oct=Number(m[3]);
+  if(acc!=='b')return letter+(acc==='#'?'#':'')+oct;
+  const semis={C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+  let midi=(oct+1)*12+semis[letter]-1;
+  const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  return names[(midi%12+12)%12]+(Math.floor(midi/12)-1);
+}
+function packMeta(id){
+  const cfg=PIANO_VOICES[id],rec=installedSoundPacks[id];
+  return {
+    id,label:cfg?.label||id,
+    installed:id==='lite'||!!rec,
+    current:state.pianoVoice===id,
+    sampleCount:id==='lite'?LOCAL_PIANO_SAMPLES.length:(rec?.samples?.length||0),
+    bytes:id==='lite'?0:(rec?.bytes||0),
+    source:id==='lite'?'內建':'本機匯入'
+  };
+}
+async function loadInstalledSoundPacks(){
+  try{
+    const rows=await soundPackGetAll();
+    installedSoundPacks=Object.fromEntries(rows.map(x=>[x.id,x]));
+  }catch(e){installedSoundPacks={}}
+  renderSoundPackManager();
+}
+function renderSoundPackManager(){
+  if(!$('soundPackList'))return;
+  const ids=['lite','studio','concert','warm','bright','soft'];
+  const root=$('soundPackList');root.innerHTML='';
+  let installed=0,totalBytes=0,totalSamples=0;
+  ids.forEach(id=>{
+    const meta=packMeta(id),cfg=PIANO_VOICES[id];
+    if(meta.installed){installed++;totalBytes+=meta.bytes;totalSamples+=meta.sampleCount}
+    const row=document.createElement('div');
+    row.className='sound-pack-row'+(meta.current?' active':'');
+    row.innerHTML=`
+      <div class="sound-pack-main">
+        <strong>${cfg.label}</strong>
+        <span>${cfg.quality.toUpperCase()} · ${cfg.polyphony} polyphony</span>
+        <div class="sound-pack-tags">
+          <em class="${meta.installed?'installed':''}">${meta.installed?'已安裝':'未安裝'}</em>
+          ${meta.current?'<em class="current">目前使用</em>':''}
+          <em>${meta.sampleCount} samples</em>
+        </div>
+      </div>
+      <div class="sound-pack-info"><b>${meta.source}</b><span>${meta.bytes?bytesLabel(meta.bytes):'隨網站內建'}</span></div>
+      <div class="sound-pack-actions"></div>`;
+    const actions=row.querySelector('.sound-pack-actions');
+
+    const use=document.createElement('button');
+    use.type='button';use.className='primary';use.textContent='使用';
+    use.disabled=meta.current;
+    use.addEventListener('click',async()=>{
+      if(id!=='lite'&&!meta.installed){
+        $('soundPackImportStatus').textContent=`${cfg.label} 尚未安裝，請先匯入 WAV / MP3。`;
+        return;
+      }
+      setPianoVoice(id);
+      await activateSoundPack(id);
+      renderSoundPackManager();
+    });
+    actions.appendChild(use);
+
+    if(id!=='lite'){
+      const ib=document.createElement('button');
+      ib.type='button';ib.textContent=meta.installed?'重新匯入':'安裝';
+      ib.addEventListener('click',()=>{
+        $('soundPackFilesInput').dataset.targetPack=id;
+        $('soundPackFilesInput').click();
+      });
+      actions.appendChild(ib);
+      if(meta.installed){
+        const del=document.createElement('button');
+        del.type='button';del.className='danger';del.textContent='移除';
+        del.addEventListener('click',async()=>{
+          if(!confirm(`移除 ${cfg.label} 音色包？`))return;
+          await soundPackDelete(id);delete installedSoundPacks[id];
+          if(state.pianoVoice===id){setPianoVoice('lite');await activateSoundPack('lite')}
+          renderSoundPackManager();
+        });
+        actions.appendChild(del);
+      }
+    }
+    root.appendChild(row);
+  });
+  $('installedPackCount').textContent=`${installed} / ${ids.length}`;
+  $('installedPackBytes').textContent=totalBytes?bytesLabel(totalBytes):'0 MB';
+  $('installedSampleCount').textContent=String(totalSamples);
+  $('currentPackLabel').textContent=currentPianoVoice().label;
+}
+async function importSoundPackFiles(id,files){
+  const cfg=PIANO_VOICES[id];if(!cfg)throw new Error('未知音色包');
+  const list=[...(files||[])],samples=[];
+  for(const file of list){
+    const note=normalizeSampleNoteName(file.name);
+    if(note)samples.push({note,name:file.name,blob:file,size:file.size||0,type:file.type||''});
+  }
+  if(!samples.length)throw new Error('沒有找到可辨識檔名，例如 C4.mp3、Cs4.wav 或 F#3.mp3');
+  const rec={id,label:cfg.label,updatedAt:Date.now(),bytes:samples.reduce((s,x)=>s+x.size,0),samples};
+  await soundPackPut(rec);
+  installedSoundPacks[id]=rec;
+  $('soundPackImportStatus').textContent=`${cfg.label} 已安裝：${samples.length} samples，${bytesLabel(rec.bytes)}。`;
+  renderSoundPackManager();
+}
+async function activateSoundPack(id){
+  if(id==='lite'){
+    state.pianoReady=false;state.pianoBuffers=new Map();
+    return loadLocalPianoSamples();
+  }
+  const rec=installedSoundPacks[id];
+  if(!rec){
+    setPianoVoice('lite');
+    return activateSoundPack('lite');
+  }
+  const ctx=ensureAudioContext(),map=new Map();
+  setSampleStatus(`${PIANO_VOICES[id].label}：載入中…`,'loading');
+  let ok=0;
+  for(const s of rec.samples){
+    try{
+      const arr=await s.blob.arrayBuffer();
+      const buffer=await ctx.decodeAudioData(arr.slice(0));
+      const midi=noteToMidi(s.note);
+      if(Number.isFinite(midi)){map.set(midi,buffer);ok++}
+    }catch(e){}
+  }
+  if(!ok){
+    setSampleStatus(`${PIANO_VOICES[id].label} 無可用 sample，改回 Lite`,'error');
+    setPianoVoice('lite');
+    return activateSoundPack('lite');
+  }
+  state.pianoBuffers=map;state.pianoReady=true;
+  setSampleStatus(`${PIANO_VOICES[id].label}：${ok} samples 已就緒`,'ready');
+  updatePianoEngineStatus();
+  return true;
+}
 
 const PIANO_VOICES={
   lite:{label:'Lite Piano',quality:'lite',brightness:1.00,attack:1.00,release:.55,room:.00,resonance:.00,polyphony:48,dynamic:1.00},
@@ -2574,7 +2819,7 @@ function gameLoop(){
 }
 
 function flash(kind){
-  // V3.0: intentionally disabled. No screen flash at beat/hit time.
+  // V3.1: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   if(state.sessionMode==='exam' || state.sessionMode==='performance') return;

@@ -1070,3 +1070,48 @@ button{cursor:pointer}
   .piano-engine-status{grid-template-columns:repeat(2,minmax(0,1fr))}
   .piano-voice-control{width:100%;justify-content:space-between}
 }
+
+
+/* V3.1 — Sound Pack Manager */
+.sound-pack-open{white-space:nowrap}
+.sound-pack-modal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:18px}
+.sound-pack-modal[hidden]{display:none}
+.sound-pack-backdrop{position:absolute;inset:0;background:rgba(24,28,42,.52);backdrop-filter:blur(4px)}
+.sound-pack-dialog{position:relative;width:min(980px,100%);max-height:min(88vh,900px);overflow:auto;background:#fff;border-radius:22px;box-shadow:0 24px 80px rgba(24,28,42,.28);padding:20px}
+.sound-pack-dialog-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.sound-pack-dialog-head small{display:block;color:#7568c6;font-size:.62rem;font-weight:900;letter-spacing:.14em}
+.sound-pack-dialog-head h2{margin:3px 0 4px;color:#44516d}
+.sound-pack-dialog-head p{margin:0;color:#7d879b;font-size:.8rem;line-height:1.55}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid #e0e3eb;background:#fff;color:#66718a;font-size:1.25rem}
+.sound-pack-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}
+.sound-pack-summary>div{background:#f8f9fc;border:1px solid #e3e6ef;border-radius:12px;padding:10px;text-align:center}
+.sound-pack-summary small{display:block;color:#8c95a8;font-size:.62rem}
+.sound-pack-summary b{display:block;color:#4b5874;margin-top:3px}
+.sound-pack-list{display:grid;gap:9px;margin-top:14px}
+.sound-pack-row{display:grid;grid-template-columns:1.2fr .8fr auto;gap:12px;align-items:center;border:1px solid #e2e5ed;border-radius:14px;padding:12px}
+.sound-pack-row.active{border-color:#c9c3ee;background:#faf9ff}
+.sound-pack-main strong{display:block;color:#48546f}
+.sound-pack-main span{display:block;color:#8b94a8;font-size:.7rem;margin-top:3px}
+.sound-pack-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.sound-pack-tags em{font-style:normal;font-size:.6rem;padding:2px 6px;border-radius:999px;background:#f0f2f7;color:#778198}
+.sound-pack-tags em.installed{background:#edf7f0;color:#4e7d62}
+.sound-pack-tags em.current{background:#f1efff;color:#695cc0}
+.sound-pack-info{font-size:.72rem;color:#737d94}
+.sound-pack-info b{display:block;color:#4d5973;margin-bottom:3px}
+.sound-pack-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.sound-pack-actions button{border:1px solid #dfe3eb;background:#fff;color:#647087;border-radius:8px;padding:7px 9px;font-size:.68rem}
+.sound-pack-actions .primary{background:#7569d8;color:#fff;border-color:#7569d8}
+.sound-pack-actions .danger{color:#a65a62}
+.sound-pack-import,.sound-pack-test{margin-top:14px;border:1px solid #e3e6ef;border-radius:14px;padding:12px;background:#f9fafc}
+.sound-pack-import{display:flex;justify-content:space-between;gap:14px;align-items:center}
+.sound-pack-import small,.sound-pack-test small{display:block;color:#7a6dca;font-size:.61rem;font-weight:900;letter-spacing:.12em}
+.sound-pack-import strong,.sound-pack-test strong{display:block;color:#4c5873;margin-top:2px}
+.sound-pack-import p{margin:4px 0 0;color:#8992a6;font-size:.72rem}
+.sound-pack-test-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.sound-pack-test-actions button{border:1px solid #dfe3eb;background:#fff;color:#5e6981;border-radius:9px;padding:8px 10px}
+@media(max-width:760px){
+  .sound-pack-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sound-pack-row{grid-template-columns:1fr}
+  .sound-pack-actions{justify-content:flex-start}
+  .sound-pack-import{align-items:flex-start;flex-direction:column}
+}
