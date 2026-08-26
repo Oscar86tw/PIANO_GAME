@@ -7,6 +7,53 @@ const midiToHz=m=>440*Math.pow(2,(m-69)/12);
 const hzToMidi=h=>Math.round(69+12*Math.log2(h/440));
 const fmt=t=>{t=Math.max(0,Math.ceil(t));return `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`};
 
+function noteStepIndex(note){
+  const m=note.match(/^([A-G])(#?)(-?\d)$/); if(!m) return 0;
+  const letter=m[1], octave=+m[3];
+  const order={C:0,D:1,E:2,F:3,G:4,A:5,B:6};
+  return octave*7 + order[letter];
+}
+function renderStaff(){
+  const root=$('staffNotes'); if(!root) return; root.innerHTML='';
+  const s=currentSong();
+  const total=s.notes.length;
+  const windowSize=Math.min(12,total);
+  let start=Math.max(0,state.index-2);
+  if(start+windowSize>total) start=Math.max(0,total-windowSize);
+  const view=s.notes.slice(start,start+windowSize);
+  const baseStep=30; // E4 bottom line in treble clef
+  const topPad=18, lineGap=12;
+  view.forEach((note,localIdx)=>{
+    const idx=start+localIdx;
+    const wrap=document.createElement('div');
+    wrap.className='staff-note'+(idx===state.index?' current':idx>state.index?' upcoming':'');
+    const x=((localIdx+0.8)/(windowSize+0.6))*100;
+    const step=noteStepIndex(note.replace('#',''));
+    const y=(baseStep-step)*(lineGap/2)+78; // center mapping
+    wrap.style.left=`${x}%`;
+    wrap.style.top=`${Math.max(8,Math.min(126,y))}px`;
+    const accidental = note.includes('#') ? '<div class="accidental">♯</div>' : '';
+    wrap.innerHTML= accidental + '<div class="note-head"></div><div class="stem"></div><div class="label">'+note+'</div>';
+    // ledger lines for notes outside staff range
+    const bottomStaffStep=30, topStaffStep=38; // E4..F5
+    if(step < bottomStaffStep){
+      for(let s2=bottomStaffStep-2; s2>=step; s2-=2){
+        const line=document.createElement('div'); line.className='ledger';
+        line.style.top=((baseStep-s2)*(lineGap/2)+84)+'px';
+        wrap.appendChild(line);
+      }
+    }
+    if(step > topStaffStep){
+      for(let s2=topStaffStep+2; s2<=step; s2+=2){
+        const line=document.createElement('div'); line.className='ledger';
+        line.style.top=((baseStep-s2)*(lineGap/2)+84)+'px';
+        wrap.appendChild(line);
+      }
+    }
+    root.appendChild(wrap);
+  });
+}
+
 const PATTERNS={
   scale:['C4','D4','E4','F4','G4','A4','B4','C5','B4','A4','G4','F4','E4','D4','C4'],
   triad:['C4','E4','G4','E4','C4','D4','F4','A4','F4','D4','E4','G4','B4','G4','E4'],
@@ -113,8 +160,9 @@ function renderSong(){
   $('noteIndex').textContent=Math.min(state.index+1,s.notes.length);
   $('expectedNote').textContent=state.running&&state.index<s.notes.length?s.notes[state.index]:'—';
   $('expectedHz').textContent=state.running&&state.index<s.notes.length?`${midiToHz(noteToMidi(s.notes[state.index])).toFixed(1)} Hz`:'WAIT';
-  updateClock(); renderHighway();
+  updateClock(); renderHighway(); renderStaff();
 }
+
 function noteTiming(i){
   const s=currentSong();
   return (i+1)*s.duration/(s.notes.length+1);
