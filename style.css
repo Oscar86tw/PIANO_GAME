@@ -175,3 +175,9 @@ button{cursor:pointer}
   .match-status{grid-template-columns:repeat(2,minmax(0,1fr))}
   .audio-row .soft-btn{flex:1 1 calc(50% - 5px)}
 }
+
+
+/* V1.2 score piano demo sound */
+.sound-volume{display:flex;align-items:center;gap:8px;padding:0 4px;color:#79839a;font-size:.72rem;font-weight:800}
+.sound-volume input{width:120px;accent-color:#7569dc}
+@media(max-width:540px){.sound-volume{width:100%;justify-content:space-between}.sound-volume input{flex:1}}
