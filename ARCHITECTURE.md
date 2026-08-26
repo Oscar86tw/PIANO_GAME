@@ -190,3 +190,11 @@ Photo-only scores are viewable immediately; playable EventTimeline data can be a
 - personal-scores.json 新增 8 個條目（含多頁條目與共用頁面條目）。
 - 圖檔置於 assets/user-scores/*。
 - 仍採 photoScore 模式，由 score-detail.js 直接讀取 pageImages 渲染。
+
+
+## V6.0 Photo Score → Sync Practice
+
+- 在 personal-scores.json 為 9 首使用者照片教材加入 events、timeSig、fingering、syncReady。
+- 維持 photoScore/pageImages 顯示，並同步提供 practice.html 練習入口。
+- score-detail.js 已調整：當 photoScore 同時擁有 events 時，仍顯示照片頁，但允許直接進入同步練習與小節範圍練習。
+- 此版屬於 starter synchronization layer，後續可逐首精修音高、和弦、節拍與指法。

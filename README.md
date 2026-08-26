@@ -533,3 +533,28 @@ Metronome → MetroGain → MasterGain → Output
 
 以上皆放入：學校教材 / 技巧訓練 → 個人教材匯入。
 目前先以原始照片樂譜保存，可在樂譜庫直接開啟；若之後要做同步播放、碰線判定、節拍器同步與自動評分，再另外建立音符事件資料。
+
+
+## V6.0 — 照片教材轉成可同步練習版
+
+本次把目前已匯入的照片教材樂譜，補上第一版同步音符事件資料，讓它們可以直接進入：
+- 7 秒準備時間
+- BPM / 五線譜 / 節拍器同步
+- 左手 / 右手 / 雙手練習
+- 即時輸入判定與星星評分
+
+已轉成同步練習版的曲目：
+- The Wampus Cats｜貓人隊
+- The Thunder Hawks｜迅雷鷹隊
+- Moonlight Sonata｜月光奏鳴曲
+- Virtuoso Chord Patterns｜精湛的和弦進行
+- Virtuoso Scale Patterns｜精湛的音階進行
+- Silver Rain Etude｜銀雨練習曲
+- G Scale in Contrary Motion｜反向進行 G 大調音階
+- Scale Toccata in G｜G 大調音階觸技曲
+- Circle Shapes｜圓圈圈
+
+說明：
+- 目前這一版為「同步練習版第一版」，以你上傳的頁面內容為基礎整理成可練習事件資料。
+- 原始照片頁面仍保留，可在樂譜詳情頁繼續查看。
+- 之後可再逐首細修到更貼近原譜每一顆音、每個和弦與指法。
