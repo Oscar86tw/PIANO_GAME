@@ -1,19 +1,21 @@
+
 (async()=>{
  const q=new URLSearchParams(location.search),id=q.get('song');const song=await Library.get(id);
  const hasSyncEvents=Array.isArray(song.events)&&song.events.length>0;
  let rendered={totalMeasures:song.measures||0};
  if(song.photoScore&&Array.isArray(song.pageImages)){
-   if(hasSyncEvents){rendered={measures:ScoreRenderer.splitMeasures(song),totalMeasures:ScoreRenderer.splitMeasures(song).length};}
+   if(hasSyncEvents&&window.ScoreRenderer?.splitMeasures){const measures=ScoreRenderer.splitMeasures(song); rendered={measures,totalMeasures:measures.length};}
    scoreSheet.style.display='none';
    photoScoreView.style.display='block';
-   photoScoreView.innerHTML=`<div class="kicker">PHOTO SCORE</div><h2>上傳教材譜面</h2>${hasSyncEvents?'<div class="status ok">已建立同步練習版：可以直接進入同步練習。</div>':'<div class="status">目前依你上傳的頁面保存；未上傳的後續頁不會自行補入。</div>'}${song.pageImages.map((src,i)=>`<figure class="photo-score-page"><img src="../${src}" alt="${song.title} 第${i+1}頁"><figcaption>第 ${i+1} 頁${song.visibleMeasures?`｜小節 ${song.visibleMeasures}`:''}</figcaption></figure>`).join('')}`;
+   const imgHtml=song.pageImages.map((src,i)=>{const realSrc=String(src).startsWith('data:')?src:`../${src}`;return `<figure class="photo-score-page"><img src="${realSrc}" alt="${song.title} 第${i+1}頁"><figcaption>第 ${i+1} 頁${song.visibleMeasures?`｜${song.visibleMeasures}`:''}</figcaption></figure>`}).join('');
+   photoScoreView.innerHTML=`<div class="kicker">PHOTO SCORE</div><h2>上傳教材譜面</h2>${hasSyncEvents?'<div class="status ok">已建立同步練習版：可以直接進入同步練習。</div>':'<div class="status">目前已加入曲庫。若要節拍器、五線譜與音符同步，請到「匯入樂譜」頁按「轉同步版」。</div>'}${imgHtml}`;
  }else{
    rendered=ScoreRenderer.renderScore(scoreSheet,song);
  }
- scoreTitle.textContent=song.title;scoreSubtitle.textContent=`${song.composer||''} ${song.subtitle||''}`.trim();
+ scoreTitle.textContent=song.title;scoreSubtitle.textContent=`${song.composer||song.author||''} ${song.subtitle||''}`.trim();
  scoreCategory.textContent=song.category||'—';scoreLevel.textContent=song.level||'—';scoreBpm.textContent=song.bpm||'—';scoreTime.textContent=(song.timeSig||[4,4]).join('/');scoreMeasures.textContent=rendered.totalMeasures;
  startMeasure.max=endMeasure.max=Math.max(1,rendered.totalMeasures||1);endMeasure.value=Math.min(4,Math.max(1,rendered.totalMeasures||1));
- if(song.photoScore&&!hasSyncEvents){practiceAll.textContent='照片譜模式';practiceAll.href='#';practiceAll.onclick=e=>{e.preventDefault();alert('此頁目前以原始照片樂譜保存；若要同步播放與自動判定，需要另外建立音符事件資料。')};practiceRangeBtn.style.display='none'}else{practiceAll.textContent=hasSyncEvents?'開始同步練習':'全部練習';practiceAll.href=`practice.html?song=${encodeURIComponent(song.id)}`;practiceAll.onclick=null;practiceRangeBtn.style.display='inline-flex'}
+ if(song.photoScore&&!hasSyncEvents){practiceAll.textContent='照片譜模式';practiceAll.href='import.html';practiceAll.onclick=null;practiceRangeBtn.style.display='none'}else{practiceAll.textContent=hasSyncEvents?'開始同步練習':'全部練習';practiceAll.href=`practice.html?song=${encodeURIComponent(song.id)}`;practiceAll.onclick=null;practiceRangeBtn.style.display='inline-flex'}
  const favKey='piano-favorites-v52';
  function favs(){return Store.get(favKey,[])}function isFav(){return favs().includes(song.id)}
  function drawFav(){favoriteBtn.textContent=isFav()?'★ 已收藏':'☆ 收藏'}

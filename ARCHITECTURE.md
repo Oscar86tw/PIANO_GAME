@@ -198,3 +198,12 @@ Photo-only scores are viewable immediately; playable EventTimeline data can be a
 - 維持 photoScore/pageImages 顯示，並同步提供 practice.html 練習入口。
 - score-detail.js 已調整：當 photoScore 同時擁有 events 時，仍顯示照片頁，但允許直接進入同步練習與小節範圍練習。
 - 此版屬於 starter synchronization layer，後續可逐首精修音高、和弦、節拍與指法。
+
+
+## V6.1 Mobile Camera Upload + Sync Builder
+- 新增 `photo-library-v61`：手機拍照後直接加入曲庫。
+- `savePhotoToLibrary()`：圖片壓縮為 JPEG data URL 後保存。
+- `convertPhotoToSync()`：依模板把照片樂譜轉成可同步練習版。
+- `Library.load()` 已納入 photo-library-v61。
+- `score-detail.js` 支援 data URL 圖片與未轉同步版提示。
+- 匯入頁新增同步轉換面板，可直接在手機完成整個流程。

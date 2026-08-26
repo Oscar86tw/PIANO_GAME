@@ -1,6 +1,6 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>匯入樂譜 · V5.5</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/import.css"></head><body data-page="import">
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>匯入樂譜 · V6.1</title><link rel="stylesheet" href="../css/base.css"><link rel="stylesheet" href="../css/import.css"></head><body data-page="import">
 <header class="topbar">
-<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V5.5</span></div>
+<div class="brand"><div><small>PIANO LEARNING</small>Complete Piano Academy</div><span class="version">V6.1</span></div>
 <nav class="nav">
 <a data-nav="home">首頁</a><a data-nav="academy">學院</a><a data-nav="course">課程</a>
 <a data-nav="practice">練習</a><a data-nav="training">訓練</a><a data-nav="theory">樂理</a>
@@ -8,7 +8,7 @@
 <a data-nav="progress">進度</a><a data-nav="teacher">老師/家長</a><a data-nav="errors">錯誤</a>
 </nav></header>
 <main class="page">
-<section class="card"><div class="kicker">PHOTO SCORE IMPORT</div><h1>拍照 / 匯入樂譜</h1><p>照片先保存為「待 OMR」。不會把照片假裝辨識成錯誤音符。</p><div class="grid grid-2"><div class="field"><label>曲名</label><input id="title"></div><div class="field"><label>作者 / 來源</label><input id="author"></div></div><div class="dropzone" style="margin-top:12px"><input id="photos" type="file" accept="image/*" multiple capture="environment"><p>直接拍照或一次選多張圖片</p></div><div id="preview" class="preview-grid"></div><div style="margin-top:10px"><button id="savePhoto" class="btn primary">加入我的拍照樂譜</button></div></section>
+<section class="card"><div class="kicker">PHOTO SCORE IMPORT</div><h1>拍照 / 匯入樂譜</h1><p>手機可以直接拍照上傳到曲庫。照片會先保存成教材頁面，再可一鍵轉成「同步練習版」。</p><div class="grid grid-2"><div class="field"><label>曲名</label><input id="title"></div><div class="field"><label>作者 / 來源</label><input id="author"></div></div><div class="dropzone" style="margin-top:12px"><input id="photos" type="file" accept="image/*" multiple capture="environment"><p>直接拍照或一次選多張圖片（手機可直接開相機）</p></div><div id="preview" class="preview-grid"></div><div style="margin-top:10px"><button id="savePhoto" class="btn primary">加入我的拍照樂譜</button></div></section>
 <section class="card" style="margin-top:12px">
 <div class="kicker">MUSICXML / MIDI</div><h2>數位樂譜匯入 · 雙手 / 和弦</h2>
 <p>選擇 MusicXML / XML / MID / MIDI，解析成功後直接加入 V4 樂譜庫。MIDI 同時間多音會保留成和弦，並依中央 C 分成左右手。</p>
@@ -16,7 +16,19 @@
 <div id="digitalImportStatus" class="status" style="margin-top:10px">尚未選擇數位樂譜。</div>
 <div id="digitalImportDetail" class="status" style="margin-top:7px;display:none"></div>
 </section><section class="card" style="margin-top:12px"><h2>我的 MusicXML / MIDI 樂譜</h2><div id="digitalScoreList" class="table-list"></div></section>
-<section class="card" style="margin-top:12px"><h2>我的拍照樂譜</h2><div id="photoList" class="table-list"></div></section></main>
+<section class="card" style="margin-top:12px"><h2>我的拍照樂譜</h2><div id="photoList" class="table-list"></div></section>
+<section id="syncBuilderSection" class="card" style="margin-top:12px;display:none"><div class="kicker">SYNC PRACTICE BUILDER</div><h2 id="syncBuilderTitle">轉成同步練習版</h2><p>這一步會保留原始照片頁面，並補上可練習的同步事件資料。之後還能再逐首細修。</p>
+<div class="grid grid-2">
+<div class="field"><label>同步模板</label><select id="syncTemplate"><option value="single-right">右手單音</option><option value="single-left">左手單音</option><option value="both-hands-broken">雙手分解</option><option value="both-hands-chords">雙手和弦</option><option value="scale">音階練習</option><option value="etude">技巧練習曲</option></select></div>
+<div class="field"><label>BPM</label><input id="syncBpm" type="number" min="30" max="240" value="88"></div>
+<div class="field"><label>拍號分子</label><input id="syncBeats" type="number" min="2" max="12" value="4"></div>
+<div class="field"><label>拍號分母</label><input id="syncBeatUnit" type="number" min="2" max="16" value="4"></div>
+<div class="field"><label>練習小節數</label><input id="syncMeasures" type="number" min="4" max="64" value="16"></div>
+<div class="field"><label>分類標籤</label><input id="syncCategory" value="我的拍照樂譜 / 同步版"></div>
+</div>
+<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap"><button id="syncSave" class="btn primary">轉成同步練習版</button><button id="syncCancel" class="btn">取消</button></div>
+<div id="syncBuilderStatus" class="status" style="margin-top:10px">尚未開始轉換。</div>
+</section></main>
 <script src="../js/core/storage.js"></script>
 <script src="../js/core/events.js"></script>
 <script src="../js/core/router.js"></script>

@@ -9,16 +9,12 @@ window.Library={
         fetch(AppBase+'data/personal-scores.json').then(r=>r.json()).catch(()=>[])
       ]);
       const imported=Store.get('imported-scores-v41',[]);
-      this.songs=[...personal,...builtins,...academy,...imported];
+      const photoLibrary=Store.get('photo-library-v61',[]);
+      this.songs=[...photoLibrary,...personal,...builtins,...academy,...imported];
     }
     return this.songs;
   },
   async reload(){this.songs=[];return this.load()},
   async get(id){await this.load();return this.songs.find(x=>x.id===id)||this.songs[0]},
-  async stats(){
-    await this.load();
-    const map={};
-    this.songs.forEach(s=>map[s.category]=(map[s.category]||0)+1);
-    return {total:this.songs.length,categories:map};
-  }
+  async stats(){await this.load();const map={};this.songs.forEach(s=>map[s.category]=(map[s.category]||0)+1);return {total:this.songs.length,categories:map}}
 };
