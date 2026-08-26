@@ -422,3 +422,87 @@ button{cursor:pointer}
 @media(max-width:540px){
   .both-hands-status{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+
+/* V2.3 — 練習分析，僅在紀錄區顯示 */
+.practice-analytics{margin-top:10px}
+.analytics-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+}
+.analytics-grid>div,
+.timing-balance>div{
+  background:#f7f8fc;
+  border:1px solid #e2e6f0;
+  border-radius:11px;
+  padding:9px 10px;
+  text-align:center;
+}
+.analytics-grid small,
+.timing-balance small{
+  display:block;
+  color:#8993a9;
+  font-size:.63rem;
+}
+.analytics-grid b,
+.timing-balance b{
+  display:block;
+  margin-top:3px;
+  color:#4c5874;
+  font-size:.95rem;
+}
+.timing-balance{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-top:8px;
+}
+.weak-measures{
+  margin-top:10px;
+  border:1px solid #e3e7f0;
+  border-radius:12px;
+  padding:10px;
+}
+.weak-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.weak-head small{display:block;color:#8379ce;font-size:.62rem;letter-spacing:.12em;font-weight:900}
+.weak-head strong{display:block;color:#4d5974}
+.weak-head button{
+  border:1px solid #dcdff0;
+  background:#f6f4ff;
+  color:#665bc8;
+  border-radius:9px;
+  padding:8px 11px;
+  font-weight:900;
+}
+.weak-measure-list{display:grid;gap:6px;margin-top:8px;color:#748099;font-size:.76rem}
+.weak-measure-row{
+  display:grid;
+  grid-template-columns:70px 1fr auto;
+  gap:8px;
+  align-items:center;
+  border-top:1px solid #edf0f5;
+  padding-top:7px;
+}
+.weak-measure-row button{
+  border:1px solid #e1e4ee;
+  background:white;
+  border-radius:8px;
+  padding:6px 9px;
+  color:#5f6a83;
+  font-size:.7rem;
+}
+@media(max-width:760px){
+  .analytics-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:480px){
+  .timing-balance{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .weak-measure-row{grid-template-columns:1fr auto}
+  .weak-measure-row span{grid-column:1/-1}
+}
+
+.transport-btn.has-analysis{
+  border-color:#b9b3df;
+  background:#f4f2ff;
+  color:#6258b4;
+}

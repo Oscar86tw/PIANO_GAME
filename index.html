@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#7067d9">
-  <title>PIANO LEARNING V2.2.2</title>
-  <link rel="stylesheet" href="style.css?v=2.2.2">
+  <title>PIANO LEARNING V2.3</title>
+  <link rel="stylesheet" href="style.css?v=2.3">
 </head>
 <body>
   <main id="app">
@@ -16,7 +16,7 @@
           <h1>今天想練什麼？</h1>
           <p>選一堂課，或直接開始彈一首歌。</p>
         </div>
-        <div class="version-badge">VERSION V2.2.2</div>
+        <div class="version-badge">VERSION V2.3</div>
       </header>
 
       <nav class="home-tabs" aria-label="主要功能">
@@ -203,6 +203,31 @@
             <button id="closeRecordBtn" type="button">關閉</button>
           </div>
           <div id="recordSummary" class="record-summary">尚未開始練習。</div>
+          <section id="practiceAnalytics" class="practice-analytics">
+            <div class="analytics-grid">
+              <div><small>音高正確率</small><b id="pitchAccuracyValue">—</b></div>
+              <div><small>節拍正確率</small><b id="rhythmAccuracyValue">—</b></div>
+              <div><small>完全吻合</small><b id="exactAccuracyValue">—</b></div>
+              <div><small>平均節拍誤差</small><b id="avgTimingValue">—</b></div>
+              <div><small>右手表現</small><b id="rightHandAccuracyValue">—</b></div>
+              <div><small>左手表現</small><b id="leftHandAccuracyValue">—</b></div>
+              <div><small>和弦完整度</small><b id="chordAccuracyValue">—</b></div>
+              <div><small>最需重練</small><b id="weakMeasureValue">—</b></div>
+            </div>
+            <div class="timing-balance">
+              <div><small>太早</small><b id="earlyCount">0</b></div>
+              <div><small>準時</small><b id="onTimeCount">0</b></div>
+              <div><small>太晚</small><b id="lateCount">0</b></div>
+              <div><small>漏音</small><b id="missCount">0</b></div>
+            </div>
+            <div class="weak-measures">
+              <div class="weak-head">
+                <div><small>FOCUS PRACTICE</small><strong>需要重練的小節</strong></div>
+                <button id="practiceWeakestBtn" type="button">練最弱小節</button>
+              </div>
+              <div id="weakMeasureList" class="weak-measure-list">完成一些練習後，這裡會自動整理。</div>
+            </div>
+          </section>
           <div id="recordList" class="record-list"></div>
         </div>
 
@@ -285,6 +310,6 @@
       </section>
     </section>
   </main>
-  <script src="app.js?v=2.2.2"></script>
+  <script src="app.js?v=2.3"></script>
 </body>
 </html>

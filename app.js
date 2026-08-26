@@ -57,7 +57,7 @@ for(const song of Object.values(songs)){
 }
 
 
-// ---------- V2.2.2: 216 built-in pedagogical scores ----------
+// ---------- V2.3: 216 built-in pedagogical scores ----------
 const LEVEL_PROFILES = {
   prep:{label:'預備級',range:['C4','D4','E4','F4','G4'],bpms:[60,66,72],durations:[1,1,1,2]},
   1:{label:'Level 1',range:['C4','D4','E4','F4','G4','A4'],bpms:[66,72,78],durations:[1,1,2,.5]},
@@ -143,7 +143,7 @@ function addGeneratedBuiltins(){
 const GENERATED_BUILTIN_COUNT=addGeneratedBuiltins();
 
 
-// ---------- V2.2.2: full-length repertoire collections ----------
+// ---------- V2.3: full-length repertoire collections ----------
 function buildFullPiecePattern(range,variant,bars=20,timeSig=[4,4],style='lyrical'){
   const beatsPerBar=timeSig[0];
   const events=[];
@@ -249,7 +249,7 @@ const DISNEY_IMPORT_SLOTS=[
   'Disney Piano Song 09','Disney Piano Song 10','Disney Piano Song 11','Disney Piano Song 12'
 ];
 
-// ---------- V2.2.2: generated left-hand accompaniment ----------
+// ---------- V2.3: generated left-hand accompaniment ----------
 const NOTE_TO_MIDI={C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
 function midiName(m){
   const names=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -800,8 +800,134 @@ function rewindMeasure(){
   seekTo(Math.max(0,current-measure));
   $('transportStatus').textContent=state.paused?'暫停':'播放中';
 }
+
+function measureFromTime(t){
+  const sig=songs[state.song]?.timeSig?.[0]||4;
+  const beat=(Number(t)||0)/beatSeconds()-leadInBeats();
+  return Math.max(1,Math.floor(Math.max(0,beat)/sig)+1);
+}
+function measureStartTime(measureNumber){
+  const sig=songs[state.song]?.timeSig?.[0]||4;
+  return (leadInBeats()+(Math.max(1,measureNumber)-1)*sig)*beatSeconds();
+}
+function percent(n,d){
+  return d?Math.round(n/d*100):0;
+}
+function analyzePracticeLog(){
+  const log=state.performanceLog||[];
+  const validTiming=log.filter(x=>Number.isFinite(x.timingErrorMs));
+  const pitchOk=log.filter(x=>x.pitchCorrect).length;
+  const rhythmOk=log.filter(x=>x.rhythmCorrect).length;
+  const exact=log.filter(x=>x.pitchCorrect&&x.rhythmCorrect).length;
+  const avgTiming=validTiming.length
+    ? Math.round(validTiming.reduce((s,x)=>s+Math.abs(x.timingErrorMs),0)/validTiming.length)
+    : null;
+
+  const early=validTiming.filter(x=>x.timingErrorMs<-180).length;
+  const onTime=validTiming.filter(x=>Math.abs(x.timingErrorMs)<=180).length;
+  const late=validTiming.filter(x=>x.timingErrorMs>180).length;
+  const miss=log.filter(x=>x.playedNote==null || x.result==='miss').length;
+
+  const handStats={right:{n:0,ok:0},left:{n:0,ok:0}};
+  log.forEach(x=>{
+    if(x.hand==='right'||x.hand==='left'){
+      handStats[x.hand].n++;
+      if(x.pitchCorrect&&x.rhythmCorrect)handStats[x.hand].ok++;
+    }else if(String(x.hand||'').includes('+')){
+      handStats.right.n++; handStats.left.n++;
+      if(x.pitchCorrect&&x.rhythmCorrect){handStats.right.ok++;handStats.left.ok++}
+    }
+  });
+
+  const chordLogs=log.filter(x=>Number.isFinite(x.chordCompleteness));
+  const chordAvg=chordLogs.length
+    ? Math.round(chordLogs.reduce((s,x)=>s+x.chordCompleteness,0)/chordLogs.length)
+    : null;
+
+  const measures=new Map();
+  log.forEach(x=>{
+    const m=measureFromTime(x.expectedTime);
+    if(!measures.has(m))measures.set(m,{measure:m,total:0,exact:0,pitch:0,rhythm:0,miss:0,errorScore:0});
+    const o=measures.get(m);
+    o.total++;
+    if(x.pitchCorrect)o.pitch++;
+    if(x.rhythmCorrect)o.rhythm++;
+    if(x.pitchCorrect&&x.rhythmCorrect)o.exact++;
+    if(x.playedNote==null||x.result==='miss')o.miss++;
+    const timingPenalty=Number.isFinite(x.timingErrorMs)?Math.min(2,Math.abs(x.timingErrorMs)/180):2;
+    const pitchPenalty=x.pitchCorrect?0:1.5;
+    const missPenalty=(x.playedNote==null||x.result==='miss')?2:0;
+    o.errorScore+=timingPenalty+pitchPenalty+missPenalty;
+  });
+
+  const ranked=[...measures.values()].map(o=>({
+    ...o,
+    accuracy:percent(o.exact,o.total),
+    score:o.total?o.errorScore/o.total:0
+  })).sort((a,b)=>b.score-a.score);
+
+  return {
+    total:log.length,
+    pitchAccuracy:percent(pitchOk,log.length),
+    rhythmAccuracy:percent(rhythmOk,log.length),
+    exactAccuracy:percent(exact,log.length),
+    avgTiming,
+    early,onTime,late,miss,
+    rightAccuracy:percent(handStats.right.ok,handStats.right.n),
+    leftAccuracy:percent(handStats.left.ok,handStats.left.n),
+    rightCount:handStats.right.n,
+    leftCount:handStats.left.n,
+    chordAvg,
+    measures:ranked,
+    weakest:ranked[0]||null
+  };
+}
+function renderPracticeAnalytics(){
+  const a=analyzePracticeLog();
+  const val=(id,text)=>{const el=$(id);if(el)el.textContent=text};
+
+  if(!a.total){
+    ['pitchAccuracyValue','rhythmAccuracyValue','exactAccuracyValue','avgTimingValue',
+     'rightHandAccuracyValue','leftHandAccuracyValue','chordAccuracyValue','weakMeasureValue'
+    ].forEach(id=>val(id,'—'));
+    val('earlyCount','0');val('onTimeCount','0');val('lateCount','0');val('missCount','0');
+    $('weakMeasureList').textContent='完成一些練習後，這裡會自動整理。';
+    return;
+  }
+
+  val('pitchAccuracyValue',a.pitchAccuracy+'%');
+  val('rhythmAccuracyValue',a.rhythmAccuracy+'%');
+  val('exactAccuracyValue',a.exactAccuracy+'%');
+  val('avgTimingValue',a.avgTiming==null?'—':a.avgTiming+' ms');
+  val('rightHandAccuracyValue',a.rightCount?a.rightAccuracy+'%':'—');
+  val('leftHandAccuracyValue',a.leftCount?a.leftAccuracy+'%':'—');
+  val('chordAccuracyValue',a.chordAvg==null?'—':a.chordAvg+'%');
+  val('weakMeasureValue',a.weakest?'第 '+a.weakest.measure+' 小節':'—');
+  val('earlyCount',String(a.early));
+  val('onTimeCount',String(a.onTime));
+  val('lateCount',String(a.late));
+  val('missCount',String(a.miss));
+
+  const root=$('weakMeasureList'); root.innerHTML='';
+  a.measures.slice(0,5).forEach(m=>{
+    const row=document.createElement('div');
+    row.className='weak-measure-row';
+    row.innerHTML=`<b>第 ${m.measure} 小節</b><span>完全吻合 ${m.accuracy}%｜漏音 ${m.miss}</span><button type="button">重練</button>`;
+    row.querySelector('button').addEventListener('click',()=>{
+      seekTo(measureStartTime(m.measure));
+      state.loopMeasure=true;
+      $('measureLoopSelect').value='current';
+      $('recordDrawer').hidden=true;
+      $('recordBtn').classList.remove('active');
+      playFromCurrent();
+    });
+    root.appendChild(row);
+  });
+}
+
 function renderRecordDrawer(){
   const log=state.performanceLog||[];
+  renderPracticeAnalytics();
   const exact=log.filter(x=>x.pitchCorrect&&x.rhythmCorrect).length;
   const pitch=log.filter(x=>x.pitchCorrect).length;
   const rhythm=log.filter(x=>x.rhythmCorrect).length;
@@ -827,6 +953,17 @@ $('recordBtn').addEventListener('click',()=>{
   renderRecordDrawer();
   $('recordDrawer').hidden=!$('recordDrawer').hidden;
   $('recordBtn').classList.toggle('active',!$('recordDrawer').hidden);
+});
+
+$('practiceWeakestBtn').addEventListener('click',()=>{
+  const a=analyzePracticeLog();
+  if(!a.weakest)return;
+  seekTo(measureStartTime(a.weakest.measure));
+  state.loopMeasure=true;
+  $('measureLoopSelect').value='current';
+  $('recordDrawer').hidden=true;
+  $('recordBtn').classList.remove('active');
+  playFromCurrent();
 });
 $('closeRecordBtn').addEventListener('click',()=>{
   $('recordDrawer').hidden=true;
@@ -1454,12 +1591,20 @@ function gameLoop(){
     }
   }
 
-  if(e>=effectiveDuration()){savePracticeSummary();stopPractice();$('playBtn').classList.remove('active');$('transportTime').textContent=fmtTime(effectiveDuration());$('transportStatus').textContent='完成';return}
+  if(e>=effectiveDuration()){
+    savePracticeSummary();
+    stopPractice();
+    $('playBtn').classList.remove('active');
+    $('transportTime').textContent=fmtTime(effectiveDuration());
+    $('transportStatus').textContent='完成';
+    $('recordBtn').classList.add('has-analysis');
+    return
+  }
   state.gameRaf=requestAnimationFrame(gameLoop);
 }
 
 function flash(kind){
-  // V2.2.2: intentionally disabled. No screen flash at beat/hit time.
+  // V2.3: intentionally disabled. No screen flash at beat/hit time.
 }
 function showAssist(){
   const r=$('rhythmAssist');
@@ -1644,8 +1789,10 @@ function micLoop(){
 }
 
 function logPerformance(entry){
+  const expectedTime=Number(entry.expectedTime)||0;
   state.performanceLog.push({
     songId:state.song,
+    measure:measureFromTime(expectedTime),
     songTitle:songs[state.song].title,
     bpm:songs[state.song].bpm,
     metronomeBpm:effectiveBpm(),
@@ -1655,6 +1802,7 @@ function logPerformance(entry){
     ...entry
   });
   $('recordCount').textContent=state.performanceLog.length;
+  if($('recordDrawer') && !$('recordDrawer').hidden) renderPracticeAnalytics();
 }
 function savePracticeSummary(){
   const completed=state.performanceLog.length;
