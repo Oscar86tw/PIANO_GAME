@@ -24,7 +24,7 @@ let state = {
   speed:1,mode:'play',hand:'right',micStream:null,audioCtx:null,analyser:null,
   audioRaf:0,gameRaf:0,metroOn:false,metroTimer:null,assistTimer:null,assistBeat:0,
   judged:new Set(),goodStreak:0,tempoBpm:null,tempoManual:false,
-  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,demoSoundOn:false,pianoSampler:null,pianoLoading:false,demoPlayed:new Set(),demoVolume:0.45
+  performanceLog:[],lastCapturedAt:0,currentTargetIndex:-1,demoSoundOn:false,pianoBuffers:new Map(),pianoLoading:false,pianoReady:false,demoPlayed:new Set(),demoVolume:0.45,pianoVoices:new Set()
 };
 
 function showView(name){
@@ -83,7 +83,7 @@ $('pauseBtn').addEventListener('click',()=>{
   if(!state.running) return;
   state.paused=!state.paused;
   if(state.paused){
-    state.pauseStart=performance.now(); stopMetronome(false); try{state.pianoSampler?.releaseAll();}catch(e){}
+    state.pauseStart=performance.now(); stopMetronome(false); stopAllPianoVoices()
   }else{
     state.pauseTotal+=performance.now()-state.pauseStart;
     if(state.metroOn) startMetronome();
@@ -116,57 +116,163 @@ $('tempoMinus').addEventListener('click',()=>setTempo((state.tempoBpm||songs[sta
 $('tempoPlus').addEventListener('click',()=>setTempo((state.tempoBpm||songs[state.song].bpm)+1,true));
 $('tempoReset').addEventListener('click',()=>setTempo(songs[state.song].bpm,false));
 
-const PIANO_BASE_URL='https://gleitz.github.io/midi-js-soundfonts/MusyngKite/acoustic_grand_piano-mp3/';
-const PIANO_SAMPLE_MAP={
-  'A0':'A0.mp3','C1':'C1.mp3','Eb1':'Eb1.mp3','Gb1':'Gb1.mp3',
-  'A1':'A1.mp3','C2':'C2.mp3','Eb2':'Eb2.mp3','Gb2':'Gb2.mp3',
-  'A2':'A2.mp3','C3':'C3.mp3','Eb3':'Eb3.mp3','Gb3':'Gb3.mp3',
-  'A3':'A3.mp3','C4':'C4.mp3','Eb4':'Eb4.mp3','Gb4':'Gb4.mp3',
-  'A4':'A4.mp3','C5':'C5.mp3','Eb5':'Eb5.mp3','Gb5':'Gb5.mp3',
-  'A5':'A5.mp3','C6':'C6.mp3','Eb6':'Eb6.mp3','Gb6':'Gb6.mp3',
-  'A6':'A6.mp3','C7':'C7.mp3','Eb7':'Eb7.mp3','Gb7':'Gb7.mp3','A7':'A7.mp3','C8':'C8.mp3'
-};
+
+const LOCAL_PIANO_SAMPLES = [
+  ['A0',21],['C1',24],['D#1',27],['F#1',30],
+  ['A1',33],['C2',36],['D#2',39],['F#2',42],
+  ['A2',45],['C3',48],['D#3',51],['F#3',54],
+  ['A3',57],['C4',60],['D#4',63],['F#4',66],
+  ['A4',69],['C5',72],['D#5',75],['F#5',78],
+  ['A5',81],['C6',84],['D#6',87],['F#6',90],
+  ['A6',93],['C7',96],['D#7',99],['F#7',102],
+  ['A7',105],['C8',108]
+];
+
 function setSampleStatus(text,kind=''){
-  const el=$('pianoSampleStatus'); if(!el) return; el.textContent=text; el.className='sample-status'+(kind?' '+kind:'');
+  const el=$('pianoSampleStatus');
+  if(!el) return;
+  el.textContent=text;
+  el.className='sample-status'+(kind?' '+kind:'');
 }
-async function ensurePianoSampler(){
-  if(state.pianoSampler) return state.pianoSampler;
-  if(state.pianoLoading) return null;
-  if(!window.Tone){ setSampleStatus('鋼琴音色：Tone.js 載入失敗','error'); return null; }
-  state.pianoLoading=true; setSampleStatus('鋼琴音色：載入中…','loading');
+
+function ensureAudioContext(){
+  if(!state.audioCtx){
+    const AC=window.AudioContext||window.webkitAudioContext;
+    state.audioCtx=new AC();
+  }
+  return state.audioCtx;
+}
+
+function noteToMidi(note){
+  const names={'C':0,'C#':1,'D':2,'D#':3,'E':4,'F':5,'F#':6,'G':7,'G#':8,'A':9,'A#':10,'B':11};
+  const m=note.match(/^([A-G]#?)(-?\d)$/);
+  if(!m) return 60;
+  return (Number(m[2])+1)*12+names[m[1]];
+}
+
+function sampleFileFor(noteName){
+  return 'assets/piano/'+noteName.replace('#','s')+'.mp3';
+}
+
+async function loadLocalPianoSamples(){
+  if(state.pianoReady) return true;
+  if(state.pianoLoading) return false;
+
+  state.pianoLoading=true;
+  setSampleStatus('本地鋼琴音色：載入中…','loading');
+  const ctx=ensureAudioContext();
+
   try{
-    await Tone.start();
-    state.pianoSampler=new Tone.Sampler({urls:PIANO_SAMPLE_MAP,baseUrl:PIANO_BASE_URL,release:1.2}).toDestination();
-    await Tone.loaded();
-    state.pianoSampler.volume.value=Tone.gainToDb(Math.max(0.001,state.demoVolume));
-    setSampleStatus('鋼琴音色：已就緒','ready');
-    return state.pianoSampler;
+    await ctx.resume();
+    let loaded=0;
+
+    for(const [noteName,midi] of LOCAL_PIANO_SAMPLES){
+      if(state.pianoBuffers.has(midi)){ loaded++; continue; }
+      const res=await fetch(sampleFileFor(noteName),{cache:'force-cache'});
+      if(!res.ok) throw new Error('Sample missing: '+noteName);
+      const arr=await res.arrayBuffer();
+      const buffer=await ctx.decodeAudioData(arr);
+      state.pianoBuffers.set(midi,buffer);
+      loaded++;
+      setSampleStatus(`本地鋼琴音色：${loaded}/${LOCAL_PIANO_SAMPLES.length}`,'loading');
+    }
+
+    state.pianoReady=true;
+    setSampleStatus('本地鋼琴音色：已就緒','ready');
+    return true;
   }catch(err){
-    console.error(err); state.pianoSampler=null; setSampleStatus('鋼琴音色：載入失敗','error'); return null;
-  }finally{ state.pianoLoading=false; }
-}
-async function toggleDemoSound(){
-  const btn=$('demoSoundBtn');
-  if(!state.demoSoundOn){
-    btn.disabled=true; btn.textContent='鋼琴音色載入中…';
-    const sampler=await ensurePianoSampler();
-    btn.disabled=false;
-    if(!sampler){ btn.textContent='譜面鋼琴聲：關'; return; }
-    state.demoSoundOn=true; state.demoPlayed=new Set(); btn.textContent='譜面鋼琴聲：開'; btn.classList.add('is-on');
-    sampler.triggerAttackRelease('C4','8n',Tone.now(),0.8);
-  }else{
-    state.demoSoundOn=false; btn.textContent='譜面鋼琴聲：關'; btn.classList.remove('is-on'); state.demoPlayed=new Set();
-    try{ state.pianoSampler?.releaseAll(); }catch(e){}
+    console.error(err);
+    state.pianoReady=false;
+    setSampleStatus('本地鋼琴音色：載入失敗，請確認 assets/piano 已上傳','error');
+    return false;
+  }finally{
+    state.pianoLoading=false;
   }
 }
+
+function nearestPianoSample(targetMidi){
+  let best=null,bestDist=999;
+  for(const [noteName,midi] of LOCAL_PIANO_SAMPLES){
+    const d=Math.abs(targetMidi-midi);
+    if(d<bestDist){ best={noteName,midi}; bestDist=d; }
+  }
+  return best;
+}
+
+function stopAllPianoVoices(){
+  for(const voice of state.pianoVoices){
+    try{voice.stop()}catch(e){}
+  }
+  state.pianoVoices.clear();
+}
+
+function playLocalPiano(note,velocity=0.85,duration=1.1){
+  if(!state.demoSoundOn || !state.pianoReady) return;
+  const ctx=ensureAudioContext();
+  const targetMidi=noteToMidi(note);
+  const sample=nearestPianoSample(targetMidi);
+  const buffer=state.pianoBuffers.get(sample.midi);
+  if(!buffer) return;
+
+  const src=ctx.createBufferSource();
+  const gain=ctx.createGain();
+  src.buffer=buffer;
+  src.playbackRate.value=Math.pow(2,(targetMidi-sample.midi)/12);
+  gain.gain.value=Math.max(0,Math.min(1,state.demoVolume))*velocity;
+  src.connect(gain).connect(ctx.destination);
+
+  const now=ctx.currentTime;
+  src.start(now);
+  state.pianoVoices.add(src);
+
+  // Gentle release without cutting the sample abruptly.
+  gain.gain.setValueAtTime(gain.gain.value,now+Math.max(.15,duration*.65));
+  gain.gain.exponentialRampToValueAtTime(.001,now+duration);
+  src.stop(now+Math.min(buffer.duration/playbackRateSafe(src.playbackRate.value),duration+.25));
+  src.onended=()=>state.pianoVoices.delete(src);
+}
+
+function playbackRateSafe(v){ return Math.max(.25,Math.min(4,v||1)); }
+
+async function toggleDemoSound(){
+  const btn=$('demoSoundBtn');
+
+  if(!state.demoSoundOn){
+    btn.disabled=true;
+    btn.textContent='本地鋼琴載入中…';
+
+    const ok=await loadLocalPianoSamples();
+    btn.disabled=false;
+
+    if(!ok){
+      btn.textContent='譜面鋼琴聲：關';
+      return;
+    }
+
+    state.demoSoundOn=true;
+    state.demoPlayed=new Set();
+    btn.textContent='譜面鋼琴聲：開';
+    btn.classList.add('is-on');
+
+    // Immediate test note, so the user knows audio is working.
+    playLocalPiano('C4',0.9,1.0);
+  }else{
+    state.demoSoundOn=false;
+    btn.textContent='譜面鋼琴聲：關';
+    btn.classList.remove('is-on');
+    state.demoPlayed=new Set();
+    stopAllPianoVoices();
+  }
+}
+
 $('demoSoundBtn').addEventListener('click',toggleDemoSound);
+
 $('demoVolume').addEventListener('input',()=>{
   state.demoVolume=Math.max(0,Math.min(1,parseFloat($('demoVolume').value)||0));
-  if(state.pianoSampler && window.Tone) state.pianoSampler.volume.value=Tone.gainToDb(Math.max(0.001,state.demoVolume));
 });
+
 function playScoreSample(note){
-  if(!state.demoSoundOn || !state.pianoSampler || !window.Tone) return;
-  try{ state.pianoSampler.triggerAttackRelease(note,'8n',Tone.now(),0.85); }catch(e){console.error(e)}
+  playLocalPiano(note,0.86,1.0);
 }
 
 function scoreBpm(){ return Math.max(30,Math.round(songs[state.song].bpm*state.speed)); }
@@ -233,7 +339,7 @@ function startPractice(){
 }
 function restartPractice(){ if($('practiceView').classList.contains('active')){renderStaticScore(); startPractice();} }
 function stopAnimationOnly(){ if(state.gameRaf) cancelAnimationFrame(state.gameRaf); state.gameRaf=0; }
-function stopPractice(){ state.running=false; stopAnimationOnly(); stopMetronome(false); hideAssist(); try{state.pianoSampler?.releaseAll();}catch(e){} }
+function stopPractice(){ state.running=false; stopAnimationOnly(); stopMetronome(false); hideAssist(); stopAllPianoVoices() }
 
 function gameLoop(){
   if(!state.running){return}
@@ -301,7 +407,7 @@ async function startMicrophone(){
     const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
     state.micStream=stream;
     const AC=window.AudioContext||window.webkitAudioContext;
-    const ctx=new AC(); state.audioCtx=ctx; await ctx.resume();
+    const ctx=ensureAudioContext(); state.audioCtx=ctx; await ctx.resume();
     const analyser=ctx.createAnalyser(); analyser.fftSize=4096; analyser.smoothingTimeConstant=.05;
     ctx.createMediaStreamSource(stream).connect(analyser); state.analyser=analyser;
     $('micBtn').textContent='麥克風已連線';
